@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Open Pharmacy Tonight — Barbados</title>
+  <title>Find a pharmacy open now — Barbados Drug Service</title>
   <link rel="icon" href="./dist/assets/images/favicon.ico">
   <link rel="stylesheet" href="./dist/styles.css">
   <link rel="stylesheet" href="./dist/leaflet.min.css">
@@ -182,8 +182,24 @@
     .type-pill:hover   { border-color: var(--color-teal-00); color: var(--color-teal-00); }
     .type-pill.active  { background: var(--color-teal-00); color: white; border-color: var(--color-teal-00); }
 
-    /* Search */
-    .govbb-search { max-width: 260px; }
+    /* Search row */
+    .filter-search-row {
+      display: flex;
+      gap: var(--spacing-s);
+      align-items: center;
+      width: 100%;
+      padding-bottom: var(--spacing-xs);
+      border-bottom: 1px solid var(--color-grey-00);
+      margin-bottom: var(--spacing-xs);
+    }
+    .filter-search-row .govbb-search { flex: 1; max-width: 480px; }
+    .filter-controls-row {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-s);
+      flex-wrap: wrap;
+      width: 100%;
+    }
 
     /* Parish select */
     .parish-select-wrap {
@@ -695,6 +711,157 @@
     /* Main spacing */
     main { padding-bottom: var(--spacing-l); }
     .section-pad { padding: var(--spacing-m) 0; }
+
+    /* ── govbb show/hide (details/summary disclosure) ── */
+    .govbb-details {
+      border-left: 4px solid var(--color-teal-40);
+      padding: var(--spacing-xs) 0 var(--spacing-xs) var(--spacing-s);
+      margin: var(--spacing-m) 0;
+    }
+    .govbb-details__summary {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-size: var(--font-size-body);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-teal-00);
+      list-style: none;
+      user-select: none;
+    }
+    .govbb-details__summary::-webkit-details-marker { display: none; }
+    .govbb-details__summary::before {
+      content: '▶';
+      font-size: 0.65em;
+      transition: transform 0.2s;
+    }
+    details[open] > .govbb-details__summary::before { transform: rotate(90deg); }
+    .govbb-details__summary:hover { color: var(--color-teal-100); }
+    .govbb-details__summary:focus-visible { outline: 4px solid var(--color-teal-100); outline-offset: 2px; border-radius: 2px; }
+    .govbb-details__text {
+      margin-top: var(--spacing-s);
+    }
+
+    /* ── GDS-style always-visible numbered steps ── */
+    .gds-steps { list-style: none; margin: 0; padding: 0; }
+    .gds-step {
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: 0 var(--spacing-s);
+      padding: var(--spacing-s) 0;
+      border-bottom: 1px solid var(--color-grey-00);
+    }
+    .gds-step__header {
+      display: contents; /* lets num and title sit in the grid */
+    }
+    .gds-step__num {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--color-teal-00);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--font-size-caption);
+      font-weight: var(--font-weight-bold);
+      flex-shrink: 0;
+      margin-top: 2px;
+      grid-column: 1;
+    }
+    .gds-step__title {
+      font-size: var(--font-size-body);
+      font-weight: var(--font-weight-bold);
+      margin: 0 0 var(--spacing-xs);
+      grid-column: 2;
+      align-self: center;
+    }
+    .gds-step__body {
+      grid-column: 2;
+      font-size: var(--font-size-body);
+    }
+    .gds-step__body p { margin-bottom: var(--spacing-xs); }
+    .gds-step__body p:last-child { margin-bottom: 0; }
+
+    /* ── Prescription colour labels ── */
+    .rx-colours { display: flex; flex-direction: column; gap: var(--spacing-xs); margin: var(--spacing-s) 0; }
+    .rx-colour-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--spacing-s);
+      padding: var(--spacing-xs) var(--spacing-s);
+      border-radius: 4px;
+      border-left: 6px solid;
+    }
+    .rx-colour-item--blue  { background: #e8f0ff; border-color: #00267f; }
+    .rx-colour-item--pink  { background: #fff0f5; border-color: #c2185b; }
+    .rx-colour-item--yellow{ background: #fffde7; border-color: #f9a825; }
+    .rx-colour-item__label { font-weight: var(--font-weight-bold); font-size: var(--font-size-caption); min-width: 70px; }
+    .rx-colour-item__desc  { font-size: var(--font-size-caption); color: var(--color-text); }
+
+    /* ── If something goes wrong accordions ── */
+    .problem-list { list-style: none; padding: 0; margin: var(--spacing-s) 0; }
+    .problem-item {
+      border-bottom: 1px solid var(--color-grey-00);
+    }
+    .problem-item__trigger {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--spacing-s);
+      padding: var(--spacing-s) 0;
+      background: none;
+      border: 0;
+      cursor: pointer;
+      font-family: var(--font-family-base);
+      font-size: var(--font-size-body);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-teal-00);
+      text-align: left;
+    }
+    .problem-item__trigger:hover { color: var(--color-teal-100); }
+    .problem-item__trigger:focus-visible { outline: 4px solid var(--color-teal-100); outline-offset: 2px; border-radius: 2px; }
+    .problem-item__chevron { flex-shrink: 0; transition: transform 0.2s; }
+    .problem-item.open .problem-item__chevron { transform: rotate(180deg); }
+    .problem-item__body {
+      display: none;
+      padding-bottom: var(--spacing-s);
+      font-size: var(--font-size-body);
+      color: var(--color-text);
+    }
+    .problem-item.open .problem-item__body { display: block; }
+
+    /* ── Eligibility table ── */
+    .eligibility-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-s);
+      margin: var(--spacing-s) 0;
+    }
+    @media (max-width: 640px) { .eligibility-grid { grid-template-columns: 1fr; } }
+    .eligibility-card {
+      border-radius: 6px;
+      padding: var(--spacing-s);
+      border: 2px solid;
+    }
+    .eligibility-card--gov  { background: #eef2ff; border-color: var(--color-blue-40); }
+    .eligibility-card--priv { background: #fffbeb; border-color: var(--color-yellow-40); }
+    .eligibility-card__heading {
+      font-size: var(--font-size-caption);
+      font-weight: var(--font-weight-bold);
+      margin-bottom: var(--spacing-xs);
+    }
+    .eligibility-card__heading--gov  { color: var(--color-blue-100); }
+    .eligibility-card__heading--priv { color: #7a5c00; }
+    .eligibility-card ul { margin: 0; padding-left: 18px; font-size: var(--font-size-caption); }
+    .eligibility-card ul li { margin-bottom: 4px; }
+
+    /* ── Compact info section (before directory) ── */
+    .service-info-section {
+      background: var(--color-white-00);
+      border-bottom: 2px solid var(--color-grey-00);
+      padding: var(--spacing-m) 0;
+    }
   </style>
 </head>
 <body class="govbb-page">
@@ -742,7 +909,7 @@
         <ol class="govbb-breadcrumbs__list">
           <li class="govbb-breadcrumbs__item"><a href="#" class="govbb-breadcrumbs__link">Home</a></li>
           <li class="govbb-breadcrumbs__item"><a href="#" class="govbb-breadcrumbs__link">Health</a></li>
-          <li class="govbb-breadcrumbs__item" aria-current="page">Open Pharmacy Tonight</li>
+          <li class="govbb-breadcrumbs__item" aria-current="page">Find a pharmacy open now</li>
         </ol>
       </nav>
     </div>
@@ -756,8 +923,7 @@
       <div class="govbb-container">
         <h1 class="govbb-text-h2">Find a pharmacy open now</h1>
         <p class="govbb-text-body">
-          Directory of all registered pharmacies in Barbados, with SBS status, live opening hours and directions.
-          Powered by data from the Barbados Drug Service.
+          Find a pharmacy in Barbados that accepts SBS prescriptions. The Special Benefit Service (SBS) lets qualifying residents collect medication free or for a small dispensing fee only. Data from the Barbados Drug Service, verified May 2026.
         </p>
         <div class="time-chip" id="current-time" aria-live="polite">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -766,73 +932,196 @@
       </div>
     </section>
 
+    <!-- ── Who can use this service ── -->
+    <section class="service-info-section" aria-labelledby="eligibility-heading">
+      <div class="govbb-container">
+
+        <h2 class="govbb-text-h3" id="eligibility-heading" style="margin-bottom: var(--spacing-s);">Who can use this service</h2>
+        <p class="govbb-text-body" style="margin-bottom: var(--spacing-s);">
+          The Special Benefit Service (SBS) lets qualifying citizens and permanent residents collect prescription medication either free or for a small dispensing fee. The Barbados Drug Service pays pharmacies on your behalf for medication on the <strong>Barbados National Drug Formulary (BNDF)</strong>.
+        </p>
+        <div class="eligibility-grid">
+          <div class="eligibility-card eligibility-card--gov">
+            <p class="eligibility-card__heading eligibility-card__heading--gov">Free at a government pharmacy, dispensing fee only at private SBS</p>
+            <ul>
+              <li>Age 65 or over</li>
+              <li>Under 16 years old</li>
+              <li>Prescribed for asthma, cancer, diabetes, epilepsy, glaucoma or hypertension (any age)</li>
+            </ul>
+          </div>
+          <div class="eligibility-card eligibility-card--priv">
+            <p class="eligibility-card__heading eligibility-card__heading--priv">Free at a government pharmacy. Full price at private pharmacies.</p>
+            <ul>
+              <li>All other permanent residents and citizens with a BNDF prescription</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── How to get your medication ── -->
+    <section class="service-info-section" aria-labelledby="howto-heading">
+      <div class="govbb-container">
+
+        <h2 class="govbb-text-h3" id="howto-heading" style="margin-bottom: var(--spacing-m);">How to get your medication</h2>
+
+        <ol class="gds-steps" aria-label="Steps to get your medication">
+
+          <li class="gds-step">
+            <div class="gds-step__header">
+              <span class="gds-step__num" aria-hidden="true">1</span>
+              <h3 class="gds-step__title">What to bring</h3>
+            </div>
+            <div class="gds-step__body">
+              <p>You will need your <strong>Barbados ID card</strong>, plus one of the following to prove permanent residency:</p>
+              <ul class="govbb-list govbb-list--bullet">
+                <li>Your passport stamped by Barbados Immigration confirming permanent residency</li>
+                <li>A Permanent Resident's certificate from the Barbados Immigration Department</li>
+              </ul>
+              <p>If you are collecting for a child, bring the child's birth certificate or ID, your own ID, and your permanent residency documents. If you are not the parent, bring a letter of guardianship.</p>
+              <p class="govbb-text-caption text-muted">If your stamp is in an old passport, bring both old and new passports. If your new passport has no stamp, visit Immigration at Careenage House, The Wharf, Bridgetown first.</p>
+            </div>
+          </li>
+
+          <li class="gds-step">
+            <div class="gds-step__header">
+              <span class="gds-step__num" aria-hidden="true">2</span>
+              <h3 class="gds-step__title">Get a prescription</h3>
+            </div>
+            <div class="gds-step__body">
+              <p>A prescription can come from a public-sector doctor (polyclinic or QEH) or a private doctor. The colour of your prescription affects what you pay at a private pharmacy.</p>
+              <div class="rx-colours">
+                <div class="rx-colour-item rx-colour-item--blue">
+                  <span class="rx-colour-item__label">Blue</span>
+                  <span class="rx-colour-item__desc">From a public polyclinic or health centre. Free at a government pharmacy, dispensing fee only at a private SBS pharmacy.</span>
+                </div>
+                <div class="rx-colour-item rx-colour-item--pink">
+                  <span class="rx-colour-item__label">Pink</span>
+                  <span class="rx-colour-item__desc">From a private doctor. Free at a government pharmacy, dispensing fee only at a private SBS pharmacy.</span>
+                </div>
+                <div class="rx-colour-item rx-colour-item--yellow">
+                  <span class="rx-colour-item__label">Yellow or Green</span>
+                  <span class="rx-colour-item__desc">From QEH outpatient. Free at a government pharmacy. <strong>Not covered at private pharmacies</strong>, so you will pay full price. Ask your QEH doctor to reissue on a standard form if you want to use a private pharmacy.</span>
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <li class="gds-step">
+            <div class="gds-step__header">
+              <span class="gds-step__num" aria-hidden="true">3</span>
+              <h3 class="gds-step__title">Choose where to go</h3>
+            </div>
+            <div class="gds-step__body">
+              <p><strong>Government polyclinic pharmacy:</strong> medication is completely free. 12 locations across the island. You do not have to use the polyclinic in your parish.</p>
+              <p><strong>Private SBS pharmacy:</strong> a small dispensing fee applies, but there are more locations with evening and weekend hours. Use the directory below to find one near you.</p>
+            </div>
+          </li>
+
+          <li class="gds-step" style="border-bottom: none;">
+            <div class="gds-step__header">
+              <span class="gds-step__num" aria-hidden="true">4</span>
+              <h3 class="gds-step__title">At the pharmacy</h3>
+            </div>
+            <div class="gds-step__body">
+              <ol class="govbb-list govbb-list--number">
+                <li>Hand your prescription and ID documents to the pharmacist.</li>
+                <li>The pharmacist will check your eligibility against the Barbados Drug Service register.</li>
+                <li>If you are eligible, the pharmacist will give you your medication.</li>
+                <li>At a government pharmacy you pay nothing. At a private SBS pharmacy you pay the dispensing fee only.</li>
+              </ol>
+              <p class="govbb-text-caption text-muted" style="margin-top: var(--spacing-xs);">If your documents are not accepted, do not pay full price. Ask the pharmacist to call BDS on <a href="tel:+12465354300" class="govbb-link">(246) 535-4300</a> first.</p>
+            </div>
+          </li>
+
+        </ol>
+
+      </div>
+    </section>
+
+    <!-- ── Find an open pharmacy heading ── -->
+    <section class="service-info-section" style="padding: var(--spacing-m) 0 var(--spacing-s);" aria-labelledby="directory-heading">
+      <div class="govbb-container">
+        <h2 class="govbb-text-h2" id="directory-heading" style="margin-bottom: var(--spacing-xs);">Find an open pharmacy</h2>
+        <p class="govbb-text-body text-muted">There are 12 government polyclinic pharmacies (free) and more than 70 private SBS pharmacies with a small dispensing fee across Barbados. Search or filter below to find one near you.</p>
+      </div>
+    </section>
+
     <!-- Filter bar -->
     <div class="filter-bar" role="search" aria-label="Filter pharmacies">
       <div class="govbb-container">
-        <div class="filter-bar__inner">
+        <div class="filter-bar__inner" style="flex-direction: column; align-items: stretch; gap: var(--spacing-xs);">
 
-          <!-- Open now toggle -->
-          <label class="toggle-wrap" for="open-now-toggle">
-            <input type="checkbox" id="open-now-toggle" role="switch" aria-checked="false">
-            <span class="toggle-label">Open now only</span>
-          </label>
-
-          <!-- Type filter -->
-          <div class="filter-bar__group" role="group" aria-label="Filter by pharmacy type">
-            <span class="filter-label">Type:</span>
-            <div class="type-pills">
-              <button class="type-pill active" data-type="all"         aria-pressed="true">All</button>
-              <button class="type-pill"         data-type="government" aria-pressed="false">
-                <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--color-blue-100);vertical-align:middle;margin-right:3px;"></span>Government
-              </button>
-              <button class="type-pill"         data-type="private-sbs" aria-pressed="false">
-                <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--color-yellow-00);vertical-align:middle;margin-right:3px;"></span>Private SBS
-              </button>
-              <button class="type-pill"         data-type="unconfirmed" aria-pressed="false">
-                <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#c8cdd3;vertical-align:middle;margin-right:3px;"></span>Unconfirmed
+          <!-- Search row (top, full width) -->
+          <div class="filter-search-row" role="search">
+            <div class="govbb-search">
+              <label class="govbb-search__label" for="pharmacy-search">Search by pharmacy name</label>
+              <input
+                class="govbb-search__input"
+                id="pharmacy-search"
+                type="search"
+                placeholder="For example: iMart, Oistins, Speightstown"
+                autocomplete="off"
+              >
+              <button class="govbb-search__button" aria-label="Search">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
               </button>
             </div>
           </div>
 
-          <!-- Parish filter -->
-          <div class="filter-bar__group">
-            <label class="filter-label" for="parish-select">Parish:</label>
-            <div class="parish-select-wrap">
-              <select id="parish-select" aria-label="Filter by parish">
-                <option value="all">All parishes</option>
-                <option value="St. Michael">St. Michael</option>
-                <option value="Christ Church">Christ Church</option>
-                <option value="St. James">St. James</option>
-                <option value="St. Peter">St. Peter</option>
-                <option value="St. George">St. George</option>
-                <option value="St. John">St. John</option>
-                <option value="St. Philip">St. Philip</option>
-                <option value="St. Andrew">St. Andrew</option>
-                <option value="St. Joseph">St. Joseph</option>
-                <option value="St. Thomas">St. Thomas</option>
-              </select>
+          <!-- Filter controls row (below search) -->
+          <div class="filter-controls-row">
+
+            <!-- Open now toggle -->
+            <label class="toggle-wrap" for="open-now-toggle">
+              <input type="checkbox" id="open-now-toggle" role="switch" aria-checked="false">
+              <span class="toggle-label">Open now only</span>
+            </label>
+
+            <!-- Type filter -->
+            <div class="filter-bar__group" role="group" aria-label="Filter by pharmacy type">
+              <span class="filter-label">Type:</span>
+              <div class="type-pills">
+                <button class="type-pill active" data-type="all"         aria-pressed="true">All</button>
+                <button class="type-pill"         data-type="government" aria-pressed="false">
+                  <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--color-blue-100);vertical-align:middle;margin-right:3px;"></span>Government
+                </button>
+                <button class="type-pill"         data-type="private-sbs" aria-pressed="false">
+                  <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--color-yellow-00);vertical-align:middle;margin-right:3px;"></span>Private SBS
+                </button>
+                <button class="type-pill"         data-type="unconfirmed" aria-pressed="false">
+                  <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#c8cdd3;vertical-align:middle;margin-right:3px;"></span>Unconfirmed
+                </button>
+              </div>
             </div>
-          </div>
 
-          <!-- Map toggle -->
-          <button id="map-toggle-btn" class="map-toggle-btn" aria-expanded="false" aria-controls="map-wrap">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
-            Show map
-          </button>
+            <!-- Parish filter -->
+            <div class="filter-bar__group">
+              <label class="filter-label" for="parish-select">Parish:</label>
+              <div class="parish-select-wrap">
+                <select id="parish-select" aria-label="Filter by parish">
+                  <option value="all">All parishes</option>
+                  <option value="St. Michael">St. Michael</option>
+                  <option value="Christ Church">Christ Church</option>
+                  <option value="St. James">St. James</option>
+                  <option value="St. Peter">St. Peter</option>
+                  <option value="St. George">St. George</option>
+                  <option value="St. John">St. John</option>
+                  <option value="St. Philip">St. Philip</option>
+                  <option value="St. Andrew">St. Andrew</option>
+                  <option value="St. Joseph">St. Joseph</option>
+                  <option value="St. Thomas">St. Thomas</option>
+                </select>
+              </div>
+            </div>
 
-          <!-- Name search -->
-          <div class="govbb-search" role="search">
-            <label class="govbb-search__label" for="pharmacy-search">Search pharmacies</label>
-            <input
-              class="govbb-search__input"
-              id="pharmacy-search"
-              type="search"
-              placeholder="Search by name…"
-              autocomplete="off"
-            >
-            <button class="govbb-search__button" aria-label="Search">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <!-- Map toggle -->
+            <button id="map-toggle-btn" class="map-toggle-btn" aria-expanded="false" aria-controls="map-wrap" style="margin-left: auto;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+              Show map
             </button>
+
           </div>
 
         </div>
@@ -845,7 +1134,10 @@
 
         <!-- Legend -->
         <div class="results-meta">
-          <p class="results-count" id="results-count" aria-live="polite">Loading…</p>
+          <div>
+            <p class="results-count" id="results-count" aria-live="polite">Loading…</p>
+            <p id="open-filter-note" class="hidden" style="font-size:var(--font-size-caption-sm);color:var(--color-mid-grey-00);margin-top:3px;">Pharmacies with unconfirmed hours are not shown when 'Open now' is selected.</p>
+          </div>
           <div class="legend" aria-label="Key">
             <div class="legend-item"><span class="legend-strip legend-strip--gov"></span>Government · Free</div>
             <div class="legend-item"><span class="legend-strip legend-strip--priv"></span>Private SBS · Dispensing fee</div>
@@ -861,7 +1153,7 @@
             <div class="map-legend-item"><span class="map-dot map-dot--priv"></span>Private SBS · Fee</div>
             <div class="map-legend-item"><span class="map-dot map-dot--unc"></span>SBS unconfirmed</div>
             <div class="map-legend-item" style="margin-left:auto;">
-              <span style="width:8px;height:8px;border-radius:50%;background:var(--color-green-00);display:inline-block;"></span>Open now dot indicator
+              <span style="width:8px;height:8px;border-radius:50%;background:var(--color-green-00);display:inline-block;"></span>Green dot = open now
             </div>
           </div>
         </div>
@@ -874,102 +1166,104 @@
       </div>
     </section>
 
-    <!-- ── WhatsApp / SMS Bot ── -->
-    <section class="section-pad" aria-label="WhatsApp and SMS bot">
+    <!-- ── If something goes wrong ── -->
+    <section class="section-pad" aria-label="If something goes wrong">
       <div class="govbb-container">
         <hr class="section-divider">
-        <div class="wa-section">
-          <div class="wa-section__header">
-            <div class="wa-section__icon" aria-hidden="true">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        <h2 class="govbb-text-h3" style="margin-bottom: var(--spacing-s);">If something goes wrong</h2>
+        <ul class="problem-list" id="problem-list">
+
+          <li class="problem-item">
+            <button class="problem-item__trigger" aria-expanded="false" onclick="toggleProblem(this)">
+              My drug is not on the formulary
+              <svg class="problem-item__chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="problem-item__body" hidden>
+              Ask your doctor about a therapeutically equivalent alternative on the Barbados National Drug Formulary (BNDF). If no equivalent exists, your doctor can request a Category B exception through the Drug and Therapeutics Committee at QEH, or through the BDS Director.
             </div>
-            <div>
-              <h2 class="govbb-text-h3">No internet? Use WhatsApp or SMS</h2>
-              <p class="govbb-text-caption text-muted">
-                Text <strong>"pharmacy open now"</strong> or your area name to get a list of open pharmacies — no app navigation needed.
-              </p>
+          </li>
+
+          <li class="problem-item">
+            <button class="problem-item__trigger" aria-expanded="false" onclick="toggleProblem(this)">
+              My ID was not accepted
+              <svg class="problem-item__chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="problem-item__body" hidden>
+              Ask the pharmacist to contact BDS on <a href="tel:+12465354300" class="govbb-link">(246) 535-4300</a> before you pay. If your permanent residency documentation needs updating, contact the Immigration Department at Careenage House, The Wharf, Bridgetown.
             </div>
+          </li>
+
+          <li class="problem-item">
+            <button class="problem-item__trigger" aria-expanded="false" onclick="toggleProblem(this)">
+              I was charged full price but think I qualify
+              <svg class="problem-item__chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="problem-item__body" hidden>
+              Keep your receipt. Contact BDS on <a href="tel:+12465354300" class="govbb-link">(246) 535-4300</a> or email <a href="mailto:director@drugservice.gov.bb" class="govbb-link">director@drugservice.gov.bb</a> with your prescription, receipt and ID documents. You may be entitled to a refund.
+            </div>
+          </li>
+
+          <li class="problem-item">
+            <button class="problem-item__trigger" aria-expanded="false" onclick="toggleProblem(this)">
+              My child just turned 16
+              <svg class="problem-item__chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="problem-item__body" hidden>
+              The under-16 benefit ends on the child's 16th birthday. If the child has a qualifying chronic condition (asthma, diabetes, etc.), the benefit continues under that category. Ask the doctor to show the qualifying condition on future prescriptions.
+            </div>
+          </li>
+
+          <li class="problem-item">
+            <button class="problem-item__trigger" aria-expanded="false" onclick="toggleProblem(this)">
+              The pharmacy is out of stock
+              <svg class="problem-item__chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="problem-item__body" hidden>
+              The pharmacy should direct you to another participating pharmacy. If they cannot help, call BDS on <a href="tel:+12465354300" class="govbb-link">(246) 535-4300</a>.
+            </div>
+          </li>
+
+          <li class="problem-item" style="border-bottom: none;">
+            <button class="problem-item__trigger" aria-expanded="false" onclick="toggleProblem(this)">
+              Collecting on someone else's behalf
+              <svg class="problem-item__chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="problem-item__body" hidden>
+              Medication must be collected in person. This service is not available online. Someone else can collect for you. They will need to bring your prescription, your ID, your permanent residency documents, and their own ID.
+            </div>
+          </li>
+
+        </ul>
+      </div>
+    </section>
+
+    <!-- ── WhatsApp / SMS — collapsed by default ── -->
+    <section class="section-pad" aria-label="WhatsApp and SMS alternative">
+      <div class="govbb-container">
+
+        <details class="govbb-details">
+          <summary class="govbb-details__summary">
+            No smartphone? Get results by SMS or WhatsApp instead
+          </summary>
+          <div class="govbb-details__text">
+            <p class="govbb-text-caption text-muted" style="margin-bottom: var(--spacing-s);">
+              Text <strong>"pharmacy open now"</strong> or your area name to get a list of open pharmacies. SMS works without data. WhatsApp requires an internet connection.
+            </p>
+            <ol class="govbb-list govbb-list--number" style="margin-bottom: var(--spacing-s);">
+              <li>Save <strong>+1 (246) 535-BOT</strong> in your contacts as <em>Pharmacy Bot</em></li>
+              <li>Send a message on WhatsApp or SMS, for example: <code>pharmacy open now</code>, <code>pharmacies in Bridgetown</code>, or <code>pharmacy St James</code></li>
+              <li>You will get a plain-text list of open pharmacies with phone numbers</li>
+            </ol>
+            <div style="display: flex; gap: var(--spacing-xs); flex-wrap: wrap; margin-top: var(--spacing-xs);">
+              <a href="https://wa.me/12465358268?text=pharmacy%20open%20now" target="_blank" rel="noopener" class="card-btn card-btn--whatsapp" aria-label="Open WhatsApp demo — bot not yet live">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="white" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                Try WhatsApp <span style="font-size:10px;font-weight:normal;opacity:0.9;">(demo — not live)</span>
+              </a>
+              <a href="sms:+12465358268?body=pharmacy%20open%20now" class="card-btn card-btn--secondary">Send SMS instead</a>
+            </div>
+            <p class="govbb-text-caption-sm text-muted" style="margin-top: 8px;">The bot number is illustrative. It is not live yet. This prototype shows how the service will work at launch.</p>
           </div>
-
-          <div class="wa-section__body">
-
-            <!-- Left: how it works -->
-            <div>
-              <h3 class="govbb-text-h4" style="margin-bottom: var(--spacing-xs);">How it works</h3>
-              <ol class="govbb-list govbb-list--number" style="margin-bottom: var(--spacing-s);">
-                <li>Save <strong>+1 (246) 535-BOT</strong> in your contacts as <em>Pharmacy Bot</em></li>
-                <li>Send any of these messages on WhatsApp or SMS:
-                  <ul class="govbb-list govbb-list--bullet" style="margin-top: 6px;">
-                    <li><code>pharmacy open now</code></li>
-                    <li><code>pharmacies in Bridgetown</code></li>
-                    <li><code>pharmacy St James</code></li>
-                    <li><code>late night pharmacy</code></li>
-                  </ul>
-                </li>
-                <li>Receive a plain-text list of open pharmacies with phone numbers within seconds</li>
-              </ol>
-              <p class="govbb-text-caption text-muted" style="margin-bottom: var(--spacing-s);">
-                Powered by the same real-time data as this page. Works on any phone — no data plan required for SMS.
-              </p>
-              <div style="display: flex; gap: var(--spacing-xs); flex-wrap: wrap;">
-                <a href="https://wa.me/12465358268?text=pharmacy%20open%20now" target="_blank" rel="noopener" class="card-btn card-btn--whatsapp" aria-label="Open WhatsApp and send pharmacy open now">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                  Try on WhatsApp
-                </a>
-                <a href="sms:+12465358268&body=pharmacy%20open%20now" class="card-btn card-btn--secondary">
-                  Send SMS instead
-                </a>
-              </div>
-              <p class="govbb-text-caption-sm text-muted" style="margin-top: 6px;">
-                Note: Bot number is illustrative for this prototype — real number to be configured at launch.
-              </p>
-            </div>
-
-            <!-- Right: chat demo -->
-            <div>
-              <h3 class="govbb-text-h4" style="margin-bottom: var(--spacing-xs);">Example conversation</h3>
-              <div class="chat-demo">
-                <div class="chat-demo__header">
-                  <div class="chat-demo__avatar" aria-hidden="true">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/></svg>
-                  </div>
-                  Pharmacy Bot — Barbados Drug Service
-                </div>
-                <div class="bubble bubble--user">
-                  pharmacy open now<br><span class="bubble__time">9:48 PM ✓✓</span>
-                </div>
-                <div class="bubble bubble--bot">
-                  <strong>Open pharmacies right now (9:48 PM):</strong><br><br>
-                  🏥 Winston Scott Polyclinic<br>
-                  Jemmotts Lane, St. Michael<br>
-                  📞 (246) 536-3419 · Free (Govt)<br>
-                  Open until 10:00 PM<br><br>
-                  💊 DASAE Pharmacy (Sparman Clinic)<br>
-                  Belleville, St. Michael<br>
-                  📞 (246) 624-3278 · Dispensing fee<br>
-                  Open until 5:00 AM<br><br>
-                  Reply with a parish name for nearby results.<br>
-                  <span class="bubble__time">9:48 PM ✓✓</span>
-                </div>
-                <div class="bubble bubble--user">
-                  pharmacies in Christ Church<br><span class="bubble__time">9:49 PM ✓✓</span>
-                </div>
-                <div class="bubble bubble--bot">
-                  <strong>Christ Church pharmacies:</strong><br><br>
-                  🏥 Randal Phillips Polyclinic, Oistins<br>
-                  📞 (246) 536-4346 · Free<br>
-                  Mon–Fri until 8:30 PM — <em>closed now</em><br><br>
-                  💊 iMart Pharmacy — Lanterns Mall<br>
-                  📞 (246) 271-3784 · Dispensing fee<br>
-                  Daily 8am–8pm (Sun 9–2) — <em>closed now</em><br><br>
-                  Reply HELP for more options.<br>
-                  <span class="bubble__time">9:49 PM ✓✓</span>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
+        </details>
 
         <!-- BDS contact banner -->
         <div class="bds-banner">
@@ -977,8 +1271,9 @@
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
           </div>
           <div class="bds-banner__body">
-            <p class="govbb-text-body" style="font-weight: var(--font-weight-bold);">Barbados Drug Service (BDS)</p>
-            <p class="govbb-text-caption">If a pharmacy is refusing your SBS prescription, call BDS on <strong>(246) 535-4300</strong> or email <a href="mailto:director@drugservice.gov.bb" class="govbb-link">director@drugservice.gov.bb</a> — 6th Floor, Warrens Tower II</p>
+            <p class="govbb-text-body" style="font-weight: var(--font-weight-bold);">Barbados Drug Service</p>
+            <p class="govbb-text-caption">6th Floor, Warrens Tower II · <strong>(246) 535-4300</strong> · <a href="mailto:director@drugservice.gov.bb" class="govbb-link">director@drugservice.gov.bb</a> · <a href="https://drugservice.gov.bb" class="govbb-link">drugservice.gov.bb</a></p>
+            <p class="govbb-text-caption" style="margin-top:4px;">If a pharmacy is refusing your SBS prescription, call BDS before you pay.</p>
           </div>
           <a href="tel:+12465354300" class="card-btn card-btn--primary">Call BDS</a>
         </div>
@@ -1003,7 +1298,7 @@
           <img src="./dist/assets/images/govbb-creast.svg" alt="Government of Barbados" class="govbb-footer__coat">
           <p class="govbb-footer__copy">
             Data sourced from the Barbados Drug Service · verified May 2026.<br>
-            Hours subject to change — always call ahead for unconfirmed pharmacies.
+            Hours subject to change. Always call ahead for unconfirmed pharmacies.
           </p>
         </div>
       </div>
@@ -1087,10 +1382,11 @@
 
       <!-- Success view (shown after submit) -->
       <div class="modal-success" id="report-success">
-        <div class="modal-success__icon" aria-hidden="true">✓</div>
-        <h3 class="govbb-text-h3">Report received</h3>
-        <p class="govbb-text-body text-muted">Thank you — the Barbados Drug Service will review this and update the directory.</p>
-        <button class="govbb-btn" id="report-done-btn">Done</button>
+        <div class="modal-success__icon" aria-hidden="true">✉</div>
+        <h3 class="govbb-text-h3">Almost done</h3>
+        <p class="govbb-text-body text-muted">Your email app should now open with a pre-filled report. Please send the message to submit your report to the Barbados Drug Service.</p>
+        <p class="govbb-text-caption text-muted">If your email app did not open, you can email <a href="mailto:director@drugservice.gov.bb" class="govbb-link">director@drugservice.gov.bb</a> directly.</p>
+        <button class="govbb-btn" id="report-done-btn">Close</button>
       </div>
     </div>
   </div>
@@ -1146,13 +1442,13 @@
       phone: '(246) 536-4346',
       hours: [{ days: [1,2,3,4,5], open: 495, close: 1230 }],  // Mon–Fri 8:15–20:30
       hoursText: 'Mon–Fri 8:15am–8:30pm',
-      notes: 'Open until 8:30pm — late option for the south.',
+      notes: 'Open until 8:30pm, the late option for the south.',
       routes: 'Routes 30, 31 from Bridgetown (Fairchild St Terminal)'
     },
     {
       id: 'gov-6', name: 'Glebe Polyclinic', type: 'government',
       address: 'Glebe, St. George', parish: 'St. George',
-      phone: '(246) 429-1680',
+      phone: '(246) 429-1680 ext. 237',
       hours: [{ days: [1,2,3,4,5], open: 495, close: 990 }],
       hoursText: 'Mon–Fri 8:15am–4:30pm',
       notes: '', routes: 'Route 3 from Bridgetown (Fairchild St Terminal)'
@@ -1171,7 +1467,7 @@
       phone: '(246) 536-3200',
       hours: [{ days: [1,2,3,4,5], open: 495, close: 1230 }],
       hoursText: 'Mon–Fri 8:15am–8:30pm',
-      notes: 'Open until 8:30pm — late option for north and west.',
+      notes: 'Open until 8:30pm, the late option for the north and west.',
       routes: 'Route 1B from Bridgetown (Lower Green Terminal)'
     },
     {
@@ -1290,7 +1586,7 @@
         { days: [0,6],        open: 0,   close: 480  }   // Sat–Sun midnight–08:00
       ],
       hoursText: 'Mon–Fri midnight–5:00pm · Sat–Sun midnight–8:00am',
-      notes: 'ONLY midnight pharmacy on the island. Always confirm before visiting.',
+      notes: 'Unusual hours: open from midnight to 5:00pm on weekdays, and midnight to 8:00am on weekends. Always call (246) 624-3278 to confirm before visiting.',
       routes: 'Routes 12, 22 from Bridgetown'
     },
     {
@@ -1513,10 +1809,34 @@
     return `${h}:${String(m).padStart(2,'0')} ${ampm} AST`;
   }
 
-  const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const DAY_NAMES   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
 
   /* ───────── OPEN-NOW LOGIC ───────── */
+
+  function nextOpenText(pharmacy) {
+    if (!pharmacy.hours || pharmacy.hours.length === 0) return null;
+    const now  = getBarbadosDate();
+    const day  = now.getDay();
+    const mins = minutesSinceMidnight(now);
+
+    // Search the next 7 days for the next opening slot
+    for (let d = 0; d < 7; d++) {
+      const checkDay = (day + d) % 7;
+      const slots = pharmacy.hours
+        .filter(s => s.days.includes(checkDay))
+        .sort((a, b) => a.open - b.open);
+
+      for (const slot of slots) {
+        // On day 0 (today), skip slots that have already started or passed
+        if (d === 0 && slot.open <= mins) continue;
+        const label = d === 0 ? 'today' : d === 1 ? 'tomorrow' : DAY_NAMES[checkDay];
+        return `${label} at ${formatMins(slot.open)}`;
+      }
+    }
+    return null;
+  }
 
   function openStatus(pharmacy) {
     if (!pharmacy.hours || pharmacy.hours.length === 0) return null; // unknown
@@ -1568,7 +1888,9 @@
       const closingNote = cl !== null ? ` · closes ${formatMins(cl)}` : '';
       statusBadge = `<span class="badge badge--open badge--dot" role="status">Open now${closingNote}</span>`;
     } else if (status === false) {
-      statusBadge = `<span class="badge badge--closed badge--dot" role="status">Closed now</span>`;
+      const nextOpen = nextOpenText(p);
+      const nextNote = nextOpen ? ` · opens ${nextOpen}` : '';
+      statusBadge = `<span class="badge badge--closed badge--dot" role="status">Closed now${nextNote}</span>`;
     } else {
       statusBadge = `<span class="badge badge--unknown" role="status">Hours unconfirmed</span>`;
     }
@@ -1577,7 +1899,7 @@
     const phoneDigits = p.phone.replace(/[^0-9]/g, '');
     const phoneLink   = p.phone
       ? `<a href="tel:+1${phoneDigits}" class="pharmacy-card__phone">${PHONE_SVG}${p.phone}</a>`
-      : `<span class="pharmacy-card__phone" style="color:var(--color-mid-grey-00); font-weight:normal; font-size: var(--font-size-caption);">No number listed — call BDS</span>`;
+      : `<span class="pharmacy-card__phone" style="color:var(--color-mid-grey-00); font-weight:normal; font-size: var(--font-size-caption);">No number listed. Call BDS on (246) 535-4300.</span>`;
 
     // Directions
     const mapsQuery = encodeURIComponent(`${p.name}, ${p.address}, Barbados`);
@@ -1662,6 +1984,8 @@
     const filtered = sortedPharmacies(getFiltered());
     const grid     = document.getElementById('pharmacy-grid');
     const countEl  = document.getElementById('results-count');
+    const filterNote = document.getElementById('open-filter-note');
+    if (filterNote) filterNote.classList.toggle('hidden', !openOnly);
 
     const openCount = filtered.filter(p => openStatus(p) === true).length;
 
@@ -1687,7 +2011,7 @@
     const now = getBarbadosDate();
     const timeEl = document.getElementById('time-text');
     if (timeEl) {
-      timeEl.textContent = `${DAY_NAMES[now.getDay()]}, ${formatBarbadosTime(now)}, Barbados`;
+      timeEl.textContent = `${DAY_NAMES[now.getDay()]} ${now.getDate()} ${MONTH_NAMES[now.getMonth()]}, ${formatBarbadosTime(now)}`;
     }
   }
 
@@ -1986,6 +2310,24 @@
     }
   });
 
+  /* ── Step accordions (how to get your medication) ── */
+  function toggleStep(btn) {
+    const li   = btn.closest('.service-step');
+    const body = li.querySelector('.service-step__body');
+    const open = li.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open.toString());
+    body.hidden = !open;
+  }
+
+  /* ── Problem accordions (if something goes wrong) ── */
+  function toggleProblem(btn) {
+    const li   = btn.closest('.problem-item');
+    const body = li.querySelector('.problem-item__body');
+    const open = li.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open.toString());
+    body.hidden = !open;
+  }
+
   document.getElementById('report-form').addEventListener('submit', e => {
     e.preventDefault();
     const p = PHARMACIES.find(x => x.id === currentPharmacyId);
@@ -1996,7 +2338,7 @@
     const contact = document.getElementById('report-contact').value.trim();
     const msgEl   = document.getElementById('report-validation-msg');
 
-    if (!issues.length && !details) {
+    if (!issues.length || !details) {
       msgEl.style.display = 'block';
       return;
     }
