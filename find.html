@@ -3,100 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Directory of Barbados pharmacies that accept SBS prescriptions. See opening hours, filter by parish, and find one open now.">
   <title>Find an open pharmacy — Barbados Drug Service</title>
   <link rel="icon" href="./dist/assets/images/favicon.ico">
   <link rel="stylesheet" href="./dist/styles.css">
   <link rel="stylesheet" href="./dist/leaflet.min.css">
   <style>
     /* ── Pharmacy Finder custom styles ── */
-
-    /* Hero */
-    .page-hero {
-      background: var(--color-white-00);
-      padding: var(--spacing-m) 0 var(--spacing-xm);
-      border-bottom: 1px solid var(--color-grey-00);
-    }
-    .page-hero h1 { margin-bottom: var(--spacing-xs); }
-    .page-hero p  { color: var(--color-mid-grey-00); margin-bottom: var(--spacing-s); }
-
-    .time-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: transparent;
-      border: none;
-      border-radius: 0;
-      padding: 0;
-      font-size: var(--font-size-caption);
-      font-weight: var(--font-weight-normal);
-      color: var(--color-mid-grey-00);
-    }
-    .time-chip svg { flex-shrink: 0; width: 14px; height: 14px; stroke: var(--color-mid-grey-00); }
-
-    /* ── Footer layout override ── */
-    @media (min-width: 1024px) {
-      .govbb-footer__inner {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-        padding-block: var(--spacing-m);
-      }
-      .govbb-footer__nav   { padding-block: 0; }
-      .govbb-footer__end   {
-        justify-content: flex-end;
-        align-items: flex-end;
-        gap: var(--spacing-xs);
-        padding-block: 0;
-      }
-    }
-
-    /* ── "Was this helpful?" feedback box ── */
-    .govbb-feedback-box {
-      background: var(--color-yellow-40);
-      border: 2px solid var(--color-yellow-100);
-      padding: var(--spacing-m) 0;
-      margin-top: var(--spacing-l);
-    }
-    .govbb-feedback-box__heading {
-      font-size: var(--font-size-h3);
-      font-weight: var(--font-weight-bold);
-      margin-bottom: var(--spacing-xs);
-    }
-    .govbb-feedback-box__body {
-      font-size: var(--font-size-body);
-      color: var(--color-text);
-      margin-bottom: var(--spacing-xs);
-    }
-
-    /* Header nav (matches prod) */
-    .govbb-header__nav {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-m);
-      margin-left: auto;
-    }
-    .govbb-header__nav-link {
-      font-size: var(--font-size-body);
-      font-weight: var(--font-weight-normal);
-      color: var(--color-blue-100);
-      text-decoration: none;
-    }
-    .govbb-header__nav-link:hover { text-decoration: underline; }
-    .govbb-header__nav-link:focus-visible {
-      outline: 3px solid var(--color-blue-100);
-      outline-offset: 2px;
-      border-radius: 2px;
-    }
-    @media (max-width: 480px) {
-      .govbb-header__nav { display: none; }
-    }
-
-    /* Breadcrumb nav */
-    .page-breadcrumb {
-      padding: var(--spacing-xs) 0;
-      background: var(--color-white-00);
-      border-bottom: 1px solid var(--color-grey-00);
-    }
 
     /* Back link */
     .page-back-link {
@@ -320,27 +233,8 @@
       #map-toggle-btn { margin-left: 0 !important; }
     }
 
-    /* Parish select */
-    .parish-select-wrap {
-      display: flex;
-      align-items: center;
-      background: var(--color-background);
-      border: 2px solid var(--color-text);
-      border-radius: var(--radius-sm);
-      min-width: 160px;
-      overflow: hidden;
-    }
-    .parish-select-wrap select {
-      border: 0;
-      outline: 0;
-      background: none;
-      padding: 6px 10px;
-      font: inherit;
-      font-size: var(--font-size-caption);
-      color: var(--color-text);
-      flex: 1;
-      cursor: pointer;
-    }
+    /* Parish select uses the govbb-select-wrapper component */
+    .filter-bar__group .govbb-select-wrapper { min-width: 200px; }
 
     /* ── Results ── */
     .results-meta {
@@ -464,7 +358,7 @@
     }
     .pharmacy-card--government { border-left: 5px solid var(--color-blue-100); }
     .pharmacy-card--private    { border-left: 5px solid var(--color-yellow-00); }
-    .pharmacy-card--unconfirmed{ border-left: 5px solid #c8cdd3; }
+    .pharmacy-card--unconfirmed{ border-left: 5px solid var(--color-grey-40); }
 
     .pharmacy-card__top {
       display: flex;
@@ -533,31 +427,6 @@
       margin-top: auto;
       padding-top: var(--spacing-xs);
     }
-    .card-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 6px 14px;
-      border-radius: 4px;
-      font-family: var(--font-family-base);
-      font-size: var(--font-size-caption);
-      font-weight: var(--font-weight-normal);
-      cursor: pointer;
-      text-decoration: none;
-      transition: background 0.15s;
-      border: 0;
-    }
-    .card-btn--primary {
-      background: var(--color-teal-00);
-      color: white;
-    }
-    .card-btn--primary:hover { background: #1a777d; }
-    .card-btn--secondary {
-      background: var(--color-grey-00);
-      color: var(--color-text);
-    }
-    .card-btn--secondary:hover { background: #c8cdd3; }
-
     /* ── Empty state ── */
     .empty-state {
       grid-column: 1 / -1;
@@ -567,27 +436,6 @@
     }
     .empty-state__icon { font-size: 3rem; margin-bottom: var(--spacing-s); }
     .empty-state h3 { font-size: var(--font-size-h3); color: var(--color-text); }
-
-    /* ── Section divider ── */
-    .section-divider {
-      border: 0;
-      border-top: 3px solid var(--color-grey-00);
-      margin: var(--spacing-l) 0;
-    }
-
-    /* BDS contact banner */
-    .bds-banner {
-      background: var(--color-blue-10);
-      border: 2px solid var(--color-blue-40);
-      border-radius: 8px;
-      padding: var(--spacing-s) var(--spacing-m);
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-s);
-      flex-wrap: wrap;
-      margin-bottom: var(--spacing-m);
-    }
-    .bds-banner__body { flex: 1; min-width: 200px; }
 
     /* ── Map ── */
     .map-wrap {
@@ -627,7 +475,7 @@
     }
     .map-dot--gov  { background: var(--color-blue-100); }
     .map-dot--priv { background: var(--color-yellow-00); }
-    .map-dot--unc  { background: #c8cdd3; }
+    .map-dot--unc  { background: var(--color-grey-40); }
 
     .map-toggle-btn {
       display: inline-flex;
@@ -669,30 +517,6 @@
 
     main { padding-bottom: var(--spacing-l); }
     .section-pad { padding: var(--spacing-m) 0; }
-
-    /* Scroll FAB */
-    #scroll-fab {
-      position: fixed;
-      bottom: max(28px, env(safe-area-inset-bottom, 28px));
-      right: max(24px, env(safe-area-inset-right, 24px));
-      z-index: 999;
-      width: 44px; height: 44px;
-      border-radius: 50%;
-      background: var(--color-blue-100);
-      color: var(--color-white-00);
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
-      opacity: 0;
-      pointer-events: none;
-      transition: background 0.15s, opacity 0.2s;
-    }
-    #scroll-fab.visible { opacity: 1; pointer-events: auto; }
-    #scroll-fab:hover { background: var(--color-teal-00); }
-    #scroll-fab:focus-visible { outline: 3px solid var(--color-yellow-00); outline-offset: 2px; }
   </style>
 </head>
 <body class="govbb-page">
@@ -739,8 +563,8 @@
     <div class="govbb-container">
       <nav class="govbb-breadcrumbs" aria-label="Breadcrumb">
         <ol class="govbb-breadcrumbs__list">
-          <li class="govbb-breadcrumbs__item"><a href="#" class="govbb-breadcrumbs__link">Home</a></li>
-          <li class="govbb-breadcrumbs__item"><a href="#" class="govbb-breadcrumbs__link">Health</a></li>
+          <li class="govbb-breadcrumbs__item"><a href="https://gov.bb" class="govbb-breadcrumbs__link">Home</a></li>
+          <li class="govbb-breadcrumbs__item"><a href="https://gov.bb/services" class="govbb-breadcrumbs__link">Services</a></li>
           <li class="govbb-breadcrumbs__item"><a href="index.html" class="govbb-breadcrumbs__link">Find a pharmacy open now</a></li>
           <li class="govbb-breadcrumbs__item" aria-current="page">Open pharmacy directory</li>
         </ol>
@@ -809,7 +633,7 @@
                     <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--color-yellow-00);vertical-align:middle;margin-right:3px;"></span>Private SBS
                   </button>
                   <button class="type-pill"         data-type="unconfirmed" aria-pressed="false">
-                    <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#c8cdd3;vertical-align:middle;margin-right:3px;"></span>Unconfirmed
+                    <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--color-grey-40);vertical-align:middle;margin-right:3px;"></span>Unconfirmed
                   </button>
                 </div>
               </div>
@@ -817,8 +641,8 @@
               <!-- Parish filter -->
               <div class="filter-bar__group">
                 <label class="filter-label" for="parish-select">Parish:</label>
-                <div class="parish-select-wrap">
-                  <select id="parish-select" aria-label="Filter by parish">
+                <div class="govbb-select-wrapper">
+                  <select id="parish-select" class="govbb-select" aria-label="Filter by parish">
                     <option value="all">All parishes</option>
                     <option value="St. Michael">St. Michael</option>
                     <option value="Christ Church">Christ Church</option>
@@ -831,6 +655,9 @@
                     <option value="St. Joseph">St. Joseph</option>
                     <option value="St. Thomas">St. Thomas</option>
                   </select>
+                  <span class="govbb-select__chevron" aria-hidden="true">
+                    <svg viewBox="0 0 12 8" xmlns="http://www.w3.org/2000/svg"><path d="M6 0L0 8h12L6 0z"/></svg>
+                  </span>
                 </div>
               </div>
 
@@ -899,7 +726,7 @@
             <p class="govbb-text-caption">6th Floor, Warrens Tower II · <strong>(246) 535-4300</strong> · <a href="mailto:director@drugservice.gov.bb" class="govbb-link">director@drugservice.gov.bb</a> · <a href="https://drugservice.gov.bb" class="govbb-link">drugservice.gov.bb</a></p>
             <p class="govbb-text-caption" style="margin-top:4px;">If a pharmacy is refusing your SBS prescription, call BDS before you pay.</p>
           </div>
-          <a href="tel:+12465354300" class="card-btn card-btn--primary">Call BDS</a>
+          <a href="tel:+12465354300" class="govbb-btn">Call BDS</a>
         </div>
       </div>
     </section>
@@ -1469,7 +1296,7 @@
   ${routesHTML}
   ${whatsappLink}
   <div class="pharmacy-card__actions">
-    <a href="${mapsURL}" target="_blank" rel="noopener" class="card-btn card-btn--primary" aria-label="Get directions to ${p.name}">${MAP_SVG} Directions</a>
+    <a href="${mapsURL}" target="_blank" rel="noopener" class="govbb-btn" aria-label="Get directions to ${p.name}">${MAP_SVG} Directions</a>
   </div>
 </article>`;
   }
@@ -1736,32 +1563,31 @@
   }
 
   function popupHTML(p) {
-    const st    = openStatus(p);
+    const st = openStatus(p);
     const stTxt = st === true
-      ? '<span style="color:#00654a;font-weight:700;">● Open now</span>'
+      ? '<span class="pharmacy-popup__status--open">● Open now</span>'
       : st === false
-        ? '<span style="color:#a42c2c;">● Closed now</span>'
-        : '<span style="color:#888;">○ Hours unconfirmed</span>';
+        ? '<span class="pharmacy-popup__status--closed">● Closed now</span>'
+        : '<span class="pharmacy-popup__status--unknown">○ Hours unconfirmed</span>';
     const typeLabel = {
       government:   'Government · Free',
       'private-sbs':'Private SBS · Dispensing fee',
       unconfirmed:  'SBS status unconfirmed'
     }[p.type];
     const phoneHtml = p.phone
-      ? `<div style="margin:4px 0;"><a href="tel:+1${p.phone.replace(/\D/g,'')}" style="color:#0e5f64;font-weight:700;text-decoration:none;">📞 ${p.phone}</a></div>`
+      ? `<div><a class="pharmacy-popup__phone" href="tel:+1${p.phone.replace(/\D/g,'')}">📞 ${p.phone}</a></div>`
       : '';
     const mapsQ   = encodeURIComponent(`${p.name}, ${p.address}, Barbados`);
     const mapsURL = `https://maps.google.com/maps?q=${mapsQ}`;
-    return `<div style="min-width:210px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;line-height:1.45;">
-      <strong style="font-size:14px;display:block;margin-bottom:2px;">${p.name}</strong>
-      <span style="color:#666;font-size:11px;">${typeLabel}</span>
-      <div style="margin:6px 0;">${stTxt}</div>
-      <div style="color:#555;margin-bottom:3px;">📍 ${p.address}</div>
+    return `<div class="pharmacy-popup">
+      <strong class="pharmacy-popup__name">${p.name}</strong>
+      <span class="pharmacy-popup__type">${typeLabel}</span>
+      <div class="pharmacy-popup__status">${stTxt}</div>
+      <div class="pharmacy-popup__row">📍 ${p.address}</div>
       ${phoneHtml}
-      <div style="color:#666;font-size:11px;margin-bottom:10px;">🕐 ${p.hoursText}</div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;">
-        <a href="${mapsURL}" target="_blank" rel="noopener"
-           style="display:inline-block;padding:5px 12px;background:#0e5f64;color:white;border-radius:4px;text-decoration:none;font-size:12px;">Directions</a>
+      <div class="pharmacy-popup__hours">🕐 ${p.hoursText}</div>
+      <div class="pharmacy-popup__actions">
+        <a href="${mapsURL}" target="_blank" rel="noopener" class="govbb-btn">Directions</a>
       </div>
     </div>`;
   }
@@ -1769,7 +1595,7 @@
   function initMap() {
     const container = document.getElementById('pharmacy-map');
     if (typeof L === 'undefined') {
-      container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;background:#f0f2f4;color:#595959;font-family:sans-serif;font-size:14px;padding:24px;text-align:center;">Map could not load — please check your internet connection and refresh the page.</div>';
+      container.innerHTML = '<div class="map-error map-error--info">Map could not load — please check your internet connection and refresh the page.</div>';
       return;
     }
     try {
@@ -1791,7 +1617,7 @@
       setTimeout(() => pharmacyMap.invalidateSize(), 50);
 
     } catch (err) {
-      container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;background:#fff0f0;color:#a42c2c;font-family:sans-serif;font-size:14px;padding:24px;text-align:center;">Map failed to initialise. Please refresh the page and try again.</div>';
+      container.innerHTML = '<div class="map-error map-error--danger">Map failed to initialise. Please refresh the page and try again.</div>';
     }
   }
 

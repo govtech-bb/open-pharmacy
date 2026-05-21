@@ -48,6 +48,8 @@
     --color-black-00: #000;
     --color-mid-grey-00: #595959;
     --color-grey-00: #e0e4e9;
+    --color-grey-10: #f0f2f4;
+    --color-grey-40: #c8cdd3;
     --color-white-00: #fff;
     --color-green-00: #00654a;
     --color-green-40: #a5e5ce;
@@ -2247,3 +2249,206 @@
   syntax: "*";
   inherits: false
 }
+
+/* ─────────────────────────────────────────────────────────────
+   Open Pharmacy — project additions to the govbb design system.
+   Add new entries below; keep tokens/components in this section
+   so the two pages don't drift back into duplicated CSS.
+   ───────────────────────────────────────────────────────────── */
+
+/* Shared page shell -------------------------------------------- */
+.page-hero {
+  background: var(--color-background);
+  padding: var(--spacing-m) 0 var(--spacing-xm);
+  border-bottom: 1px solid var(--color-grey-00);
+}
+.page-hero h1 { margin-bottom: var(--spacing-xs); }
+.page-hero p { color: var(--color-mid-grey-00); margin-bottom: var(--spacing-s); }
+
+.page-breadcrumb {
+  padding: var(--spacing-xs) 0;
+  background: var(--color-background);
+  border-bottom: 1px solid var(--color-grey-00);
+}
+
+.section-divider {
+  border: 0;
+  border-top: 3px solid var(--color-grey-00);
+  margin: var(--spacing-l) 0;
+}
+
+.time-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-mid-grey-00);
+}
+.time-chip svg {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  stroke: var(--color-mid-grey-00);
+}
+
+/* Header / footer overrides ------------------------------------ */
+.govbb-header__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-m);
+  margin-left: auto;
+}
+.govbb-header__nav-link {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-blue-100);
+  text-decoration: none;
+}
+.govbb-header__nav-link:hover { text-decoration: underline; }
+.govbb-header__nav-link:focus-visible {
+  outline: 3px solid var(--color-blue-100);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+@media (max-width: 480px) {
+  .govbb-header__nav { display: none; }
+}
+
+@media (min-width: 1024px) {
+  .govbb-footer__inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-block: var(--spacing-m);
+  }
+  .govbb-footer__nav { padding-block: 0; }
+  .govbb-footer__end {
+    justify-content: flex-end;
+    align-items: flex-end;
+    gap: var(--spacing-xs);
+    padding-block: 0;
+  }
+}
+
+/* "Was this helpful?" feedback box ----------------------------- */
+.govbb-feedback-box {
+  background: var(--color-yellow-40);
+  border: 2px solid var(--color-yellow-100);
+  padding: var(--spacing-m) 0;
+  margin-top: var(--spacing-l);
+}
+.govbb-feedback-box__heading {
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--spacing-xs);
+}
+.govbb-feedback-box__body {
+  font-size: var(--font-size-body);
+  color: var(--color-text);
+  margin-bottom: var(--spacing-xs);
+}
+
+/* BDS contact banner ------------------------------------------- */
+.bds-banner {
+  background: var(--color-blue-10);
+  border: 2px solid var(--color-blue-40);
+  border-radius: 8px;
+  padding: var(--spacing-s) var(--spacing-m);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-s);
+  flex-wrap: wrap;
+  margin-bottom: var(--spacing-m);
+}
+.bds-banner__body { flex: 1; min-width: 200px; }
+
+/* Scroll-to-top FAB -------------------------------------------- */
+#scroll-fab {
+  position: fixed;
+  bottom: max(28px, env(safe-area-inset-bottom, 28px));
+  right: max(24px, env(safe-area-inset-right, 24px));
+  z-index: 999;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--color-blue-100);
+  color: var(--color-white-00);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  opacity: 0;
+  pointer-events: none;
+  transition: background 0.15s, opacity 0.2s;
+}
+#scroll-fab.visible { opacity: 1; pointer-events: auto; }
+#scroll-fab:hover { background: var(--color-teal-00); }
+#scroll-fab:focus-visible {
+  outline: 3px solid var(--color-yellow-00);
+  outline-offset: 2px;
+}
+
+/* Leaflet map error fallback (find.html) ----------------------- */
+.map-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: var(--spacing-xm);
+  text-align: center;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-caption);
+}
+.map-error--info {
+  background: var(--color-grey-10);
+  color: var(--color-mid-grey-00);
+}
+.map-error--danger {
+  background: var(--color-red-10);
+  color: var(--color-red-00);
+}
+
+/* Leaflet popup (find.html) ------------------------------------ */
+.pharmacy-popup {
+  min-width: 210px;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-caption);
+  line-height: var(--line-height-caption);
+}
+.pharmacy-popup__name {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-bold);
+  display: block;
+  margin-bottom: 2px;
+}
+.pharmacy-popup__type {
+  color: var(--color-mid-grey-00);
+  font-size: var(--font-size-caption-sm);
+}
+.pharmacy-popup__status { margin: 6px 0; }
+.pharmacy-popup__row {
+  color: var(--color-text);
+  margin-bottom: 3px;
+}
+.pharmacy-popup__phone {
+  color: var(--color-teal-00);
+  font-weight: var(--font-weight-bold);
+  text-decoration: none;
+}
+.pharmacy-popup__phone:hover { text-decoration: underline; }
+.pharmacy-popup__hours {
+  color: var(--color-mid-grey-00);
+  font-size: var(--font-size-caption-sm);
+  margin-bottom: 10px;
+}
+.pharmacy-popup__actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.pharmacy-popup__status--open   { color: var(--color-green-00); font-weight: var(--font-weight-bold); }
+.pharmacy-popup__status--closed { color: var(--color-red-00);   font-weight: var(--font-weight-bold); }
+.pharmacy-popup__status--unknown{ color: var(--color-mid-grey-00); }
