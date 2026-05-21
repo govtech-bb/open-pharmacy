@@ -396,15 +396,55 @@
     .legend-strip--priv { background: var(--color-yellow-00); }
     .legend-strip--unc { background: var(--color-grey-00); border: 1px solid #ccc; }
 
-    /* ── Pharmacy grid ── */
+    /* ── Pharmacy list (single column) ── */
     .pharmacy-grid {
-      display: grid;
-      grid-template-columns: 1fr;
+      display: flex;
+      flex-direction: column;
       gap: var(--spacing-s);
-      padding-bottom: var(--spacing-l);
     }
-    @media (min-width: 640px)  { .pharmacy-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (min-width: 1024px) { .pharmacy-grid { grid-template-columns: repeat(3, 1fr); } }
+
+    /* ── Pagination ── */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin: var(--spacing-m) 0 var(--spacing-l);
+    }
+    .pagination:empty { display: none; }
+    .pagination__btn {
+      min-width: 36px;
+      height: 36px;
+      padding: 0 12px;
+      border: 1px solid var(--color-grey-00);
+      background: var(--color-white-00);
+      color: var(--color-text);
+      font-family: var(--font-family-base);
+      font-size: var(--font-size-caption);
+      font-weight: var(--font-weight-bold);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+    .pagination__btn:hover:not([disabled]):not([aria-current]) {
+      background: var(--color-blue-10);
+      border-color: var(--color-blue-100);
+    }
+    .pagination__btn[aria-current="page"] {
+      background: var(--color-teal-00);
+      border-color: var(--color-teal-00);
+      color: white;
+      cursor: default;
+    }
+    .pagination__btn[disabled] {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .pagination__btn:focus-visible {
+      outline: 3px solid var(--color-teal-100);
+      outline-offset: 2px;
+    }
 
     /* ── Pharmacy card ── */
     .pharmacy-card {
@@ -517,12 +557,6 @@
       color: var(--color-text);
     }
     .card-btn--secondary:hover { background: #c8cdd3; }
-    .card-btn--ghost {
-      background: none;
-      color: var(--color-mid-grey-00);
-      border: 1px solid var(--color-grey-00);
-    }
-    .card-btn--ghost:hover { border-color: #aaa; color: var(--color-text); }
 
     /* ── Empty state ── */
     .empty-state {
@@ -554,28 +588,6 @@
       margin-bottom: var(--spacing-m);
     }
     .bds-banner__body { flex: 1; min-width: 200px; }
-
-    /* Feedback toast */
-    #feedback-toast {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: var(--color-green-00);
-      color: white;
-      padding: 12px 20px;
-      border-radius: 8px;
-      font-size: var(--font-size-caption);
-      font-family: var(--font-family-base);
-      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-      transform: translateY(100px);
-      opacity: 0;
-      transition: transform 0.3s, opacity 0.3s;
-      z-index: 999;
-    }
-    #feedback-toast.show {
-      transform: translateY(0);
-      opacity: 1;
-    }
 
     /* ── Map ── */
     .map-wrap {
@@ -635,96 +647,6 @@
     }
     .map-toggle-btn:hover,
     .map-toggle-btn.active { background: var(--color-teal-00); color: white; }
-
-    /* ── Report modal ── */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.45);
-      z-index: 500;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: var(--spacing-s);
-    }
-    .modal-panel {
-      background: var(--color-white-00);
-      border-radius: 8px;
-      width: 100%;
-      max-width: 520px;
-      max-height: 90vh;
-      overflow-y: auto;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-      display: flex;
-      flex-direction: column;
-    }
-    .modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: var(--spacing-s) var(--spacing-m);
-      border-bottom: 2px solid var(--color-grey-00);
-      position: sticky;
-      top: 0;
-      background: var(--color-white-00);
-      z-index: 1;
-    }
-    .modal-close {
-      width: 36px; height: 36px;
-      border-radius: 50%;
-      border: 2px solid var(--color-grey-00);
-      background: none;
-      font-size: 1.25rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--color-mid-grey-00);
-      line-height: 1;
-      flex-shrink: 0;
-      font-family: var(--font-family-base);
-      transition: background 0.15s;
-    }
-    .modal-close:hover { background: var(--color-grey-00); color: var(--color-text); }
-    .modal-close:focus-visible { outline: 4px solid var(--color-teal-100); outline-offset: 2px; }
-    .modal-body {
-      padding: var(--spacing-m);
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-s);
-    }
-    .modal-pharmacy-name {
-      background: var(--color-blue-10);
-      border-left: 4px solid var(--color-blue-100);
-      padding: var(--spacing-xs) var(--spacing-s);
-      border-radius: 0 4px 4px 0;
-      font-weight: var(--font-weight-bold);
-      font-size: var(--font-size-body);
-    }
-    .issue-checkboxes {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 4px;
-    }
-    .modal-success {
-      text-align: center;
-      padding: var(--spacing-m);
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      gap: var(--spacing-s);
-    }
-    .modal-success__icon {
-      width: 56px; height: 56px;
-      border-radius: 50%;
-      background: var(--color-green-10);
-      border: 3px solid var(--color-green-40);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-    }
 
     /* Utility */
     .hidden { display: none !important; }
@@ -953,10 +875,13 @@
           </div>
         </div>
 
-        <!-- Grid -->
+        <!-- List -->
         <div class="pharmacy-grid" id="pharmacy-grid" aria-live="polite" aria-atomic="false">
           <!-- Cards injected by JS -->
         </div>
+
+        <!-- Pagination -->
+        <nav class="pagination" id="pagination" aria-label="Pharmacy list pages"></nav>
 
       </div>
     </section>
@@ -1007,92 +932,6 @@
       </div>
     </div>
   </footer>
-
-  <!-- Feedback toast -->
-  <div id="feedback-toast" role="status" aria-live="polite">Hours report sent — thank you!</div>
-
-  <!-- ── Report incorrect hours modal ── -->
-  <div id="report-overlay" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="report-modal-title">
-    <div class="modal-panel">
-      <div class="modal-header">
-        <h2 id="report-modal-title" class="govbb-text-h3">Report incorrect information</h2>
-        <button class="modal-close" id="modal-close-btn" aria-label="Close report form">&#x2715;</button>
-      </div>
-
-      <!-- Form view -->
-      <div class="modal-body" id="report-form-wrap">
-        <p class="govbb-text-caption text-muted" style="margin: 0;">You are reporting information for:</p>
-        <div class="modal-pharmacy-name" id="report-pharmacy-name"></div>
-
-        <form id="report-form" novalidate>
-          <div class="govbb-form-group">
-            <span class="govbb-label">What needs correcting?</span>
-            <p class="govbb-hint">Select all that apply</p>
-            <div class="issue-checkboxes" role="group" aria-label="Issues to report">
-              <label class="govbb-checkbox-item">
-                <input type="checkbox" class="govbb-checkbox" name="issue" value="Opening hours are wrong">
-                <span class="govbb-checkbox-item__label">Opening hours are wrong</span>
-              </label>
-              <label class="govbb-checkbox-item">
-                <input type="checkbox" class="govbb-checkbox" name="issue" value="Phone number is incorrect">
-                <span class="govbb-checkbox-item__label">Phone number is incorrect</span>
-              </label>
-              <label class="govbb-checkbox-item">
-                <input type="checkbox" class="govbb-checkbox" name="issue" value="Address is wrong">
-                <span class="govbb-checkbox-item__label">Address is wrong</span>
-              </label>
-              <label class="govbb-checkbox-item">
-                <input type="checkbox" class="govbb-checkbox" name="issue" value="SBS participation status is incorrect">
-                <span class="govbb-checkbox-item__label">SBS participation status is incorrect</span>
-              </label>
-              <label class="govbb-checkbox-item">
-                <input type="checkbox" class="govbb-checkbox" name="issue" value="Pharmacy is permanently closed">
-                <span class="govbb-checkbox-item__label">Pharmacy is permanently closed</span>
-              </label>
-              <label class="govbb-checkbox-item">
-                <input type="checkbox" class="govbb-checkbox" name="issue" value="Other">
-                <span class="govbb-checkbox-item__label">Other</span>
-              </label>
-            </div>
-          </div>
-
-          <div class="govbb-form-group">
-            <label class="govbb-label" for="report-details">Correct information or details</label>
-            <p class="govbb-hint">For example: the pharmacy now closes at 7 pm, not 8 pm</p>
-            <div class="govbb-input-wrapper">
-              <textarea class="govbb-textarea" id="report-details" name="details" rows="3" placeholder="Describe what is wrong and what the correct information is…"></textarea>
-            </div>
-          </div>
-
-          <div class="govbb-form-group">
-            <label class="govbb-label" for="report-contact">Your contact <span style="font-weight:normal;">(optional)</span></label>
-            <p class="govbb-hint">So the Barbados Drug Service can follow up with you if needed</p>
-            <div class="govbb-input-wrapper">
-              <input class="govbb-input" type="text" id="report-contact" name="contact" placeholder="Email or phone number">
-            </div>
-          </div>
-
-          <div id="report-validation-msg" style="display:none; color:var(--color-red-00); font-size:var(--font-size-caption); padding: 6px 0;">
-            Please select at least one issue and add some details before submitting.
-          </div>
-
-          <div class="govbb-btn-group" style="margin-top: var(--spacing-xs);">
-            <button type="submit" class="govbb-btn">Submit report</button>
-            <button type="button" class="govbb-btn--secondary" id="modal-cancel-btn">Cancel</button>
-          </div>
-        </form>
-      </div>
-
-      <!-- Success view -->
-      <div class="modal-success" id="report-success">
-        <div class="modal-success__icon" aria-hidden="true">✉</div>
-        <h3 class="govbb-text-h3">Almost done</h3>
-        <p class="govbb-text-body text-muted">Your email app should now open with a pre-filled report. Please send the message to submit your report to the Barbados Drug Service.</p>
-        <p class="govbb-text-caption text-muted">If your email app did not open, you can email <a href="mailto:director@drugservice.gov.bb" class="govbb-link">director@drugservice.gov.bb</a> directly.</p>
-        <button class="govbb-btn" id="report-done-btn">Close</button>
-      </div>
-    </div>
-  </div>
 
   <!-- ── Pharmacy Data & Logic ── -->
   <script>
@@ -1575,7 +1414,6 @@
   const CLOCK_SVG = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
   const PHONE_SVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.81a19.79 19.79 0 01-3.07-8.68A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>`;
   const MAP_SVG   = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>`;
-  const FLAG_SVG  = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>`;
 
   const TYPE_LABELS = {
     'government':  { label: 'Government · Free',         cls: 'badge--government' },
@@ -1632,7 +1470,6 @@
   ${whatsappLink}
   <div class="pharmacy-card__actions">
     <a href="${mapsURL}" target="_blank" rel="noopener" class="card-btn card-btn--primary" aria-label="Get directions to ${p.name}">${MAP_SVG} Directions</a>
-    <button onclick="openReportModal('${p.id}')" class="card-btn card-btn--ghost" aria-label="Report incorrect information for ${p.name}">${FLAG_SVG} Report hours</button>
   </div>
 </article>`;
   }
@@ -1640,9 +1477,11 @@
 
   /* ───────── FILTER & RENDER ───────── */
 
+  const PAGE_SIZE  = 20;
   let activeType   = 'all';
   let activeParish = 'all';
   let openOnly     = false;
+  let currentPage  = 1;
 
   function getFiltered() {
     return PHARMACIES.filter(p => {
@@ -1671,10 +1510,14 @@
     const filtered    = sortedPharmacies(getFiltered());
     const grid        = document.getElementById('pharmacy-grid');
     const countEl     = document.getElementById('results-count');
+    const pagEl       = document.getElementById('pagination');
     const filterNote  = document.getElementById('open-filter-note');
     if (filterNote) filterNote.classList.toggle('hidden', !openOnly);
 
-    const openCount = filtered.filter(p => openStatus(p) === true).length;
+    const openCount  = filtered.filter(p => openStatus(p) === true).length;
+    const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+    if (currentPage > totalPages) currentPage = totalPages;
+    if (currentPage < 1)          currentPage = 1;
 
     if (filtered.length === 0) {
       grid.innerHTML = `
@@ -1684,11 +1527,37 @@
           <p class="govbb-text-body text-muted" style="margin-top: var(--spacing-xs);">Try a different parish or remove the open now filter.</p>
         </div>`;
       countEl.textContent = 'No results';
-    } else {
-      grid.innerHTML = filtered.map(buildCard).join('');
-      const openLabel = openCount > 0 ? ` · <span style="color:var(--color-green-00);font-weight:700;">${openCount} open now</span>` : '';
-      countEl.innerHTML = `Showing ${filtered.length} of ${PHARMACIES.length} pharmacies${openLabel}`;
+      pagEl.innerHTML = '';
+      return;
     }
+
+    const start = (currentPage - 1) * PAGE_SIZE;
+    const end   = Math.min(start + PAGE_SIZE, filtered.length);
+    grid.innerHTML = filtered.slice(start, end).map(buildCard).join('');
+
+    const openLabel = openCount > 0 ? ` · <span style="color:var(--color-green-00);font-weight:700;">${openCount} open now</span>` : '';
+    countEl.innerHTML = `Showing ${start + 1}–${end} of ${filtered.length} pharmacies${openLabel}`;
+
+    if (totalPages > 1) {
+      const parts = [];
+      parts.push(`<button class="pagination__btn" data-page="prev" ${currentPage === 1 ? 'disabled' : ''} aria-label="Previous page">‹ Prev</button>`);
+      for (let i = 1; i <= totalPages; i++) {
+        const isCurrent = i === currentPage;
+        parts.push(`<button class="pagination__btn" data-page="${i}" ${isCurrent ? 'aria-current="page"' : ''} aria-label="Go to page ${i}">${i}</button>`);
+      }
+      parts.push(`<button class="pagination__btn" data-page="next" ${currentPage === totalPages ? 'disabled' : ''} aria-label="Next page">Next ›</button>`);
+      pagEl.innerHTML = parts.join('');
+    } else {
+      pagEl.innerHTML = '';
+    }
+  }
+
+  function goToPage(page) {
+    if (page === currentPage) return;
+    currentPage = page;
+    render();
+    const grid = document.getElementById('pharmacy-grid');
+    if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
 
@@ -1714,6 +1583,7 @@
     toggle.addEventListener('change', () => {
       openOnly = toggle.checked;
       toggle.setAttribute('aria-checked', openOnly.toString());
+      currentPage = 1;
       render();
     });
 
@@ -1724,13 +1594,28 @@
           b.classList.toggle('active', b === btn);
           b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
         });
+        currentPage = 1;
         render();
       });
     });
 
     document.getElementById('parish-select').addEventListener('change', e => {
       activeParish = e.target.value;
+      currentPage = 1;
       render();
+    });
+
+    document.getElementById('pagination').addEventListener('click', e => {
+      const btn = e.target.closest('.pagination__btn');
+      if (!btn || btn.disabled) return;
+      const filtered   = sortedPharmacies(getFiltered());
+      const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+      const raw = btn.dataset.page;
+      let target;
+      if (raw === 'prev')      target = Math.max(1, currentPage - 1);
+      else if (raw === 'next') target = Math.min(totalPages, currentPage + 1);
+      else                     target = parseInt(raw, 10);
+      if (Number.isFinite(target)) goToPage(target);
     });
 
     const mobileFilterBtn   = document.getElementById('mobile-filter-btn');
@@ -1877,8 +1762,6 @@
       <div style="display:flex;gap:6px;flex-wrap:wrap;">
         <a href="${mapsURL}" target="_blank" rel="noopener"
            style="display:inline-block;padding:5px 12px;background:#0e5f64;color:white;border-radius:4px;text-decoration:none;font-size:12px;">Directions</a>
-        <button onclick="openReportModal('${p.id}')"
-           style="padding:5px 12px;border:1px solid #ccc;background:none;border-radius:4px;font-size:12px;cursor:pointer;font-family:inherit;">Report hours</button>
       </div>
     </div>`;
   }
@@ -1948,92 +1831,6 @@
   });
 
 
-  /* ── Report modal ── */
-  let currentPharmacyId = null;
-  let lastFocused       = null;
-
-  function openReportModal(pharmacyId) {
-    const p = PHARMACIES.find(x => x.id === pharmacyId);
-    if (!p) return;
-    currentPharmacyId = pharmacyId;
-    lastFocused = document.activeElement;
-
-    document.getElementById('report-pharmacy-name').textContent = p.name;
-    document.getElementById('report-form').reset();
-    document.getElementById('report-validation-msg').style.display = 'none';
-    document.getElementById('report-form-wrap').style.display = '';
-    document.getElementById('report-success').style.display   = 'none';
-    document.getElementById('report-overlay').classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-    document.getElementById('modal-close-btn').focus();
-  }
-
-  function closeReportModal() {
-    document.getElementById('report-overlay').classList.add('hidden');
-    document.body.style.overflow = '';
-    currentPharmacyId = null;
-    if (lastFocused) { lastFocused.focus(); lastFocused = null; }
-  }
-
-  document.getElementById('modal-close-btn') .addEventListener('click', closeReportModal);
-  document.getElementById('modal-cancel-btn').addEventListener('click', closeReportModal);
-  document.getElementById('report-done-btn') .addEventListener('click', closeReportModal);
-
-  document.getElementById('report-overlay').addEventListener('click', e => {
-    if (e.target === e.currentTarget) closeReportModal();
-  });
-
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && !document.getElementById('report-overlay').classList.contains('hidden')) {
-      closeReportModal();
-    }
-  });
-
-  /* ── Problem accordions ── */
-  function toggleProblem(btn) {
-    const li   = btn.closest('.problem-item');
-    const body = li.querySelector('.problem-item__body');
-    const open = li.classList.toggle('open');
-    btn.setAttribute('aria-expanded', open.toString());
-    body.hidden = !open;
-  }
-
-  document.getElementById('report-form').addEventListener('submit', e => {
-    e.preventDefault();
-    const p = PHARMACIES.find(x => x.id === currentPharmacyId);
-    if (!p) return;
-
-    const issues  = [...document.querySelectorAll('input[name="issue"]:checked')].map(cb => cb.value);
-    const details = document.getElementById('report-details').value.trim();
-    const contact = document.getElementById('report-contact').value.trim();
-    const msgEl   = document.getElementById('report-validation-msg');
-
-    if (!issues.length || !details) {
-      msgEl.style.display = 'block';
-      return;
-    }
-    msgEl.style.display = 'none';
-
-    const lines = [
-      `Pharmacy: ${p.name}`,
-      `Address: ${p.address}`,
-      `Parish: ${p.parish}`,
-      '',
-      `Issues: ${issues.length ? issues.join('; ') : 'See details below'}`,
-      '',
-      `Details: ${details || 'Not provided'}`,
-      '',
-      `Reporter contact: ${contact || 'Not provided'}`
-    ];
-    const subject = `Report incorrect information: ${p.name}`;
-    window.open(
-      `mailto:director@drugservice.gov.bb?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join('\n'))}`
-    );
-
-    document.getElementById('report-form-wrap').style.display = 'none';
-    document.getElementById('report-success').style.display   = 'flex';
-    document.getElementById('report-done-btn').focus();
-  });
   </script>
 
   <!-- ── Scroll to top button ── -->
