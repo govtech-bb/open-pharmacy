@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Find a pharmacy open now — Barbados Drug Service</title>
   <link rel="icon" href="./dist/assets/images/favicon.ico">
   <link rel="stylesheet" href="./dist/styles.css">
@@ -12,9 +12,9 @@
 
     /* Hero */
     .page-hero {
-      background: var(--color-blue-10);
+      background: var(--color-white-00);
       padding: var(--spacing-m) 0 var(--spacing-xm);
-      border-bottom: 3px solid var(--color-grey-00);
+      border-bottom: 1px solid var(--color-grey-00);
     }
     .page-hero h1 { margin-bottom: var(--spacing-xs); }
     .page-hero p  { color: var(--color-mid-grey-00); margin-bottom: var(--spacing-s); }
@@ -32,6 +32,48 @@
       color: var(--color-mid-grey-00);
     }
     .time-chip svg { flex-shrink: 0; width: 14px; height: 14px; stroke: var(--color-mid-grey-00); }
+
+    /* ── "Was this helpful?" feedback box ── */
+    .govbb-feedback-box {
+      background: var(--color-yellow-40);
+      border: 2px solid var(--color-yellow-100);
+      padding: var(--spacing-m) 0;
+      margin-top: var(--spacing-l);
+    }
+    .govbb-feedback-box__heading {
+      font-size: var(--font-size-h3);
+      font-weight: var(--font-weight-bold);
+      margin-bottom: var(--spacing-xs);
+    }
+    .govbb-feedback-box__body {
+      font-size: var(--font-size-body);
+      color: var(--color-text);
+      margin-bottom: var(--spacing-xs);
+    }
+
+    /* Header nav (matches prod) */
+    .govbb-header__nav {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-m);
+      margin-left: auto;
+    }
+    .govbb-header__nav-link {
+      font-size: var(--font-size-body);
+      font-weight: var(--font-weight-normal);
+      color: var(--color-blue-100);
+      text-decoration: none;
+    }
+    .govbb-header__nav-link:hover { text-decoration: underline; }
+    .govbb-header__nav-link:focus-visible {
+      outline: 3px solid var(--color-blue-100);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+    @media (max-width: 480px) {
+      /* Hide nav on very small phones — logo only, matching native app behaviour */
+      .govbb-header__nav { display: none; }
+    }
 
     /* Breadcrumb nav */
     .page-breadcrumb {
@@ -199,6 +241,64 @@
       gap: var(--spacing-s);
       flex-wrap: wrap;
       width: 100%;
+    }
+
+    /* ── Mobile filter button + panel ── */
+    .mobile-filter-btn {
+      display: none; /* shown via media query */
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border: 2px solid var(--color-text);
+      border-radius: var(--radius-sm);
+      background: none;
+      cursor: pointer;
+      font-size: var(--font-size-caption);
+      font-family: var(--font-family-base);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      white-space: nowrap;
+      margin-left: auto;
+    }
+    .mobile-filter-btn.has-filters {
+      background: var(--color-teal-00);
+      border-color: var(--color-teal-00);
+      color: white;
+    }
+    .filter-count-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: white;
+      color: var(--color-teal-00);
+      font-size: 11px;
+      font-weight: var(--font-weight-bold);
+      line-height: 1;
+    }
+    /* The extra filter controls (type, parish, map) are wrapped for mobile collapse */
+    .filter-extra {
+      display: contents; /* on desktop: transparent, children flow into flex row */
+    }
+    @media (max-width: 639px) {
+      .mobile-filter-btn { display: flex; }
+      .filter-extra {
+        display: none;
+        flex-direction: column;
+        gap: var(--spacing-s);
+        width: 100%;
+        padding-top: var(--spacing-s);
+        border-top: 1px solid var(--color-grey-00);
+        margin-top: var(--spacing-xs);
+      }
+      .filter-extra.open { display: flex; }
+      /* On mobile the controls row is a single line: open now + filters btn */
+      .filter-controls-row { flex-wrap: nowrap; }
+      /* Parish + type pills go full width inside the panel */
+      .filter-bar__group { width: 100%; }
+      .type-pills { flex-wrap: wrap; }
+      #map-toggle-btn { margin-left: 0 !important; }
     }
 
     /* Parish select */
@@ -869,9 +969,8 @@
       border-left: 4px solid var(--color-blue-100);
       padding: var(--spacing-s) var(--spacing-m);
       margin: var(--spacing-m) 0 0;
-      display: inline-block;
-      min-width: 280px;
-      max-width: 100%;
+      display: block;
+      max-width: 480px;
     }
     .contents-box__title {
       font-size: var(--font-size-caption);
@@ -917,7 +1016,7 @@
           <img src="./dist/assets/images/govbb-creast.svg" alt="" class="govbb-official-banner__icon">
         </span>
         <div class="govbb-official-banner__text">
-          <span>An official website of the Government of Barbados</span>
+          <span>Official government website</span>
         </div>
       </div>
     </div>
@@ -930,6 +1029,11 @@
         <a href="https://gov.bb" aria-label="Government of Barbados home">
           <img src="./dist/assets/images/govbb-logo.svg" alt="Government of Barbados" class="govbb-header__logo">
         </a>
+        <nav class="govbb-header__nav" aria-label="Site navigation">
+          <a href="https://gov.bb" class="govbb-header__nav-link">Home</a>
+          <a href="https://gov.bb/services" class="govbb-header__nav-link">Services</a>
+          <a href="https://gov.bb/organisations" class="govbb-header__nav-link">Organisations</a>
+        </nav>
       </div>
     </div>
   </header>
@@ -937,11 +1041,7 @@
   <!-- ── Alpha banner ── -->
   <div class="govbb-status-banner govbb-status-banner--alpha">
     <div class="govbb-container">
-      <p>
-        <strong>Alpha</strong> — This is a new service under development.
-        <a href="mailto:director@drugservice.gov.bb?subject=Open%20Pharmacy%20Tonight%20feedback" class="govbb-link">Give feedback</a>
-        to help us improve it.
-      </p>
+      <p>This page is in <a href="https://www.gov.bb/alpha" class="govbb-link">Alpha</a>.</p>
     </div>
   </div>
 
@@ -1126,54 +1226,66 @@
           <!-- Filter controls row (below search) -->
           <div class="filter-controls-row">
 
-            <!-- Open now toggle -->
+            <!-- Open now toggle — always visible -->
             <label class="toggle-wrap" for="open-now-toggle">
               <input type="checkbox" id="open-now-toggle" role="switch" aria-checked="false">
               <span class="toggle-label">Open now only</span>
             </label>
 
-            <!-- Type filter -->
-            <div class="filter-bar__group" role="group" aria-label="Filter by pharmacy type">
-              <span class="filter-label">Type:</span>
-              <div class="type-pills">
-                <button class="type-pill active" data-type="all"         aria-pressed="true">All</button>
-                <button class="type-pill"         data-type="government" aria-pressed="false">
-                  <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--color-blue-100);vertical-align:middle;margin-right:3px;"></span>Government
-                </button>
-                <button class="type-pill"         data-type="private-sbs" aria-pressed="false">
-                  <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--color-yellow-00);vertical-align:middle;margin-right:3px;"></span>Private SBS
-                </button>
-                <button class="type-pill"         data-type="unconfirmed" aria-pressed="false">
-                  <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#c8cdd3;vertical-align:middle;margin-right:3px;"></span>Unconfirmed
-                </button>
-              </div>
-            </div>
-
-            <!-- Parish filter -->
-            <div class="filter-bar__group">
-              <label class="filter-label" for="parish-select">Parish:</label>
-              <div class="parish-select-wrap">
-                <select id="parish-select" aria-label="Filter by parish">
-                  <option value="all">All parishes</option>
-                  <option value="St. Michael">St. Michael</option>
-                  <option value="Christ Church">Christ Church</option>
-                  <option value="St. James">St. James</option>
-                  <option value="St. Peter">St. Peter</option>
-                  <option value="St. George">St. George</option>
-                  <option value="St. John">St. John</option>
-                  <option value="St. Philip">St. Philip</option>
-                  <option value="St. Andrew">St. Andrew</option>
-                  <option value="St. Joseph">St. Joseph</option>
-                  <option value="St. Thomas">St. Thomas</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- Map toggle -->
-            <button id="map-toggle-btn" class="map-toggle-btn" aria-expanded="false" aria-controls="map-wrap" style="margin-left: auto;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
-              Show map
+            <!-- Mobile: Filters button (hidden on desktop via CSS) -->
+            <button class="mobile-filter-btn" id="mobile-filter-btn" aria-expanded="false" aria-controls="filter-extra">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+              Filters
+              <span class="filter-count-badge" id="mobile-filter-count" hidden>0</span>
             </button>
+
+            <!-- Extra filters: collapsed on mobile, always visible on desktop -->
+            <div class="filter-extra" id="filter-extra">
+
+              <!-- Type filter -->
+              <div class="filter-bar__group" role="group" aria-label="Filter by pharmacy type">
+                <span class="filter-label">Type:</span>
+                <div class="type-pills">
+                  <button class="type-pill active" data-type="all"          aria-pressed="true">All</button>
+                  <button class="type-pill"         data-type="government"  aria-pressed="false">
+                    <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--color-blue-100);vertical-align:middle;margin-right:3px;"></span>Government
+                  </button>
+                  <button class="type-pill"         data-type="private-sbs" aria-pressed="false">
+                    <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--color-yellow-00);vertical-align:middle;margin-right:3px;"></span>Private SBS
+                  </button>
+                  <button class="type-pill"         data-type="unconfirmed" aria-pressed="false">
+                    <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#c8cdd3;vertical-align:middle;margin-right:3px;"></span>Unconfirmed
+                  </button>
+                </div>
+              </div>
+
+              <!-- Parish filter -->
+              <div class="filter-bar__group">
+                <label class="filter-label" for="parish-select">Parish:</label>
+                <div class="parish-select-wrap">
+                  <select id="parish-select" aria-label="Filter by parish">
+                    <option value="all">All parishes</option>
+                    <option value="St. Michael">St. Michael</option>
+                    <option value="Christ Church">Christ Church</option>
+                    <option value="St. James">St. James</option>
+                    <option value="St. Peter">St. Peter</option>
+                    <option value="St. George">St. George</option>
+                    <option value="St. John">St. John</option>
+                    <option value="St. Philip">St. Philip</option>
+                    <option value="St. Andrew">St. Andrew</option>
+                    <option value="St. Joseph">St. Joseph</option>
+                    <option value="St. Thomas">St. Thomas</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Map toggle -->
+              <button id="map-toggle-btn" class="map-toggle-btn" aria-expanded="false" aria-controls="map-wrap" style="margin-left: auto;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+                Show map
+              </button>
+
+            </div><!-- /filter-extra -->
 
           </div>
 
@@ -1336,22 +1448,28 @@
 
   </main>
 
+  <!-- ── "Was this helpful?" feedback box ── -->
+  <div class="govbb-feedback-box">
+    <div class="govbb-container">
+      <h2 class="govbb-feedback-box__heading">Was this helpful?</h2>
+      <p class="govbb-feedback-box__body">Give us your feedback about this page.</p>
+      <a href="mailto:director@drugservice.gov.bb?subject=Open%20Pharmacy%20Tonight%20feedback" class="govbb-link">Help us improve alpha.gov.bb</a>
+    </div>
+  </div>
+
   <!-- ── Footer ── -->
   <footer class="govbb-footer">
     <div class="govbb-container">
       <div class="govbb-footer__inner">
         <nav class="govbb-footer__nav" aria-label="Footer navigation">
-          <a href="https://drugservice.gov.bb" class="govbb-footer__link">Barbados Drug Service</a>
-          <a href="mailto:pharmacy.council@health.gov.bb" class="govbb-footer__link">Pharmacy Council of Barbados</a>
-          <a href="mailto:director@drugservice.gov.bb?subject=Open%20Pharmacy%20Tonight%20feedback" class="govbb-footer__link">Give feedback</a>
-          <a href="#" class="govbb-footer__link">Accessibility</a>
-          <a href="#" class="govbb-footer__link">Privacy policy</a>
+          <a href="https://gov.bb" class="govbb-footer__link">Home</a>
+          <a href="https://gov.bb/terms" class="govbb-footer__link">Terms &amp; Conditions</a>
+          <a href="https://gov.bb/careers" class="govbb-footer__link">Careers</a>
         </nav>
         <div class="govbb-footer__end">
           <img src="./dist/assets/images/govbb-creast.svg" alt="Government of Barbados" class="govbb-footer__coat">
           <p class="govbb-footer__copy">
-            Data sourced from the Barbados Drug Service · verified May 2026.<br>
-            Hours subject to change. Always call ahead for unconfirmed pharmacies.
+            &copy; 2026 Government of Barbados
           </p>
         </div>
       </div>
@@ -1865,6 +1983,12 @@
   const DAY_NAMES   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
+  function ordinal(n) {
+    const s = ['th','st','nd','rd'];
+    const v = n % 100;
+    return n + (s[(v - 20) % 10] || s[v] || s[0]);
+  }
+
 
   /* ───────── OPEN-NOW LOGIC ───────── */
 
@@ -2064,7 +2188,7 @@
     const now = getBarbadosDate();
     const timeEl = document.getElementById('time-text');
     if (timeEl) {
-      timeEl.textContent = `${DAY_NAMES[now.getDay()]} ${now.getDate()} ${MONTH_NAMES[now.getMonth()]}, ${formatBarbadosTime(now)}`;
+      timeEl.textContent = `${DAY_NAMES[now.getDay()]} ${ordinal(now.getDate())} ${MONTH_NAMES[now.getMonth()]}, ${formatBarbadosTime(now)}`;
     }
   }
 
@@ -2107,6 +2231,38 @@
       searchQuery = e.target.value.trim();
       render();
     });
+
+    // ── Mobile filter panel toggle ──
+    const mobileFilterBtn   = document.getElementById('mobile-filter-btn');
+    const filterExtra       = document.getElementById('filter-extra');
+    const mobileFilterCount = document.getElementById('mobile-filter-count');
+
+    function updateMobileFilterCount() {
+      let count = 0;
+      if (activeType   !== 'all') count++;
+      if (activeParish !== 'all') count++;
+      if (count > 0) {
+        mobileFilterCount.textContent = count;
+        mobileFilterCount.hidden = false;
+        mobileFilterBtn.classList.add('has-filters');
+      } else {
+        mobileFilterCount.hidden = true;
+        mobileFilterBtn.classList.remove('has-filters');
+      }
+    }
+
+    if (mobileFilterBtn) {
+      mobileFilterBtn.addEventListener('click', () => {
+        const isOpen = filterExtra.classList.toggle('open');
+        mobileFilterBtn.setAttribute('aria-expanded', isOpen.toString());
+      });
+
+      // Keep count in sync whenever type or parish changes
+      document.querySelectorAll('.type-pill').forEach(btn => {
+        btn.addEventListener('click', updateMobileFilterCount);
+      });
+      document.getElementById('parish-select').addEventListener('change', updateMobileFilterCount);
+    }
 
     render();
   });
@@ -2430,8 +2586,8 @@
   <style>
     #scroll-fab {
       position: fixed;
-      bottom: 28px;
-      right: 24px;
+      bottom: max(28px, env(safe-area-inset-bottom, 28px));
+      right: max(24px, env(safe-area-inset-right, 24px));
       z-index: 999;
       width: 44px;
       height: 44px;
