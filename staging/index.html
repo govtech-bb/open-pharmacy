@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Find a Barbados pharmacy that accepts Special Benefit Service prescriptions. Qualifying residents can collect medication free or for a small dispensing fee.">
+  <title>Find a pharmacy open now — Barbados Drug Service</title>
+  <link rel="icon" href="./dist/assets/images/favicon.ico">
+  <link rel="stylesheet" href="./dist/styles.css">
+  <style>
+    /* Primary CTA spacing (uses govbb-btn) */
+    .govbb-btn--cta { margin: var(--spacing-m) 0; }
+
+    /* "Last updated" stamp */
+    .page-meta {
+      font-size: var(--font-size-caption-sm);
+      color: var(--color-mid-grey-00);
+      margin-top: var(--spacing-xs);
+    }
+
+    /* Utility */
+    .hidden { display: none !important; }
+    .text-muted { color: var(--color-mid-grey-00); }
+
+    main { padding-bottom: var(--spacing-l); }
+    .section-pad { padding: var(--spacing-l) 0 0; }
+
+    /* Service info sections — use whitespace alone, no border */
+    .service-info-section {
+      padding: var(--spacing-l) 0 0;
+    }
+
+    /* GDS-style numbered steps */
+    .gds-steps { list-style: none; margin: 0; padding: 0; }
+    .gds-step {
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: 0 var(--spacing-s);
+      padding: var(--spacing-s) 0;
+      border-bottom: 1px solid var(--color-grey-00);
+    }
+    .gds-step--last { border-bottom: 0; }
+    .gds-step__note { margin-top: var(--spacing-xs); }
+    .gds-step__header { display: contents; }
+    .gds-step__num {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--color-teal-00);
+      color: var(--color-white-00);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--font-size-caption);
+      font-weight: var(--font-weight-bold);
+      flex-shrink: 0;
+      margin-top: 2px;
+      grid-column: 1;
+    }
+    .gds-step__title {
+      font-size: var(--font-size-body);
+      font-weight: var(--font-weight-bold);
+      margin: 0 0 var(--spacing-xs);
+      grid-column: 2;
+      align-self: center;
+    }
+    .gds-step__body {
+      grid-column: 2;
+      font-size: var(--font-size-body);
+    }
+    .gds-step__body p { margin-bottom: var(--spacing-xs); }
+    .gds-step__body p:last-child { margin-bottom: 0; }
+
+    /* Prescription colours — plain definition list, no boxes */
+    .rx-colour-list { margin: var(--spacing-s) 0 0; }
+    .rx-colour-list dt {
+      font-weight: var(--font-weight-bold);
+      margin-top: var(--spacing-s);
+    }
+    .rx-colour-list dt:first-child { margin-top: 0; }
+    .rx-colour-list dd {
+      margin: var(--spacing-xxs) 0 0;
+    }
+
+    /* Problem accordion stack (uses .govbb-show-hide) */
+    .problem-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-s);
+      margin: var(--spacing-s) 0;
+    }
+    .problem-list .govbb-show-hide {
+      padding-bottom: var(--spacing-s);
+      border-bottom: 1px solid var(--color-grey-00);
+    }
+    .problem-list .govbb-show-hide:last-child { border-bottom: 0; padding-bottom: 0; }
+  </style>
+</head>
+<body class="govbb-page">
+
+  <!-- ── Official Banner ── -->
+  <div class="govbb-official-banner">
+    <div class="govbb-container">
+      <div class="govbb-official-banner__inner">
+        <span class="govbb-official-banner__crest">
+          <img src="./dist/assets/images/govbb-creast.svg" alt="" class="govbb-official-banner__icon">
+        </span>
+        <div class="govbb-official-banner__text">
+          <span>Official government website</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Header ── -->
+  <header class="govbb-header">
+    <div class="govbb-container">
+      <div class="govbb-header__inner">
+        <a href="https://gov.bb" aria-label="Government of Barbados home">
+          <img src="./dist/assets/images/govbb-logo.svg" alt="Government of Barbados" class="govbb-header__logo">
+        </a>
+        <nav class="govbb-header__nav" aria-label="Site navigation">
+          <a href="https://gov.bb" class="govbb-header__nav-link">Home</a>
+          <a href="https://gov.bb/services" class="govbb-header__nav-link">Services</a>
+          <a href="https://gov.bb/organisations" class="govbb-header__nav-link">Organisations</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Alpha banner ── -->
+  <div class="govbb-status-banner govbb-status-banner--alpha">
+    <div class="govbb-container">
+      <p>This page is in <a href="https://www.gov.bb/alpha" class="govbb-link">Alpha</a>.</p>
+    </div>
+  </div>
+
+  <!-- ── Breadcrumb ── -->
+  <div class="page-breadcrumb">
+    <div class="govbb-container">
+      <nav class="govbb-breadcrumbs" aria-label="Breadcrumb">
+        <ol class="govbb-breadcrumbs__list">
+          <li class="govbb-breadcrumbs__item"><a href="https://gov.bb" class="govbb-breadcrumbs__link">Home</a></li>
+          <li class="govbb-breadcrumbs__item"><a href="https://gov.bb/services" class="govbb-breadcrumbs__link">Services</a></li>
+          <li class="govbb-breadcrumbs__item" aria-current="page">Find a pharmacy open now</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+
+  <!-- ── Main ── -->
+  <main>
+
+    <!-- Hero -->
+    <section class="page-hero">
+      <div class="govbb-container">
+        <h1 class="govbb-text-h2">Find a pharmacy open now</h1>
+        <p class="page-meta">Last updated: May 2026</p>
+
+        <p class="govbb-text-body">
+          Use the Special Benefit Service (SBS) to collect prescription medication from a Barbados pharmacy &mdash; free at a government polyclinic, or for a small dispensing fee at a private SBS pharmacy. The Barbados Drug Service (BDS) pays the pharmacy on your behalf.
+        </p>
+
+        <a href="find.html" class="govbb-btn govbb-btn--cta" aria-label="Find an open pharmacy — go to pharmacy directory">
+          Find an open pharmacy
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+
+        <p class="govbb-text-caption text-muted">
+          Need help? Call the Barbados Drug Service on
+          <a href="tel:+12465354300" class="govbb-link">(246) 535-4300</a>.
+        </p>
+      </div>
+    </section>
+
+    <!-- ── Eligibility ── -->
+    <section class="service-info-section" aria-labelledby="eligibility-heading">
+      <div class="govbb-container">
+
+        <h2 class="govbb-text-h2" id="eligibility-heading">Check if you can use this service</h2>
+        <p class="govbb-text-body">You can use the Special Benefit Service if you are a Barbadian citizen or permanent resident and a doctor has given you a prescription on the Barbados National Drug Formulary.</p>
+
+        <h3 class="govbb-text-h3">Who gets the lowest price</h3>
+        <p class="govbb-text-body">You pay nothing at a government polyclinic pharmacy, and only the dispensing fee at a private SBS pharmacy, if you are:</p>
+        <ul class="govbb-list govbb-list--bullet">
+          <li>aged 65 or over</li>
+          <li>under 16 years old</li>
+          <li>prescribed medication for asthma, cancer, diabetes, epilepsy, glaucoma or hypertension (any age)</li>
+        </ul>
+
+        <h3 class="govbb-text-h3">Everyone else</h3>
+        <p class="govbb-text-body">If you do not fall into one of the groups above, you can still collect your medication free at a government polyclinic pharmacy. At a private pharmacy you will pay the full price.</p>
+
+      </div>
+    </section>
+
+    <!-- ── How to get your medication ── -->
+    <section class="service-info-section" aria-labelledby="howto-heading">
+      <div class="govbb-container">
+
+        <h2 class="govbb-text-h2" id="howto-heading">How to get your medication</h2>
+
+        <ol class="gds-steps" aria-label="Steps to get your medication">
+
+          <li class="gds-step">
+            <div class="gds-step__header">
+              <span class="gds-step__num" aria-hidden="true">1</span>
+              <h3 class="gds-step__title">What to bring</h3>
+            </div>
+            <div class="gds-step__body">
+              <p>You will need your <strong>Barbados ID card</strong>, plus one of the following to prove permanent residency:</p>
+              <ul class="govbb-list govbb-list--bullet">
+                <li>Your passport stamped by Barbados Immigration confirming permanent residency</li>
+                <li>A Permanent Resident's certificate from the Barbados Immigration Department</li>
+              </ul>
+              <p>If you are collecting for a child, bring the child's birth certificate or ID, your own ID, and your permanent residency documents. If you are not the parent, bring a letter of guardianship.</p>
+              <p class="govbb-text-caption text-muted">If your stamp is in an old passport, bring both old and new passports. If your new passport has no stamp, visit Immigration at Careenage House, The Wharf, Bridgetown first.</p>
+            </div>
+          </li>
+
+          <li class="gds-step">
+            <div class="gds-step__header">
+              <span class="gds-step__num" aria-hidden="true">2</span>
+              <h3 class="gds-step__title">Get a prescription</h3>
+            </div>
+            <div class="gds-step__body">
+              <p>A prescription can come from a public-sector doctor (polyclinic or Queen Elizabeth Hospital) or a private doctor.</p>
+
+              <details class="govbb-show-hide">
+                <summary class="govbb-show-hide__summary">Find out which prescription colour you have</summary>
+                <div class="govbb-show-hide__content">
+                  <p>The paper colour tells you where the prescription came from and where it can be used.</p>
+                  <dl class="rx-colour-list">
+                    <dt>Blue</dt>
+                    <dd>From a public polyclinic or health centre. Free at a government pharmacy, dispensing fee only at a private SBS pharmacy.</dd>
+                    <dt>Pink</dt>
+                    <dd>From a private doctor. Free at a government pharmacy, dispensing fee only at a private SBS pharmacy.</dd>
+                    <dt>Yellow or green</dt>
+                    <dd>From a Queen Elizabeth Hospital outpatient clinic. Free at a government pharmacy. <strong>Not covered at private pharmacies</strong>, so you will pay full price. Ask your hospital doctor to reissue on a standard form if you want to use a private pharmacy.</dd>
+                  </dl>
+                </div>
+              </details>
+            </div>
+          </li>
+
+          <li class="gds-step">
+            <div class="gds-step__header">
+              <span class="gds-step__num" aria-hidden="true">3</span>
+              <h3 class="gds-step__title">Choose where to go</h3>
+            </div>
+            <div class="gds-step__body">
+              <p><strong>Government polyclinic pharmacy:</strong> medication is completely free. 12 locations across the island. You do not have to use the polyclinic in your parish.</p>
+              <p><strong>Private SBS pharmacy:</strong> a small dispensing fee applies, but there are more locations with evening and weekend hours. Use the directory to find one near you.</p>
+            </div>
+          </li>
+
+          <li class="gds-step gds-step--last">
+            <div class="gds-step__header">
+              <span class="gds-step__num" aria-hidden="true">4</span>
+              <h3 class="gds-step__title">At the pharmacy</h3>
+            </div>
+            <div class="gds-step__body">
+              <ol class="govbb-list govbb-list--number">
+                <li>Hand your prescription and ID documents to the pharmacist.</li>
+                <li>The pharmacist will check your eligibility against the Barbados Drug Service register.</li>
+                <li>If you are eligible, the pharmacist will give you your medication.</li>
+                <li>At a government pharmacy you pay nothing. At a private SBS pharmacy you pay the dispensing fee only.</li>
+              </ol>
+              <p class="govbb-text-caption text-muted gds-step__note">If your documents are not accepted, do not pay full price. Ask the pharmacist to call the Barbados Drug Service on <a href="tel:+12465354300" class="govbb-link">(246) 535-4300</a> first.</p>
+            </div>
+          </li>
+
+        </ol>
+
+        <a href="find.html" class="govbb-btn govbb-btn--cta" aria-label="Find an open pharmacy — go to pharmacy directory">
+          Find an open pharmacy
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- ── If something goes wrong ── -->
+    <section class="section-pad" aria-label="If something goes wrong">
+      <div class="govbb-container">
+        <h2 class="govbb-text-h2" id="problems-heading">If something goes wrong</h2>
+        <div class="problem-list" id="problem-list">
+
+          <details class="govbb-show-hide">
+            <summary class="govbb-show-hide__summary">My drug is not on the formulary</summary>
+            <div class="govbb-show-hide__content">
+              Ask your doctor about a therapeutically equivalent alternative on the Barbados National Drug Formulary. If no equivalent exists, your doctor can request a Category B exception through the Drug and Therapeutics Committee at Queen Elizabeth Hospital, or through the Barbados Drug Service Director.
+            </div>
+          </details>
+
+          <details class="govbb-show-hide">
+            <summary class="govbb-show-hide__summary">My ID was not accepted</summary>
+            <div class="govbb-show-hide__content">
+              Ask the pharmacist to contact BDS on <a href="tel:+12465354300" class="govbb-link">(246) 535-4300</a> before you pay. If your permanent residency documentation needs updating, contact the Immigration Department at Careenage House, The Wharf, Bridgetown.
+            </div>
+          </details>
+
+          <details class="govbb-show-hide">
+            <summary class="govbb-show-hide__summary">I was charged full price but think I qualify</summary>
+            <div class="govbb-show-hide__content">
+              Keep your receipt. Contact BDS on <a href="tel:+12465354300" class="govbb-link">(246) 535-4300</a> or email <a href="mailto:director@drugservice.gov.bb" class="govbb-link">director@drugservice.gov.bb</a> with your prescription, receipt and ID documents. You may be entitled to a refund.
+            </div>
+          </details>
+
+          <details class="govbb-show-hide">
+            <summary class="govbb-show-hide__summary">My child just turned 16</summary>
+            <div class="govbb-show-hide__content">
+              The under-16 benefit ends on the child's 16th birthday. If the child has a qualifying chronic condition (asthma, diabetes, etc.), the benefit continues under that category. Ask the doctor to show the qualifying condition on future prescriptions.
+            </div>
+          </details>
+
+          <details class="govbb-show-hide">
+            <summary class="govbb-show-hide__summary">The pharmacy is out of stock</summary>
+            <div class="govbb-show-hide__content">
+              The pharmacy should direct you to another participating pharmacy. If they cannot help, call BDS on <a href="tel:+12465354300" class="govbb-link">(246) 535-4300</a>.
+            </div>
+          </details>
+
+          <details class="govbb-show-hide">
+            <summary class="govbb-show-hide__summary">Collecting on someone else's behalf</summary>
+            <div class="govbb-show-hide__content">
+              Medication must be collected in person. This service is not available online. Someone else can collect for you. They will need to bring your prescription, your ID, your permanent residency documents, and their own ID.
+            </div>
+          </details>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ── BDS contact ── -->
+    <section class="section-pad" aria-label="Barbados Drug Service contact">
+      <div class="govbb-container">
+
+        <div class="bds-banner">
+          <div class="bds-banner__icon" aria-hidden="true">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <div class="bds-banner__body">
+            <p class="govbb-text-body"><strong>Barbados Drug Service</strong></p>
+            <p class="govbb-text-caption">6th Floor, Warrens Tower II &middot; <strong>(246) 535-4300</strong> &middot; <a href="mailto:director@drugservice.gov.bb" class="govbb-link">director@drugservice.gov.bb</a> &middot; <a href="https://drugservice.gov.bb" class="govbb-link">drugservice.gov.bb</a></p>
+            <p class="govbb-text-caption">If a pharmacy is refusing your SBS prescription, call the Barbados Drug Service before you pay.</p>
+          </div>
+          <a href="tel:+12465354300" class="govbb-btn">Call BDS</a>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── "Was this helpful?" feedback box ── -->
+  <div class="govbb-feedback-box">
+    <div class="govbb-container">
+      <h2 class="govbb-feedback-box__heading">Was this helpful?</h2>
+      <p class="govbb-feedback-box__body">Give us your feedback about this page.</p>
+      <a href="mailto:director@drugservice.gov.bb?subject=Open%20Pharmacy%20Tonight%20feedback" class="govbb-link">Help us improve alpha.gov.bb</a>
+    </div>
+  </div>
+
+  <!-- ── Footer ── -->
+  <footer class="govbb-footer">
+    <div class="govbb-container">
+      <div class="govbb-footer__inner">
+        <nav class="govbb-footer__nav" aria-label="Footer navigation">
+          <a href="https://gov.bb" class="govbb-footer__link">Home</a>
+          <a href="https://gov.bb/terms" class="govbb-footer__link">Terms &amp; Conditions</a>
+          <a href="https://gov.bb/careers" class="govbb-footer__link">Careers</a>
+        </nav>
+        <hr class="govbb-footer__divider">
+        <div class="govbb-footer__end">
+          <img src="./dist/assets/images/govbb-creast.svg" alt="Government of Barbados" class="govbb-footer__coat">
+          <p class="govbb-footer__copy">&copy; 2026 Government of Barbados</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- ── Scroll to top button ── -->
+  <button id="scroll-fab" aria-label="Back to top" title="Back to top">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <polyline points="18 15 12 9 6 15"/>
+    </svg>
+  </button>
+  <script>
+    (function () {
+      const btn = document.getElementById('scroll-fab');
+      const TOP_THRESHOLD = 300;
+      function updateFab() {
+        btn.classList.toggle('visible', window.scrollY > TOP_THRESHOLD);
+      }
+      btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+      window.addEventListener('scroll', updateFab, { passive: true });
+      updateFab();
+    })();
+  </script>
+
+</body>
+</html>
