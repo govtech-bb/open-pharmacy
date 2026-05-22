@@ -2256,6 +2256,21 @@
    so the two pages don't drift back into duplicated CSS.
    ───────────────────────────────────────────────────────────── */
 
+/* Prose column ------------------------------------------------- */
+/* Constrains body content (~2-of-3 cols of the container) so text
+   stays readable at a comfortable line length, matching the
+   alpha.gov.bb body layout. Chrome (header, breadcrumb, banner,
+   footer) and the find.html directory (filter bar, list, map)
+   stay at full govbb-container width. */
+.govbb-prose,
+.page-hero > .govbb-container > *,
+.service-info-section > .govbb-container > *,
+.find-cta-section > .govbb-container > *,
+.section-pad > .govbb-container > *,
+.govbb-feedback-box > .govbb-container > * {
+  max-width: 50rem; /* ~800px */
+}
+
 /* Shared page shell -------------------------------------------- */
 .page-hero {
   background: var(--color-background);
