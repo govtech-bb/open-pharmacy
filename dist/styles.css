@@ -2271,6 +2271,38 @@
   max-width: 50rem; /* ~800px */
 }
 
+/* Typographic rhythm for body sections ------------------------- */
+/* The govbb-text-* classes only set font-size/weight, not margins.
+   Apply spacing here so headings stand off from preceding content
+   and bullet lists breathe. Scoped to DIRECT children of the body
+   section containers so .gds-step internals are not affected. */
+.service-info-section > .govbb-container > h2,
+.section-pad > .govbb-container > h2 {
+  margin-top: var(--spacing-l);
+  margin-bottom: var(--spacing-s);
+}
+.service-info-section > .govbb-container > h2:first-child,
+.section-pad > .govbb-container > h2:first-child {
+  margin-top: 0;
+}
+.service-info-section > .govbb-container > h3,
+.section-pad > .govbb-container > h3 {
+  margin-top: var(--spacing-m);
+  margin-bottom: var(--spacing-xs);
+}
+.service-info-section > .govbb-container > p,
+.section-pad > .govbb-container > p {
+  margin-bottom: var(--spacing-s);
+}
+.service-info-section > .govbb-container > ul,
+.section-pad > .govbb-container > ul {
+  margin-bottom: var(--spacing-s);
+}
+.service-info-section > .govbb-container > ul > li + li,
+.section-pad > .govbb-container > ul > li + li {
+  margin-top: var(--spacing-xs);
+}
+
 /* Shared page shell -------------------------------------------- */
 .page-hero {
   background: var(--color-background);
