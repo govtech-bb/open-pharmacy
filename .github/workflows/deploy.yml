@@ -32,12 +32,19 @@ jobs:
 
       - name: Assemble site
         run: |
+          set -euxo pipefail
+          ls -la main/
+          ls -la staging/
           mkdir -p _site
           cp -r main/. _site/
           rm -rf _site/.git _site/.github
           mkdir -p _site/staging
           cp -r staging/. _site/staging/
           rm -rf _site/staging/.git _site/staging/.github
+          echo "=== _site listing ==="
+          ls -la _site/
+          echo "=== _site/staging listing ==="
+          ls -la _site/staging/
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
