@@ -24,8 +24,9 @@
       url: "https://xvyjgtdnuugcxpydvfzl.supabase.co",
       anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh2eWpndGRudXVnY3hweWR2ZnpsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0OTc4NDcsImV4cCI6MjA5NjA3Mzg0N30.wUnBadTYsHBuzphmm4Pib1hHxCmSCBUv04SM4wxcbmM"
     },
-    // Page key: treats "…/" and "…/index.html" as the same page.
-    pageId: (location.pathname.replace(/index\.html$/, "").replace(/\/$/, "") || "/"),
+    // Page key: prefixed with hostname so each deployment (fork vs org)
+    // keeps its own comments. Treats "…/" and "…/index.html" as one page.
+    pageId: location.hostname + (location.pathname.replace(/index\.html$/, "").replace(/\/$/, "") || "/"),
     root: "main"                   // only text inside <main> is commentable
   };
 
