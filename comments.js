@@ -22,7 +22,7 @@
     // Supabase backend (shared). The anon public key is safe to ship.
     supabase: {
       url: "https://xvyjgtdnuugcxpydvfzl.supabase.co",
-      anonKey: "PASTE_YOUR_SUPABASE_ANON_PUBLIC_KEY_HERE"
+      anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh2eWpndGRudXVnY3hweWR2ZnpsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0OTc4NDcsImV4cCI6MjA5NjA3Mzg0N30.wUnBadTYsHBuzphmm4Pib1hHxCmSCBUv04SM4wxcbmM"
     },
     // Page key: treats "…/" and "…/index.html" as the same page.
     pageId: (location.pathname.replace(/index\.html$/, "").replace(/\/$/, "") || "/"),
