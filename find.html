@@ -594,7 +594,7 @@
           <span id="time-text">Loading…</span>
         </div>
         <p class="govbb-text-body" style="margin-top: var(--spacing-s);">
-          12 government polyclinic pharmacies (free) and over 70 private pharmacies that accept Special Benefit Service (SBS) prescriptions, with a small dispensing fee, across Barbados. Filter by parish or type to find one near you.
+          12 government district pharmacies and a network of Private Participating Pharmacies (PPP) that accept Special Benefit Service (SBS) prescriptions for a dispensing fee, across Barbados. Filter by parish or type to find one near you.
         </p>
       </div>
     </section>
@@ -630,7 +630,7 @@
                     <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--color-blue-100);vertical-align:middle;margin-right:3px;"></span>Government
                   </button>
                   <button class="type-pill"         data-type="private-sbs" aria-pressed="false">
-                    <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--color-yellow-00);vertical-align:middle;margin-right:3px;"></span>Private SBS
+                    <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--color-yellow-00);vertical-align:middle;margin-right:3px;"></span>Private (PPP)
                   </button>
                   <button class="type-pill"         data-type="unconfirmed" aria-pressed="false">
                     <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--color-grey-40);vertical-align:middle;margin-right:3px;"></span>Unconfirmed
@@ -681,8 +681,8 @@
           <div class="results-meta__top">
             <p class="results-count" id="results-count" aria-live="polite">Loading…</p>
             <div class="legend" aria-label="Key">
-              <div class="legend-item"><span class="legend-strip legend-strip--gov"></span>Government · Free</div>
-              <div class="legend-item"><span class="legend-strip legend-strip--priv"></span>Private SBS · Dispensing fee</div>
+              <div class="legend-item"><span class="legend-strip legend-strip--gov"></span>Government</div>
+              <div class="legend-item"><span class="legend-strip legend-strip--priv"></span>Private Participating Pharmacy (PPP) · Dispensing fee</div>
               <div class="legend-item"><span class="legend-strip legend-strip--unc"></span>SBS unconfirmed</div>
             </div>
           </div>
@@ -693,8 +693,8 @@
         <div id="map-wrap" class="map-wrap hidden" aria-hidden="true">
           <div id="pharmacy-map"></div>
           <div class="map-legend" aria-label="Map key">
-            <div class="map-legend-item"><span class="map-dot map-dot--gov"></span>Government · Free</div>
-            <div class="map-legend-item"><span class="map-dot map-dot--priv"></span>Private SBS · Fee</div>
+            <div class="map-legend-item"><span class="map-dot map-dot--gov"></span>Government</div>
+            <div class="map-legend-item"><span class="map-dot map-dot--priv"></span>PPP · Fee</div>
             <div class="map-legend-item"><span class="map-dot map-dot--unc"></span>SBS unconfirmed</div>
             <div class="map-legend-item" style="margin-left:auto;">
               <span style="width:8px;height:8px;border-radius:50%;background:var(--color-green-00);display:inline-block;"></span>Green dot = open now
@@ -723,7 +723,7 @@
           </div>
           <div class="bds-banner__body">
             <p class="govbb-text-body" style="font-weight: var(--font-weight-bold);">Barbados Drug Service</p>
-            <p class="govbb-text-caption">6th Floor, Warrens Tower II · <strong>(246) 535-4300</strong> · <a href="mailto:director@drugservice.gov.bb" class="govbb-link">director@drugservice.gov.bb</a> · <a href="https://drugservice.gov.bb" class="govbb-link">drugservice.gov.bb</a></p>
+            <p class="govbb-text-caption">6th Floor, Warrens Tower II · <strong>(246) 535-4300</strong> · <a href="mailto:management@drugservice.gov.bb" class="govbb-link">management@drugservice.gov.bb</a> · <a href="https://drugservice.gov.bb" class="govbb-link">drugservice.gov.bb</a></p>
             <p class="govbb-text-caption" style="margin-top:4px;">If a pharmacy is refusing your SBS prescription, call BDS before you pay.</p>
           </div>
           <a href="tel:+12465354300" class="govbb-btn">Call BDS</a>
@@ -733,12 +733,21 @@
 
   </main>
 
+  <!-- ── Report a change ── -->
+  <section class="section-pad" aria-label="Report a change">
+    <div class="govbb-container">
+      <h2 class="govbb-text-h2">Tell us about a change</h2>
+      <p class="govbb-text-body">If a pharmacy&rsquo;s address, phone number or opening hours are out of date, a pharmacy has closed or should be added, or a map pin is in the wrong place, let the Barbados Drug Service know.</p>
+      <p class="govbb-text-body">Email <a href="mailto:management@drugservice.gov.bb?subject=Pharmacy%20directory%20change" class="govbb-link">management@drugservice.gov.bb</a> or call <a href="tel:+12465354300" class="govbb-link">(246) 535-4300</a>. Please include the pharmacy name and what needs to change.</p>
+    </div>
+  </section>
+
   <!-- ── "Was this helpful?" feedback box ── -->
   <div class="govbb-feedback-box">
     <div class="govbb-container">
       <h2 class="govbb-feedback-box__heading">Was this helpful?</h2>
       <p class="govbb-feedback-box__body">Give us your feedback about this page.</p>
-      <a href="mailto:director@drugservice.gov.bb?subject=Open%20Pharmacy%20Tonight%20feedback" class="govbb-link">Help us improve alpha.gov.bb</a>
+      <a href="mailto:management@drugservice.gov.bb?subject=Open%20Pharmacy%20Tonight%20feedback" class="govbb-link">Help us improve alpha.gov.bb</a>
     </div>
   </div>
 
@@ -784,9 +793,9 @@
       id: 'gov-2', name: 'Branford Taitt Polyclinic', type: 'government',
       address: 'Black Rock Main Road, St. Michael', parish: 'St. Michael',
       phone: '(246) 536-3700',
-      hours: [{ days: [1,2,3,4,5], open: 495, close: 1110 }],
-      hoursText: 'Mon–Fri 8:15am–6:30pm',
-      notes: 'Open until 6:30pm.',
+      hours: [{ days: [1,2,3,4,5], open: 495, close: 990 }],
+      hoursText: 'Mon–Fri 8:15am–4:30pm',
+      notes: '',
       routes: 'Routes 11, 11A from Bridgetown Terminal'
     },
     {
@@ -809,9 +818,9 @@
       id: 'gov-5', name: 'Randal Phillips Polyclinic', type: 'government',
       address: 'Oistins Main Road, Oistins, Christ Church', parish: 'Christ Church',
       phone: '(246) 536-4346',
-      hours: [{ days: [1,2,3,4,5], open: 495, close: 1230 }],
-      hoursText: 'Mon–Fri 8:15am–8:30pm',
-      notes: 'Open until 8:30pm, the late option for the south.',
+      hours: [{ days: [1,2,3,4,5], open: 495, close: 990 }],
+      hoursText: 'Mon–Fri 8:15am–4:30pm',
+      notes: '',
       routes: 'Routes 30, 31 from Bridgetown (Fairchild St Terminal)'
     },
     {
@@ -834,9 +843,9 @@
       id: 'gov-8', name: 'Maurice Byer Polyclinic', type: 'government',
       address: 'Station Hill, St. Peter', parish: 'St. Peter',
       phone: '(246) 536-3200',
-      hours: [{ days: [1,2,3,4,5], open: 495, close: 1230 }],
-      hoursText: 'Mon–Fri 8:15am–8:30pm',
-      notes: 'Open until 8:30pm, the late option for the north and west.',
+      hours: [{ days: [1,2,3,4,5], open: 495, close: 990 }],
+      hoursText: 'Mon–Fri 8:15am–4:30pm',
+      notes: '',
       routes: 'Route 1B from Bridgetown (Lower Green Terminal)'
     },
     {
@@ -852,11 +861,10 @@
       address: 'Belleplaine, St. Andrew', parish: 'St. Andrew',
       phone: '(246) 536-4071',
       hours: [
-        { days: [1], open: 495, close: 990 },
         { days: [3], open: 495, close: 720 }
       ],
-      hoursText: 'Mon 8:15am–4:30pm · Wed 8:15am–12:00pm only',
-      notes: 'Limited days only.', routes: 'Route 2 from Bridgetown (Lower Green Terminal)'
+      hoursText: 'Wed 8:15am–12:00pm only',
+      notes: 'Open Wednesdays only.', routes: 'Route 2 from Bridgetown (Lower Green Terminal)'
     },
     {
       id: 'gov-11', name: 'St. Joseph Outpatient Clinic', type: 'government',
@@ -869,13 +877,13 @@
     {
       id: 'gov-12', name: 'St. Thomas Outpatient Clinic', type: 'government',
       address: 'Rock Hall, St. Thomas', parish: 'St. Thomas',
-      phone: '(246) 425-1832',
-      hours: [{ days: [2,4], open: 495, close: 990 }],
-      hoursText: 'Tue & Thu 8:15am–4:30pm only',
-      notes: 'Two days per week.', routes: 'Route 6 from Bridgetown'
+      phone: '(246) 536-4952',
+      hours: [{ days: [2,4,5], open: 495, close: 990 }],
+      hoursText: 'Tue, Thu & Fri 8:15am–4:30pm only',
+      notes: 'Three days per week.', routes: 'Route 6 from Bridgetown'
     },
 
-    /* ── Private SBS Pharmacies (dispensing fee applies) ── */
+    /* ── Private Participating Pharmacies (PPP) — dispensing fee applies ── */
     {
       id: 'priv-1', name: 'iMart Pharmacy — Lanterns Mall', type: 'private-sbs',
       address: 'Lanterns Mall, Christ Church', parish: 'Christ Church',
@@ -931,20 +939,31 @@
       routes: 'Routes 11, 22 from Bridgetown'
     },
     {
-      id: 'priv-6', name: 'iMart Pharmacy Express — Carlton Complex', type: 'private-sbs',
-      address: 'Carlton Complex, Black Rock, St. Michael', parish: 'St. Michael',
+      id: 'priv-6', name: 'iMart Pharmacy — Six Roads', type: 'private-sbs',
+      address: 'Emerald Park, Six Cross Roads, St. Philip', parish: 'St. Philip',
       phone: '(246) 271-3784',
-      hours: [{ days: [1,2,3,4,5,6], open: 480, close: 1020 }],
-      hoursText: 'Mon–Sat 8:00am–5:00pm · Closed Sundays',
-      notes: '', routes: 'Routes 11, 11A from Bridgetown'
+      hours: [{ days: [1,2,3,4,5,6], open: 480, close: 1200 }],
+      hoursText: 'Mon–Sat 8:00am–8:00pm · Bank holidays 10:00am–2:00pm',
+      notes: '', routes: 'Route 10 from Bridgetown'
     },
     {
-      id: 'priv-7', name: 'iMart Pharmacy Express — Sunset Crest', type: 'private-sbs',
-      address: 'Sunset Crest, Holetown, St. James', parish: 'St. James',
+      id: 'priv-7', name: 'The Estates Pharmacy (iMart)', type: 'private-sbs',
+      address: 'Boarded Hall, St. George', parish: 'St. George',
+      phone: '(246) 271-3784',
+      hours: [
+        { days: [1,2,3,4,5,6], open: 480, close: 1200 },
+        { days: [0],           open: 540, close: 840  }
+      ],
+      hoursText: 'Mon–Sat 8:00am–8:00pm · Sun 9:00am–2:00pm · Bank holidays 10:00am–2:00pm',
+      notes: '', routes: 'Route 3 from Bridgetown'
+    },
+    {
+      id: 'priv-7b', name: 'iMart Pharmacy — W Plaza', type: 'private-sbs',
+      address: 'Welches, St. Thomas', parish: 'St. Thomas',
       phone: '(246) 271-3784',
       hours: [{ days: [1,2,3,4,5,6], open: 540, close: 1080 }],
-      hoursText: 'Mon–Sat 9:00am–6:00pm · Closed Sundays',
-      notes: '', routes: 'Route 1 from Bridgetown northbound'
+      hoursText: 'Mon–Sat 9:00am–6:00pm',
+      notes: '', routes: 'Route 6 from Bridgetown'
     },
     {
       id: 'priv-8', name: 'DASAE Pharmacy (Sparman Clinic)', type: 'private-sbs',
@@ -983,7 +1002,7 @@
     {
       id: 'priv-12', name: 'Felimar Plus Pharmacy', type: 'private-sbs',
       address: 'Appleby Road, Appleby, St. James', parish: 'St. James',
-      phone: '(246) 432-2956',
+      phone: '(246) 538-5685',
       hours: [], hoursText: 'Call to confirm',
       notes: 'Drive-through service available.',
       routes: 'Route 1 from Bridgetown northbound'
@@ -1037,6 +1056,110 @@
       phone: '(246) 429-8762',
       hours: [], hoursText: 'Call to confirm', notes: '',
       routes: 'Routes 11, 12 from Bridgetown'
+    },
+
+    {
+      id: 'priv-20', name: 'Rxpharma & Medical Supplies Dispensary', type: 'private-sbs',
+      address: 'Kensington New Road, St. Michael', parish: 'St. Michael',
+      phone: '(246) 237-8374',
+      hours: [
+        { days: [1,2,3,4,5], open: 480,  close: 900  },
+        { days: [1,2,3,4,5], open: 1125, close: 1260 },
+        { days: [6],          open: 480, close: 810  },
+        { days: [0],          open: 480, close: 750  }
+      ],
+      hoursText: 'Mon–Fri 8:00am–3:00pm & 6:45pm–9:00pm · Sat 8:00am–1:30pm · Sun 8:00am–12:30pm',
+      notes: 'Also (246) 237-8992.', routes: ''
+    },
+    {
+      id: 'priv-21', name: 'BT Pharmacy', type: 'private-sbs',
+      address: 'Sandy Crest Medical Centre, Holetown, St. James', parish: 'St. James',
+      phone: '(246) 422-0488',
+      hours: [
+        { days: [1,2,3,4,5,6], open: 480, close: 1140 },
+        { days: [0],           open: 480, close: 960  }
+      ],
+      hoursText: 'Mon–Sat 8:00am–7:00pm · Sun 8:00am–4:00pm',
+      notes: 'Hours do not change on bank holidays.', routes: 'Route 1 from Bridgetown northbound'
+    },
+    {
+      id: 'priv-22', name: 'Top Tier Pharmacy', type: 'private-sbs',
+      address: "Lot 51 Rouen Road, Neil's Tenantry, St. Michael", parish: 'St. Michael',
+      phone: '(246) 547-5674',
+      hours: [
+        { days: [1,3,5], open: 480, close: 1020 },
+        { days: [2,4],   open: 480, close: 1140 },
+        { days: [6],     open: 540, close: 1020 }
+      ],
+      hoursText: 'Mon, Wed & Fri 8:00am–5:00pm · Tue & Thu 8:00am–7:00pm · Sat 9:00am–5:00pm',
+      notes: '', routes: ''
+    },
+    {
+      id: 'priv-23', name: 'OneUp Pharmacy — Wildey Mall', type: 'private-sbs',
+      address: 'Wildey Mall, Wildey, St. Michael', parish: 'St. Michael',
+      phone: '(246) 426-6387',
+      hours: [
+        { days: [1,2,3,4,5], open: 510, close: 930  },
+        { days: [6],          open: 510, close: 1050 }
+      ],
+      hoursText: 'Mon–Fri 8:30am–3:30pm · Sat 8:30am–4:30pm · Closed Sundays',
+      notes: 'Telephone / WhatsApp +1 (246) 426-6387. oneuppharmacy.com', routes: 'Routes 11, 22 from Bridgetown'
+    },
+    {
+      id: 'priv-24', name: 'OneUp Pharmacy — Jemmotts Lane', type: 'private-sbs',
+      address: 'Jemmotts Lane, St. Michael', parish: 'St. Michael',
+      phone: '(246) 426-6387',
+      hours: [
+        { days: [1,2,3,4,5], open: 480, close: 990 },
+        { days: [6],          open: 480, close: 930 }
+      ],
+      hoursText: 'Mon–Fri 8:00am–4:30pm · Sat 8:00am–3:30pm · Closed Sundays',
+      notes: 'Telephone / WhatsApp +1 (246) 426-6387. oneuppharmacy.com', routes: ''
+    },
+    {
+      id: 'priv-25', name: 'OneUp Pharmacy — Triad Health', type: 'private-sbs',
+      address: 'Triad Health Centre, St. Michael', parish: 'St. Michael',
+      phone: '(246) 426-6387',
+      hours: [
+        { days: [1,2,3,4,5], open: 510, close: 990 },
+        { days: [6],          open: 540, close: 810 }
+      ],
+      hoursText: 'Mon–Fri 8:30am–4:30pm · Sat 9:00am–1:30pm · Closed Sundays',
+      notes: 'Telephone / WhatsApp +1 (246) 426-6387. oneuppharmacy.com', routes: ''
+    },
+    {
+      id: 'priv-26', name: 'OneUp Pharmacy — Diagnostic Medical', type: 'private-sbs',
+      address: 'Diagnostic Medical, St. Michael', parish: 'St. Michael',
+      phone: '(246) 426-6387',
+      hours: [
+        { days: [1,2,3,4,5], open: 480, close: 900 },
+        { days: [6],          open: 480, close: 780 }
+      ],
+      hoursText: 'Mon–Fri 8:00am–3:00pm · Sat 8:00am–1:00pm · Closed Sundays',
+      notes: 'Telephone / WhatsApp +1 (246) 426-6387. oneuppharmacy.com', routes: ''
+    },
+    {
+      id: 'priv-27', name: 'Callies Pharmacy — Bayside', type: 'private-sbs',
+      address: 'Bayside Plaza, Bay Street, St. Michael', parish: 'St. Michael',
+      phone: '(246) 431-9560',
+      hours: [
+        { days: [1,2,3,4,5], open: 510, close: 990 },
+        { days: [6],          open: 510, close: 840 },
+        { days: [0],          open: 540, close: 780 }
+      ],
+      hoursText: 'Mon–Fri 8:30am–4:30pm · Sat 8:30am–2:00pm · Sun 9:00am–1:00pm · Bank holidays 9:00am–12:00pm',
+      notes: '', routes: 'Routes 11, 12 from Bridgetown'
+    },
+    {
+      id: 'priv-28', name: 'Callies Pharmacy — Cottage', type: 'private-sbs',
+      address: 'Cottage Plantation, St. George', parish: 'St. George',
+      phone: '(246) 429-9346',
+      hours: [
+        { days: [1,2,3,4,5], open: 540, close: 900 },
+        { days: [6],          open: 540, close: 780 }
+      ],
+      hoursText: 'Mon–Fri 9:00am–3:00pm · Sat 9:00am–1:00pm',
+      notes: '', routes: 'Route 3 from Bridgetown'
     },
 
     /* ── SBS Status Unconfirmed ── */
@@ -1243,8 +1366,8 @@
   const MAP_SVG   = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>`;
 
   const TYPE_LABELS = {
-    'government':  { label: 'Government · Free',         cls: 'badge--government' },
-    'private-sbs': { label: 'Private SBS · Fee applies', cls: 'badge--private'    },
+    'government':  { label: 'Government',                cls: 'badge--government' },
+    'private-sbs': { label: 'Private Participating Pharmacy (PPP) · Dispensing fee', cls: 'badge--private'    },
     'unconfirmed': { label: 'SBS unconfirmed',            cls: 'badge--unconfirmed'}
   };
 
@@ -1502,20 +1625,28 @@
     'priv-3':  [13.0972, -59.5978],
     'priv-4':  [13.0802, -59.5832],
     'priv-5':  [13.0962, -59.5962],
-    'priv-6':  [13.1002, -59.6295],
-    'priv-7':  [13.1955, -59.6382],
+    'priv-6':  [13.0945, -59.5022],
+    'priv-7':  [13.1235, -59.5535],
+    'priv-7b': [13.1465, -59.6015],
     'priv-8':  [13.0968, -59.6118],
     'priv-9':  [13.1005, -59.6298],
     'priv-10': [13.2492, -59.6488],
     'priv-11': [13.2490, -59.6485],
     'priv-12': [13.1705, -59.6385],
-    'priv-13': [13.0752, -59.5795],
+    'priv-13': [13.0755, -59.5845],
     'priv-14': [13.0688, -59.5468],
     'priv-15': [13.0944, -59.5025],
     'priv-16': [13.0942, -59.5022],
     'priv-17': [13.1305, -59.5815],
     'priv-18': [13.1048, -59.6188],
     'priv-19': [13.1052, -59.6102],
+    'priv-20': [13.0935, -59.6180],
+    'priv-21': [13.1880, -59.6385],
+    'priv-22': [13.1060, -59.6090],
+    'priv-23': [13.0958, -59.5968],
+    'priv-24': [13.0995, -59.6190],
+    'priv-27': [13.0875, -59.6135],
+    'priv-28': [13.1280, -59.5700],
     'unc-1':  [13.0982, -59.6052],
     'unc-2':  [13.0970, -59.5975],
     'unc-3':  [13.1002, -59.6172],
@@ -1527,7 +1658,7 @@
     'unc-9':  [13.1002, -59.6168],
     'unc-10': [13.1048, -59.6182],
     'unc-11': [13.0995, -59.6162],
-    'unc-12': [13.0978, -59.6052],
+    'unc-12': [13.0948, -59.6012],
     'unc-13': [13.0792, -59.5545],
     'unc-14': [13.1005, -59.6280],
     'unc-15': [13.1102, -59.6082],
@@ -1570,8 +1701,8 @@
         ? '<span class="pharmacy-popup__status--closed">● Closed now</span>'
         : '<span class="pharmacy-popup__status--unknown">○ Hours unconfirmed</span>';
     const typeLabel = {
-      government:   'Government · Free',
-      'private-sbs':'Private SBS · Dispensing fee',
+      government:   'Government',
+      'private-sbs':'Private Participating Pharmacy (PPP) · Dispensing fee',
       unconfirmed:  'SBS status unconfirmed'
     }[p.type];
     const phoneHtml = p.phone
