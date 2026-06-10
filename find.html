@@ -386,6 +386,16 @@
       align-items: flex-end;
       flex-shrink: 0;
     }
+    /* On small screens, stack the name above the badges and let badges wrap */
+    @media (max-width: 639px) {
+      .pharmacy-card__top { flex-direction: column; gap: 6px; }
+      .pharmacy-card__status-wrap {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: flex-start;
+      }
+      .badge { white-space: normal; }
+    }
 
     .pharmacy-card__address {
       font-size: var(--font-size-caption);
@@ -1398,7 +1408,7 @@
 
   const TYPE_LABELS = {
     'government':  { label: 'Government',                cls: 'badge--government' },
-    'private-sbs': { label: 'Private Participating Pharmacy (PPP) · Dispensing fee', cls: 'badge--private'    },
+    'private-sbs': { label: 'Private (PPP) · Fee', cls: 'badge--private'    },
     'unconfirmed': { label: 'SBS status not confirmed',  cls: 'badge--unconfirmed'}
   };
 
