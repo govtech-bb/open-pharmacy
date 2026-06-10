@@ -261,6 +261,13 @@
       color: var(--color-mid-grey-00);
       width: 100%;
     }
+    #filter-context {
+      font-size: var(--font-size-caption);
+      color: var(--color-text);
+      width: 100%;
+      padding: var(--spacing-xs) 0 0;
+    }
+    #filter-context a { margin-left: 4px; }
 
     /* Legend */
     .legend {
@@ -651,8 +658,14 @@
                 </div>
               </div>
 
+              <!-- Nearest to me -->
+              <button id="near-me-btn" class="map-toggle-btn" aria-pressed="false" style="margin-left: auto;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                Nearest to me
+              </button>
+
               <!-- Map toggle -->
-              <button id="map-toggle-btn" class="map-toggle-btn" aria-expanded="false" aria-controls="map-wrap" style="margin-left: auto;">
+              <button id="map-toggle-btn" class="map-toggle-btn" aria-expanded="false" aria-controls="map-wrap">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
                 Show map
               </button>
@@ -676,6 +689,7 @@
               <div class="legend-item"><span class="legend-strip legend-strip--unc"></span>SBS status not confirmed</div>
             </div>
           </div>
+          <p id="filter-context" class="hidden" aria-live="polite"></p>
           <p id="open-filter-note" class="hidden">Pharmacies with unconfirmed hours are not shown when 'Open now' is selected.</p>
         </div>
 
@@ -1453,6 +1467,29 @@
   let activeParish = 'all';
   let openOnly     = false;
   let currentPage  = 1;
+  let userLatLng   = null;    // {lat, lng} once the user shares location
+  let nearMode     = false;   // sort results by distance to the user
+
+  const TYPE_NAMES = {
+    government:    'Government pharmacies',
+    'private-sbs': 'Private Participating Pharmacies (PPP)',
+    unconfirmed:   'Pharmacies with unconfirmed SBS status'
+  };
+
+  function distanceKm(lat1, lon1, lat2, lon2) {
+    const R = 6371, toRad = d => d * Math.PI / 180;
+    const dLat = toRad(lat2 - lat1), dLon = toRad(lon2 - lon1);
+    const a = Math.sin(dLat / 2) ** 2 +
+              Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+    return 2 * R * Math.asin(Math.sqrt(a));
+  }
+
+  function pharmacyDistance(p) {
+    if (!userLatLng) return Infinity;
+    const ll = (typeof COORDS !== 'undefined') ? COORDS[p.id] : null;
+    if (!ll) return Infinity;            // no pin -> sorts to the end
+    return distanceKm(userLatLng.lat, userLatLng.lng, ll[0], ll[1]);
+  }
 
   function getFiltered() {
     return PHARMACIES.filter(p => {
@@ -1468,6 +1505,13 @@
 
   function sortedPharmacies(list) {
     const typeOrder = { government: 0, 'private-sbs': 1, unconfirmed: 2 };
+    if (nearMode && userLatLng) {
+      return list.slice().sort((a, b) => {
+        const da = pharmacyDistance(a), db = pharmacyDistance(b);
+        if (da !== db) return da - db;
+        return a.name.localeCompare(b.name);
+      });
+    }
     return list.slice().sort((a, b) => {
       const as = openStatus(a), bs = openStatus(b);
       if (as === true && bs !== true) return -1;
@@ -1477,6 +1521,21 @@
     });
   }
 
+  function updateFilterContext() {
+    const el = document.getElementById('filter-context');
+    if (!el) return;
+    const bits = [];
+    if (activeType   !== 'all') bits.push(TYPE_NAMES[activeType] || activeType);
+    if (activeParish !== 'all') bits.push('in ' + activeParish);
+    if (openOnly)               bits.push('open now');
+    let html = '';
+    if (bits.length)            html += 'Showing ' + bits.join(', ') + '. ';
+    if (nearMode && userLatLng) html += 'Sorted by distance from you. ';
+    if (html)                   html += '<a href="#" id="clear-filters" class="govbb-link">Show all pharmacies</a>';
+    el.innerHTML = html;
+    el.classList.toggle('hidden', !html);
+  }
+
   function render() {
     const filtered    = sortedPharmacies(getFiltered());
     const grid        = document.getElementById('pharmacy-grid');
@@ -1484,6 +1543,7 @@
     const pagEl       = document.getElementById('pagination');
     const filterNote  = document.getElementById('open-filter-note');
     if (filterNote) filterNote.classList.toggle('hidden', !openOnly);
+    updateFilterContext();
 
     const openCount  = filtered.filter(p => openStatus(p) === true).length;
     const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
@@ -1540,6 +1600,83 @@
     if (timeEl) {
       timeEl.textContent = `${DAY_NAMES[now.getDay()]} ${ordinal(now.getDate())} ${MONTH_NAMES[now.getMonth()]}, ${formatBarbadosTime(now)}`;
     }
+  }
+
+
+  /* ───────── NEAR ME + DEEP LINKS ───────── */
+
+  const NEAR_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>';
+
+  function setActiveTypePill(type) {
+    document.querySelectorAll('.type-pill').forEach(b => {
+      const on = b.dataset.type === type;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+
+  function requestNearMe() {
+    const btn = document.getElementById('near-me-btn');
+    if (!('geolocation' in navigator)) {
+      if (btn) btn.innerHTML = NEAR_SVG + ' Location unavailable';
+      return;
+    }
+    if (btn) { btn.disabled = true; btn.innerHTML = NEAR_SVG + ' Finding you...'; }
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        userLatLng = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        nearMode = true;
+        if (btn) {
+          btn.disabled = false;
+          btn.classList.add('active');
+          btn.setAttribute('aria-pressed', 'true');
+          btn.innerHTML = NEAR_SVG + ' Nearest to me';
+        }
+        currentPage = 1;
+        render();
+      },
+      () => {
+        if (btn) { btn.disabled = false; btn.innerHTML = NEAR_SVG + ' Nearest to me'; }
+        const el = document.getElementById('filter-context');
+        if (el) {
+          el.innerHTML = 'We could not get your location, so results are not sorted by distance. You can still filter by parish and type, or use the map.';
+          el.classList.remove('hidden');
+        }
+      },
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
+    );
+  }
+
+  function clearAllFilters() {
+    activeType = 'all';
+    activeParish = 'all';
+    openOnly = false;
+    nearMode = false;
+    userLatLng = null;
+    currentPage = 1;
+    setActiveTypePill('all');
+    const tog = document.getElementById('open-now-toggle');
+    if (tog) { tog.checked = false; tog.setAttribute('aria-checked', 'false'); }
+    const par = document.getElementById('parish-select');
+    if (par) par.value = 'all';
+    const nearBtn = document.getElementById('near-me-btn');
+    if (nearBtn) { nearBtn.classList.remove('active'); nearBtn.setAttribute('aria-pressed', 'false'); nearBtn.innerHTML = NEAR_SVG + ' Nearest to me'; }
+    render();
+  }
+
+  function applyFiltersFromURL() {
+    const q = new URLSearchParams(location.search);
+    const t = q.get('type');
+    if (t && ['government', 'private-sbs', 'unconfirmed', 'all'].includes(t)) {
+      activeType = t;
+      setActiveTypePill(t);
+    }
+    if (q.get('open') === '1') {
+      openOnly = true;
+      const tog = document.getElementById('open-now-toggle');
+      if (tog) { tog.checked = true; tog.setAttribute('aria-checked', 'true'); }
+    }
+    if (q.get('near') === '1') requestNearMe();
   }
 
 
@@ -1618,6 +1755,33 @@
       });
       document.getElementById('parish-select').addEventListener('change', updateMobileFilterCount);
     }
+
+    // Nearest to me button
+    const nearBtn = document.getElementById('near-me-btn');
+    if (nearBtn) {
+      nearBtn.addEventListener('click', () => {
+        if (nearMode) {
+          nearMode = false;
+          userLatLng = null;
+          nearBtn.classList.remove('active');
+          nearBtn.setAttribute('aria-pressed', 'false');
+          nearBtn.innerHTML = NEAR_SVG + ' Nearest to me';
+          render();
+        } else {
+          requestNearMe();
+        }
+      });
+    }
+
+    // "Show all pharmacies" link inside the filter-context line
+    document.addEventListener('click', e => {
+      const clear = e.target.closest('#clear-filters');
+      if (clear) { e.preventDefault(); clearAllFilters(); updateMobileFilterCount(); }
+    });
+
+    // Apply ?type= / ?open= / ?near= deep links from the landing page
+    applyFiltersFromURL();
+    updateMobileFilterCount();
 
     render();
   });
