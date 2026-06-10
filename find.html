@@ -604,7 +604,7 @@
 
             <!-- Open now toggle — always visible -->
             <label class="toggle-wrap" for="open-now-toggle">
-              <input type="checkbox" id="open-now-toggle" role="switch" aria-checked="false">
+              <input type="checkbox" id="open-now-toggle" role="switch" aria-checked="true" checked>
               <span class="toggle-label">Open now only</span>
             </label>
 
@@ -982,7 +982,7 @@
         { days: [0,6],        open: 0,   close: 480  }
       ],
       hoursText: 'Mon–Fri midnight–5:00pm · Sat–Sun midnight–8:00am',
-      notes: 'Unusual hours: open from midnight to 5:00pm on weekdays, and midnight to 8:00am on weekends. Always call (246) 624-3278 to confirm before visiting.',
+      notes: 'This pharmacy serves overnight shift workers: it opens at midnight and closes in the afternoon or morning. If you are visiting in normal daytime hours, note it is closed after 5:00pm on weekdays and after 8:00am at weekends. Always call (246) 624-3278 to confirm before visiting.',
       routes: 'Routes 12, 22 from Bridgetown'
     },
     {
@@ -1409,7 +1409,7 @@
     let statusBadge = '';
     if (status === true) {
       const cl = closingMinutes(p);
-      const closingNote = cl !== null ? ` · closes ${formatMins(cl)}` : '';
+      const closingNote = cl !== null ? ` · closes ${formatMins(cl)} (today)` : '';
       statusBadge = `<span class="badge badge--open badge--dot" role="status">Open now${closingNote}</span>`;
     } else if (status === false) {
       const nextOpen = nextOpenText(p);
@@ -1427,8 +1427,8 @@
     const mapsQuery = encodeURIComponent(`${p.name}, ${p.address}, Barbados`);
     const mapsURL   = `https://maps.google.com/maps?q=${mapsQuery}`;
 
-    const whatsappLink = p.notes && p.notes.includes('WhatsApp')
-      ? `<a href="https://wa.me/12462713784?text=Hello%2C%20I%20need%20a%20prescription%20at%20${encodeURIComponent(p.name)}" target="_blank" rel="noopener" class="govbb-link" style="font-size:var(--font-size-caption);display:inline-block;margin-top:4px;" aria-label="Send prescription via WhatsApp to ${p.name}">Order prescription via WhatsApp</a>`
+    const whatsappLink = p.notes && p.notes.includes('WhatsApp prescription service available.')
+      ? `<a href="https://wa.me/${'1' + p.phone.replace(/\D/g, '')}?text=Hello%2C%20I%20need%20a%20prescription%20at%20${encodeURIComponent(p.name)}" target="_blank" rel="noopener" class="govbb-link" style="font-size:var(--font-size-caption);display:inline-block;margin-top:4px;" aria-label="Send prescription via WhatsApp to ${p.name}">Order prescription via WhatsApp</a>`
       : '';
 
     const notesHTML  = p.notes  ? `<p class="pharmacy-card__note">${p.notes}</p>` : '';
@@ -1465,7 +1465,7 @@
   const PAGE_SIZE  = 20;
   let activeType   = 'all';
   let activeParish = 'all';
-  let openOnly     = false;
+  let openOnly     = true;
   let currentPage  = 1;
   let userLatLng   = null;    // {lat, lng} once the user shares location
   let nearMode     = false;   // sort results by distance to the user
@@ -1531,7 +1531,7 @@
     let html = '';
     if (bits.length)            html += 'Showing ' + bits.join(', ') + '. ';
     if (nearMode && userLatLng) html += 'Sorted by distance from you. ';
-    if (html)                   html += '<a href="#" id="clear-filters" class="govbb-link">Show all pharmacies</a>';
+    if (html)                   html += '<a href="#" id="clear-filters" class="govbb-link">Clear all filters (show all ' + PHARMACIES.length + ' pharmacies)</a>';
     el.innerHTML = html;
     el.classList.toggle('hidden', !html);
   }
@@ -1551,11 +1551,22 @@
     if (currentPage < 1)          currentPage = 1;
 
     if (filtered.length === 0) {
+      let title, body;
+      if (activeType === 'government' && openOnly) {
+        title = 'No government pharmacies are open right now';
+        body = `Government district pharmacies open between 8:15am and 8:30am, Monday to Friday. The Winston Scott Polyclinic (Jemmotts Lane, St. Michael) also opens on Saturdays at 8:15am. <a href="#" id="empty-turn-off-open" class="govbb-link">Show all government pharmacies and their hours</a>.`;
+      } else if (activeType === 'unconfirmed' && openOnly) {
+        title = "These pharmacies can't be shown with 'Open now only'";
+        body = `Pharmacies with unconfirmed SBS status don't have confirmed hours, so they can't be shown when 'Open now only' is on. <a href="#" id="empty-turn-off-open" class="govbb-link">Turn off 'Open now only'</a> to see them.`;
+      } else {
+        title = 'No pharmacies match your filters';
+        body = "Try a different parish, change the type filter, or turn off 'Open now only'.";
+      }
       grid.innerHTML = `
         <div class="empty-state">
           <div class="empty-state__icon">💊</div>
-          <h3>No pharmacies match your filters</h3>
-          <p class="govbb-text-body text-muted" style="margin-top: var(--spacing-xs);">Try a different parish or remove the open now filter.</p>
+          <h3>${title}</h3>
+          <p class="govbb-text-body text-muted" style="margin-top: var(--spacing-xs);">${body}</p>
         </div>`;
       countEl.textContent = 'No results';
       pagEl.innerHTML = '';
@@ -1566,7 +1577,7 @@
     const end   = Math.min(start + PAGE_SIZE, filtered.length);
     grid.innerHTML = filtered.slice(start, end).map(buildCard).join('');
 
-    const openLabel = openCount > 0 ? ` · <span style="color:var(--color-green-00);font-weight:700;">${openCount} open now</span>` : '';
+    const openLabel = openCount > 0 ? ` · ${openCount} open now` : '';
     countEl.innerHTML = `Showing ${start + 1}–${end} of ${filtered.length} pharmacies${openLabel}`;
 
     if (totalPages > 1) {
@@ -1598,7 +1609,7 @@
     const now = getBarbadosDate();
     const timeEl = document.getElementById('time-text');
     if (timeEl) {
-      timeEl.textContent = `${DAY_NAMES[now.getDay()]} ${ordinal(now.getDate())} ${MONTH_NAMES[now.getMonth()]}, ${formatBarbadosTime(now)}`;
+      timeEl.textContent = `Time now: ${DAY_NAMES[now.getDay()]} ${ordinal(now.getDate())} ${MONTH_NAMES[now.getMonth()]}, ${formatBarbadosTime(now)}`;
     }
   }
 
@@ -1773,10 +1784,19 @@
       });
     }
 
-    // "Show all pharmacies" link inside the filter-context line
+    // Filter-context + empty-state recovery links
     document.addEventListener('click', e => {
       const clear = e.target.closest('#clear-filters');
-      if (clear) { e.preventDefault(); clearAllFilters(); updateMobileFilterCount(); }
+      if (clear) { e.preventDefault(); clearAllFilters(); updateMobileFilterCount(); return; }
+      const off = e.target.closest('#empty-turn-off-open');
+      if (off) {
+        e.preventDefault();
+        openOnly = false;
+        const tog = document.getElementById('open-now-toggle');
+        if (tog) { tog.checked = false; tog.setAttribute('aria-checked', 'false'); }
+        currentPage = 1;
+        render();
+      }
     });
 
     // Apply ?type= / ?open= / ?near= deep links from the landing page
