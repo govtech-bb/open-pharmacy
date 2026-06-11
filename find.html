@@ -215,11 +215,14 @@
     .filter-extra {
       display: contents;
     }
+    /* Parish select (govbb component): desktop width fits the longest parish name without clipping */
+    .filter-bar__group .govbb-select-wrapper { min-width: 215px; }
     @media (max-width: 639px) {
       .mobile-filter-btn { display: flex; }
       .filter-extra {
         display: none;
         flex-direction: column;
+        flex-basis: 100%;
         gap: var(--spacing-s);
         width: 100%;
         padding-top: var(--spacing-s);
@@ -227,15 +230,12 @@
         margin-top: var(--spacing-xs);
       }
       .filter-extra.open { display: flex; }
-      .filter-controls-row { flex-wrap: nowrap; }
+      .filter-controls-row { flex-wrap: wrap; }
       .filter-bar__group { width: 100%; }
       .type-pills { flex-wrap: wrap; }
       #map-toggle-btn { margin-left: 0 !important; width: 100%; justify-content: center; }
-      .filter-bar__group .govbb-select-wrapper { width: 100%; max-width: none; }
+      .filter-bar__group .govbb-select-wrapper { width: 100%; min-width: 0; max-width: none; }
     }
-
-    /* Parish select uses the govbb-select-wrapper component */
-    .filter-bar__group .govbb-select-wrapper { min-width: 140px; max-width: 180px; }
 
     /* ── Results ── */
     .results-meta {
@@ -272,6 +272,7 @@
     /* Search box */
     .filter-search { width: 100%; margin-bottom: var(--spacing-s); }
     .filter-search input {
+      box-sizing: border-box;
       width: 100%; max-width: 460px;
       font-family: var(--font-family-base);
       font-size: var(--font-size-body);
