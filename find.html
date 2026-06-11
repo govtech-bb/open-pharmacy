@@ -75,12 +75,12 @@
 
     /* ── Filter bar ── */
     .filter-bar {
-      background: var(--color-white-00);
-      border-bottom: 2px solid var(--color-grey-00);
+      background: var(--color-teal-10, #e6f4f0);
+      border-bottom: 2px solid var(--color-teal-00);
       padding: var(--spacing-s) 0;
       position: sticky;
       top: 0;
-      z-index: 200;
+      z-index: 1100;
       box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     }
     .filter-bar__inner {
@@ -269,18 +269,48 @@
       padding: var(--spacing-xs) 0 0;
     }
     #filter-context a { margin-left: 4px; }
-    /* Search box */
+    /* Search box — GDS / alpha.gov.bb pattern: label + input + button */
     .filter-search { width: 100%; margin-bottom: var(--spacing-s); }
-    .filter-search input {
+    .search-box__label {
+      display: block;
+      font-size: var(--font-size-caption);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      margin-bottom: var(--spacing-xxs);
+    }
+    .search-box { display: flex; width: 100%; max-width: 520px; }
+    .search-box__input {
       box-sizing: border-box;
-      width: 100%; max-width: 460px;
+      flex: 1 1 auto;
+      min-width: 0;
       font-family: var(--font-family-base);
       font-size: var(--font-size-body);
-      padding: 8px 12px;
-      border: 2px solid var(--color-grey-00);
-      border-radius: 4px;
+      padding: 14px 16px;
+      background: var(--color-white-00);
+      border: 2px solid var(--color-white-00);
+      border-right: 0;
+      border-radius: 4px 0 0 4px;
     }
-    .filter-search input:focus-visible { outline: 3px solid var(--color-teal-100); outline-offset: 1px; border-color: var(--color-teal-00); }
+    .search-box__input:focus-visible {
+      outline: 3px solid var(--color-teal-100);
+      outline-offset: 0;
+      position: relative;
+      z-index: 1;
+    }
+    .search-box__button {
+      flex: 0 0 auto;
+      font-family: var(--font-family-base);
+      font-size: var(--font-size-body);
+      font-weight: var(--font-weight-bold);
+      padding: 0 24px;
+      border: 2px solid var(--color-teal-00);
+      background: var(--color-teal-00);
+      color: var(--color-white-00);
+      border-radius: 0 4px 4px 0;
+      cursor: pointer;
+    }
+    .search-box__button:hover { background: var(--color-teal-100); border-color: var(--color-teal-100); }
+    .search-box__button:focus-visible { outline: 3px solid var(--color-teal-100); outline-offset: 2px; }
     /* Near-me status / error notice (persistent, not overwritten by render) */
     #near-me-status {
       width: 100%;
@@ -479,6 +509,8 @@
 
     /* ── Map ── */
     .map-wrap {
+      position: relative;
+      z-index: 0;
       width: 100%;
       border-radius: 8px;
       overflow: hidden;
@@ -606,7 +638,7 @@
           <li class="govbb-breadcrumbs__item"><a href="https://alpha.gov.bb/" class="govbb-breadcrumbs__link">Home</a></li>
           <li class="govbb-breadcrumbs__item"><a href="https://alpha.gov.bb/health-and-emergency-services" class="govbb-breadcrumbs__link">Health and emergency services</a></li>
           <li class="govbb-breadcrumbs__item"><a href="index.html" class="govbb-breadcrumbs__link">Get free or subsidised medication</a></li>
-          <li class="govbb-breadcrumbs__item" aria-current="page">Open pharmacy directory</li>
+          <li class="govbb-breadcrumbs__item" aria-current="page">Find an open pharmacy</li>
         </ol>
       </nav>
     </div>
@@ -634,8 +666,11 @@
       <div class="govbb-container">
         <div class="filter-bar__inner">
           <div class="filter-search">
-            <label class="sr-only" for="search-input">Search by pharmacy name or area</label>
-            <input type="search" id="search-input" placeholder="Search by pharmacy name or area" autocomplete="off" aria-controls="pharmacy-grid">
+            <label class="search-box__label" for="search-input">Search by pharmacy name or area</label>
+            <div class="search-box">
+              <input type="search" id="search-input" class="search-box__input" placeholder="For example, a name or parish" autocomplete="off" aria-controls="pharmacy-grid">
+              <button type="button" class="search-box__button" id="search-btn">Search</button>
+            </div>
           </div>
           <div class="filter-controls-row">
 
@@ -1458,7 +1493,8 @@
     const cautionHTML = p.type === 'unconfirmed'
       ? `<p class="pharmacy-card__note" style="background:var(--color-yellow-40);color:#5a3e00;font-style:normal;font-weight:var(--font-weight-bold);">SBS coverage is not confirmed for this pharmacy. Call before relying on it.</p>`
       : '';
-    const routesHTML = p.routes ? `<p class="pharmacy-card__address" style="margin-top: 2px;">${MAP_SVG}<span>${p.routes}</span></p>` : '';
+    const busText = p.routes ? p.routes.replace(/\s*from Bridgetown(\s+Terminal)?\s*/i, ' ').replace(/\s{2,}/g, ' ').trim() : '';
+    const routesHTML = busText ? `<p class="pharmacy-card__address" style="margin-top: 2px;">${MAP_SVG}<span><strong>By bus from Bridgetown:</strong> ${busText}</span></p>` : '';
 
     return `
 <article class="pharmacy-card pharmacy-card--${p.type}" data-type="${p.type}" data-parish="${p.parish}" data-open="${status}" aria-label="${p.name}">
@@ -1795,6 +1831,15 @@
         searchQuery = searchInput.value.trim().toLowerCase();
         currentPage = 1;
         render();
+      });
+    }
+    const searchBtn = document.getElementById('search-btn');
+    if (searchBtn && searchInput) {
+      searchBtn.addEventListener('click', () => {
+        searchQuery = searchInput.value.trim().toLowerCase();
+        currentPage = 1;
+        render();
+        searchInput.focus();
       });
     }
 
