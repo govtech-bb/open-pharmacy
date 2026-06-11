@@ -230,12 +230,12 @@
       .filter-controls-row { flex-wrap: nowrap; }
       .filter-bar__group { width: 100%; }
       .type-pills { flex-wrap: wrap; }
-      #near-me-btn { margin-left: 0 !important; width: 100%; justify-content: center; }
+      #map-toggle-btn { margin-left: 0 !important; width: 100%; justify-content: center; }
       .filter-bar__group .govbb-select-wrapper { width: 100%; max-width: none; }
     }
 
     /* Parish select uses the govbb-select-wrapper component */
-    .filter-bar__group .govbb-select-wrapper { min-width: 150px; max-width: 220px; }
+    .filter-bar__group .govbb-select-wrapper { min-width: 140px; max-width: 180px; }
 
     /* ── Results ── */
     .results-meta {
@@ -578,13 +578,13 @@
   <header class="govbb-header">
     <div class="govbb-container">
       <div class="govbb-header__inner">
-        <a href="https://gov.bb" aria-label="Government of Barbados home">
+        <a href="https://alpha.gov.bb/" aria-label="Government of Barbados home">
           <img src="./dist/assets/images/govbb-logo.svg" alt="Government of Barbados" class="govbb-header__logo">
         </a>
         <nav class="govbb-header__nav" aria-label="Site navigation">
-          <a href="https://gov.bb" class="govbb-header__nav-link">Home</a>
-          <a href="https://gov.bb/services" class="govbb-header__nav-link">Services</a>
-          <a href="https://gov.bb/organisations" class="govbb-header__nav-link">Organisations</a>
+          <a href="https://alpha.gov.bb/" class="govbb-header__nav-link">Home</a>
+          <a href="https://alpha.gov.bb/services" class="govbb-header__nav-link">Services</a>
+          <a href="https://alpha.gov.bb/government/organisations" class="govbb-header__nav-link">Organisations</a>
         </nav>
       </div>
     </div>
@@ -593,7 +593,7 @@
   <!-- ── Alpha banner ── -->
   <div class="govbb-status-banner govbb-status-banner--alpha">
     <div class="govbb-container">
-      <p>This page is in <a href="https://www.gov.bb/alpha" class="govbb-link">Alpha</a>.</p>
+      <p>This page is in <a href="https://alpha.gov.bb/what-we-mean-by-alpha" class="govbb-link">Alpha</a>.</p>
     </div>
   </div>
 
@@ -602,9 +602,9 @@
     <div class="govbb-container">
       <nav class="govbb-breadcrumbs" aria-label="Breadcrumb">
         <ol class="govbb-breadcrumbs__list">
-          <li class="govbb-breadcrumbs__item"><a href="https://gov.bb" class="govbb-breadcrumbs__link">Home</a></li>
-          <li class="govbb-breadcrumbs__item"><a href="https://gov.bb/services" class="govbb-breadcrumbs__link">Services</a></li>
-          <li class="govbb-breadcrumbs__item"><a href="index.html" class="govbb-breadcrumbs__link">Find a pharmacy open now</a></li>
+          <li class="govbb-breadcrumbs__item"><a href="https://alpha.gov.bb/" class="govbb-breadcrumbs__link">Home</a></li>
+          <li class="govbb-breadcrumbs__item"><a href="https://alpha.gov.bb/health-and-emergency-services" class="govbb-breadcrumbs__link">Health and emergency services</a></li>
+          <li class="govbb-breadcrumbs__item"><a href="index.html" class="govbb-breadcrumbs__link">Get free or subsidised medication</a></li>
           <li class="govbb-breadcrumbs__item" aria-current="page">Open pharmacy directory</li>
         </ol>
       </nav>
@@ -623,7 +623,7 @@
           <span id="time-text">Loading…</span>
         </div>
         <p class="govbb-text-body" style="margin-top: var(--spacing-s);">
-          12 government district pharmacies and a network of Private Participating Pharmacies (PPP) that accept Special Benefit Service (SBS) prescriptions for a dispensing fee, across Barbados. Filter by parish or type to find one near you.
+          Find a government or private pharmacy that accepts Special Benefit Service (SBS) prescriptions. Search by name, or filter by type and parish.
         </p>
       </div>
     </section>
@@ -694,10 +694,10 @@
                 </div>
               </div>
 
-              <!-- Nearest to me -->
-              <button id="near-me-btn" class="map-toggle-btn" aria-pressed="false" style="margin-left: auto;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                Nearest to me
+              <!-- Map toggle -->
+              <button id="map-toggle-btn" class="map-toggle-btn" aria-expanded="false" aria-controls="map-wrap" style="margin-left: auto;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+                Show map
               </button>
 
             </div><!-- /filter-extra -->
@@ -768,21 +768,12 @@
 
   </main>
 
-  <!-- ── Report a change ── -->
-  <section class="section-pad" aria-label="Report a change">
-    <div class="govbb-container">
-      <h2 class="govbb-text-h2">Tell us about a change</h2>
-      <p class="govbb-text-body">If a pharmacy&rsquo;s address, phone number or opening hours are out of date, a pharmacy has closed or should be added, or a map pin is in the wrong place, let the Barbados Drug Service know.</p>
-      <p class="govbb-text-body">Email <a href="mailto:management@drugservice.gov.bb?subject=Pharmacy%20directory%20change" class="govbb-link">management@drugservice.gov.bb</a> or call <a href="tel:+12465354300" class="govbb-link">(246) 535-4300</a>. Please include the pharmacy name and what needs to change.</p>
-    </div>
-  </section>
-
   <!-- ── "Was this helpful?" feedback box ── -->
   <div class="govbb-feedback-box">
     <div class="govbb-container">
       <h2 class="govbb-feedback-box__heading">Was this helpful?</h2>
       <p class="govbb-feedback-box__body">Give us your feedback about this page.</p>
-      <a href="mailto:management@drugservice.gov.bb?subject=Open%20Pharmacy%20Tonight%20feedback" class="govbb-link">Help us improve alpha.gov.bb</a>
+      <a href="https://alpha.gov.bb/feedback" class="govbb-link">Help us improve alpha.gov.bb</a>
     </div>
   </div>
 
@@ -791,9 +782,9 @@
     <div class="govbb-container">
       <div class="govbb-footer__inner">
         <nav class="govbb-footer__nav" aria-label="Footer navigation">
-          <a href="https://gov.bb" class="govbb-footer__link">Home</a>
-          <a href="https://gov.bb/terms" class="govbb-footer__link">Terms &amp; Conditions</a>
-          <a href="https://gov.bb/careers" class="govbb-footer__link">Careers</a>
+          <a href="https://alpha.gov.bb/" class="govbb-footer__link">Home</a>
+          <a href="https://alpha.gov.bb/terms-conditions" class="govbb-footer__link">Terms &amp; Conditions</a>
+          <a href="https://job-boards.greenhouse.io/govtechbarbados" class="govbb-footer__link">Careers</a>
         </nav>
         <hr class="govbb-footer__divider">
         <div class="govbb-footer__end">
