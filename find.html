@@ -269,6 +269,21 @@
       padding: var(--spacing-xs) 0 0;
     }
     #filter-context a { margin-left: 4px; }
+    /* GDS-style checkbox (open pharmacies shown by default) */
+    .gds-checkbox { display: flex; align-items: center; gap: 8px; }
+    .gds-checkbox__input {
+      width: 22px; height: 22px;
+      flex-shrink: 0;
+      cursor: pointer;
+      accent-color: var(--color-teal-00);
+    }
+    .gds-checkbox__label {
+      font-size: var(--font-size-body);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      cursor: pointer;
+    }
+
     /* Search box — GDS / alpha.gov.bb pattern: label + input + button */
     .filter-search { width: 100%; margin-bottom: var(--spacing-s); }
     .search-box__label {
@@ -656,7 +671,7 @@
           <span id="time-text">Loading…</span>
         </div>
         <p class="govbb-text-body" style="margin-top: var(--spacing-s);">
-          Find a government or private pharmacy that accepts Special Benefit Service (SBS) prescriptions. Search by name, or filter by type and parish.
+          Find a government or private pharmacy that accepts Special Benefit Service (SBS) prescriptions. Search by name or area, or filter by type.
         </p>
       </div>
     </section>
@@ -674,11 +689,11 @@
           </div>
           <div class="filter-controls-row">
 
-            <!-- Open now toggle — always visible -->
-            <label class="toggle-wrap" for="open-now-toggle">
-              <input type="checkbox" id="open-now-toggle" role="switch" aria-checked="true" checked>
-              <span class="toggle-label">Open now only</span>
-            </label>
+            <!-- Open pharmacies shown by default; tick to include closed -->
+            <div class="gds-checkbox">
+              <input type="checkbox" id="include-closed" class="gds-checkbox__input">
+              <label class="gds-checkbox__label" for="include-closed">Include pharmacies that are closed</label>
+            </div>
 
             <!-- Mobile: Filters button -->
             <button class="mobile-filter-btn" id="mobile-filter-btn" aria-expanded="false" aria-controls="filter-extra">
@@ -707,29 +722,6 @@
                 </div>
               </div>
 
-              <!-- Parish filter -->
-              <div class="filter-bar__group">
-                <label class="filter-label" for="parish-select">Parish:</label>
-                <div class="govbb-select-wrapper">
-                  <select id="parish-select" class="govbb-select" aria-label="Filter by parish">
-                    <option value="all">All parishes</option>
-                    <option value="St. Michael">St. Michael</option>
-                    <option value="Christ Church">Christ Church</option>
-                    <option value="St. James">St. James</option>
-                    <option value="St. Peter">St. Peter</option>
-                    <option value="St. George">St. George</option>
-                    <option value="St. John">St. John</option>
-                    <option value="St. Philip">St. Philip</option>
-                    <option value="St. Andrew">St. Andrew</option>
-                    <option value="St. Joseph">St. Joseph</option>
-                    <option value="St. Thomas">St. Thomas</option>
-                  </select>
-                  <span class="govbb-select__chevron" aria-hidden="true">
-                    <svg viewBox="0 0 12 8" xmlns="http://www.w3.org/2000/svg"><path d="M6 0L0 8h12L6 0z"/></svg>
-                  </span>
-                </div>
-              </div>
-
               <!-- Map toggle -->
               <button id="map-toggle-btn" class="map-toggle-btn" aria-expanded="false" aria-controls="map-wrap" style="margin-left: auto;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
@@ -749,15 +741,10 @@
         <div class="results-meta">
           <div class="results-meta__top">
             <p class="results-count" id="results-count" aria-live="polite">Loading…</p>
-            <div class="legend" aria-label="Key">
-              <div class="legend-item"><span class="legend-strip legend-strip--gov"></span>Government</div>
-              <div class="legend-item"><span class="legend-strip legend-strip--priv"></span>Private Participating Pharmacy (PPP) · Dispensing fee</div>
-              <div class="legend-item"><span class="legend-strip legend-strip--unc"></span>SBS status not confirmed</div>
-            </div>
           </div>
           <p id="filter-context" class="hidden" aria-live="polite"></p>
           <p id="near-me-status" class="hidden" role="status"></p>
-          <p id="open-filter-note" class="hidden">Pharmacies with unconfirmed hours are not shown when 'Open now' is selected.</p>
+          <p id="open-filter-note" class="hidden">Pharmacies with unconfirmed opening hours are not shown by default. Tick &lsquo;Include pharmacies that are closed&rsquo; to see them.</p>
         </div>
 
         <!-- Map (hidden by default) -->
@@ -1523,7 +1510,6 @@
 
   const PAGE_SIZE  = 20;
   let activeType   = 'all';
-  let activeParish = 'all';
   let openOnly     = true;
   let currentPage  = 1;
   let userLatLng   = null;    // {lat, lng} once the user shares location
@@ -1557,13 +1543,12 @@
   }
 
   function getFiltered() {
-    // A name/address search overrides the other filters, so a known pharmacy always surfaces
+    // A name/area search overrides the other filters, so a known pharmacy always surfaces
     if (searchQuery) {
-      return PHARMACIES.filter(p => (p.name + ' ' + p.address).toLowerCase().includes(searchQuery));
+      return PHARMACIES.filter(p => (p.name + ' ' + p.address + ' ' + (p.parish || '')).toLowerCase().includes(searchQuery));
     }
     return PHARMACIES.filter(p => {
-      if (activeType   !== 'all' && p.type   !== activeType)   return false;
-      if (activeParish !== 'all' && p.parish  !== activeParish) return false;
+      if (activeType !== 'all' && p.type !== activeType) return false;
       if (openOnly && openStatus(p) !== true) return false;
       return true;
     });
@@ -1607,9 +1592,8 @@
     if (searchQuery) {
       bits.push('matching “' + escHtml(searchQuery) + '”');
     } else {
-      if (activeType   !== 'all') bits.push(TYPE_NAMES[activeType] || activeType);
-      if (activeParish !== 'all') bits.push('in ' + activeParish);
-      if (openOnly)               bits.push('open now');
+      if (activeType !== 'all') bits.push(TYPE_NAMES[activeType] || activeType);
+      if (openOnly)             bits.push('open now');
     }
     let html = '';
     if (bits.length)            html += 'Showing ' + bits.join(', ') + '. ';
@@ -1642,11 +1626,11 @@
         title = 'No government pharmacies are open right now';
         body = `Government district pharmacies open between 8:15am and 8:30am, Monday to Friday. The Winston Scott Polyclinic (Jemmotts Lane, St. Michael) also opens on Saturdays at 8:15am. <a href="#" id="empty-turn-off-open" class="govbb-link">Show all government pharmacies and their hours</a>.`;
       } else if (activeType === 'unconfirmed' && openOnly) {
-        title = "These pharmacies can't be shown with 'Open now only'";
-        body = `Pharmacies with unconfirmed SBS status don't have confirmed hours, so they can't be shown when 'Open now only' is on. <a href="#" id="empty-turn-off-open" class="govbb-link">Turn off 'Open now only'</a> to see them.`;
+        title = "These pharmacies can't be shown by default";
+        body = `Pharmacies with unconfirmed SBS status don't have confirmed hours, so they aren't shown while closed pharmacies are excluded. <a href="#" id="empty-turn-off-open" class="govbb-link">Include pharmacies that are closed</a> to see them.`;
       } else {
         title = 'No pharmacies match your filters';
-        body = "Try a different parish, change the type filter, or turn off 'Open now only'.";
+        body = `Change the type filter, or <a href="#" id="empty-turn-off-open" class="govbb-link">include pharmacies that are closed</a>.`;
       }
       grid.innerHTML = `
         <div class="empty-state">
@@ -1756,16 +1740,13 @@
 
   function clearAllFilters() {
     activeType = 'all';
-    activeParish = 'all';
     openOnly = false;
     nearMode = false;
     userLatLng = null;
     currentPage = 1;
     setActiveTypePill('all');
-    const tog = document.getElementById('open-now-toggle');
-    if (tog) { tog.checked = false; tog.setAttribute('aria-checked', 'false'); }
-    const par = document.getElementById('parish-select');
-    if (par) par.value = 'all';
+    const inc = document.getElementById('include-closed');
+    if (inc) inc.checked = true;
     const nearBtn = document.getElementById('near-me-btn');
     if (nearBtn) { nearBtn.classList.remove('active'); nearBtn.setAttribute('aria-pressed', 'false'); nearBtn.innerHTML = NEAR_SVG + ' Nearest to me'; }
     searchQuery = '';
@@ -1785,8 +1766,8 @@
     }
     if (q.get('open') === '1') {
       openOnly = true;
-      const tog = document.getElementById('open-now-toggle');
-      if (tog) { tog.checked = true; tog.setAttribute('aria-checked', 'true'); }
+      const inc = document.getElementById('include-closed');
+      if (inc) inc.checked = false;
     }
     if (q.get('near') === '1') requestNearMe();
   }
@@ -1799,10 +1780,9 @@
     updateClock();
     setInterval(() => { updateClock(); render(); }, 60000);
 
-    const toggle = document.getElementById('open-now-toggle');
-    toggle.addEventListener('change', () => {
-      openOnly = toggle.checked;
-      toggle.setAttribute('aria-checked', openOnly.toString());
+    const includeClosed = document.getElementById('include-closed');
+    includeClosed.addEventListener('change', () => {
+      openOnly = !includeClosed.checked;
       currentPage = 1;
       render();
     });
@@ -1817,12 +1797,6 @@
         currentPage = 1;
         render();
       });
-    });
-
-    document.getElementById('parish-select').addEventListener('change', e => {
-      activeParish = e.target.value;
-      currentPage = 1;
-      render();
     });
 
     const searchInput = document.getElementById('search-input');
@@ -1871,8 +1845,7 @@
 
     function updateMobileFilterCount() {
       let count = 0;
-      if (activeType   !== 'all') count++;
-      if (activeParish !== 'all') count++;
+      if (activeType !== 'all') count++;
       if (count > 0) {
         mobileFilterCount.textContent = count;
         mobileFilterCount.hidden = false;
@@ -1892,7 +1865,6 @@
       document.querySelectorAll('.type-pill').forEach(btn => {
         btn.addEventListener('click', updateMobileFilterCount);
       });
-      document.getElementById('parish-select').addEventListener('change', updateMobileFilterCount);
     }
 
     // Nearest to me button
@@ -1923,8 +1895,8 @@
       if (off) {
         e.preventDefault();
         openOnly = false;
-        const tog = document.getElementById('open-now-toggle');
-        if (tog) { tog.checked = false; tog.setAttribute('aria-checked', 'false'); }
+        const inc = document.getElementById('include-closed');
+        if (inc) inc.checked = true;
         currentPage = 1;
         render();
       }
@@ -2092,9 +2064,8 @@
     if (!mapInitialised) return;
     leafletMarkers.forEach(({ marker, pharmacy: p }) => {
       const show = (() => {
-        if (activeType   !== 'all' && p.type   !== activeType)   return false;
-        if (activeParish !== 'all' && p.parish  !== activeParish) return false;
-        if (openOnly && openStatus(p) !== true)                   return false;
+        if (activeType !== 'all' && p.type !== activeType) return false;
+        if (openOnly && openStatus(p) !== true) return false;
         return true;
       })();
       if (show  && !pharmacyMap.hasLayer(marker)) marker.addTo(pharmacyMap);
