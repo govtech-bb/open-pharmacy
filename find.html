@@ -230,11 +230,12 @@
       .filter-controls-row { flex-wrap: nowrap; }
       .filter-bar__group { width: 100%; }
       .type-pills { flex-wrap: wrap; }
-      #map-toggle-btn { margin-left: 0 !important; }
+      #near-me-btn { margin-left: 0 !important; width: 100%; justify-content: center; }
+      .filter-bar__group .govbb-select-wrapper { width: 100%; max-width: none; }
     }
 
     /* Parish select uses the govbb-select-wrapper component */
-    .filter-bar__group .govbb-select-wrapper { min-width: 200px; }
+    .filter-bar__group .govbb-select-wrapper { min-width: 150px; max-width: 220px; }
 
     /* ── Results ── */
     .results-meta {
@@ -693,31 +694,10 @@
                 </div>
               </div>
 
-              <!-- Sort -->
-              <div class="filter-bar__group">
-                <label class="filter-label" for="sort-select">Sort by:</label>
-                <div class="govbb-select-wrapper">
-                  <select id="sort-select" class="govbb-select" aria-label="Sort pharmacies">
-                    <option value="open">Open now first</option>
-                    <option value="name">Name (A–Z)</option>
-                    <option value="closing">Closing soonest</option>
-                  </select>
-                  <span class="govbb-select__chevron" aria-hidden="true">
-                    <svg viewBox="0 0 12 8" xmlns="http://www.w3.org/2000/svg"><path d="M6 0L0 8h12L6 0z"/></svg>
-                  </span>
-                </div>
-              </div>
-
               <!-- Nearest to me -->
               <button id="near-me-btn" class="map-toggle-btn" aria-pressed="false" style="margin-left: auto;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
                 Nearest to me
-              </button>
-
-              <!-- Map toggle -->
-              <button id="map-toggle-btn" class="map-toggle-btn" aria-expanded="false" aria-controls="map-wrap">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
-                Show map
               </button>
 
             </div><!-- /filter-extra -->
@@ -2088,7 +2068,8 @@
   const _origRender = render;
   render = function () { _origRender(); updateMapMarkers(); };
 
-  document.getElementById('map-toggle-btn').addEventListener('click', function () {
+  const _mapToggleBtn = document.getElementById('map-toggle-btn');
+  if (_mapToggleBtn) _mapToggleBtn.addEventListener('click', function () {
     const wrap   = document.getElementById('map-wrap');
     const hidden = wrap.classList.toggle('hidden');
     wrap.setAttribute('aria-hidden', hidden.toString());
