@@ -1,0 +1,476 @@
+<!doctype html>
+<!-- Barbados Drug Service — pharmacy finder prototype (single-file, CSS-routed) -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Find a government or participating private pharmacy — The Government of Barbados</title>
+    <link
+      rel="icon"
+      href="https://unpkg.com/@govtech-bb/styles@1.0.0-alpha.16/dist/assets/images/favicon.ico"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/@govtech-bb/styles@1.0.0-alpha.16/dist/styles.css"
+    />
+    <style>
+      /* Page-specific layout, built from design-system tokens only. */
+      @media (max-width: 40rem) {
+        .govbb-page__main {
+          --font-size-h1: 2rem;
+          --font-size-h2: 1.5rem;
+          --font-size-h3: 1.25rem;
+          --font-size-body: 1.0625rem;
+        }
+      }
+
+      .page {
+        max-width: 42rem;
+        margin-inline: auto;
+        padding-block: var(--spacing-m) var(--spacing-l);
+      }
+
+      /* CSS-only "router": each screen is hidden until its link is clicked.
+         The start screen is shown by default and hidden when another screen
+         is targeted. No JavaScript needed, so it works in the preview panel. */
+      .screen {
+        display: none;
+        scroll-margin-top: var(--spacing-s);
+      }
+      .screen:target {
+        display: block;
+      }
+      #start {
+        display: block;
+      }
+      .screen:target ~ #start {
+        display: none;
+      }
+
+      .page h1 {
+        margin: 0 0 var(--spacing-s);
+      }
+      .page section {
+        margin-top: var(--spacing-l);
+      }
+      .page h2 {
+        margin: 0 0 var(--spacing-s);
+      }
+      .page p {
+        margin: 0 0 var(--spacing-s);
+      }
+      .page ul {
+        margin: 0 0 var(--spacing-s);
+      }
+      .page li {
+        margin-bottom: var(--spacing-xxs);
+      }
+
+      .back-link {
+        display: inline-block;
+        margin-bottom: var(--spacing-m);
+      }
+
+      /* Action cards for the three search routes */
+      .cards {
+        display: grid;
+        gap: var(--spacing-m);
+        margin-top: var(--spacing-m);
+      }
+      .card {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-s);
+        padding: var(--spacing-m);
+        background: var(--color-white-00);
+        border: var(--border-width-form) solid var(--color-grey-00);
+        border-radius: var(--radius-sm);
+      }
+      .card h3 {
+        margin: 0;
+      }
+      .card p {
+        margin: 0;
+      }
+      .card .govbb-btn {
+        margin-top: var(--spacing-xs);
+        width: 100%;
+      }
+
+      /* Quiet info strips */
+      .contact-strip {
+        padding: var(--spacing-s) var(--spacing-xm);
+        background: var(--color-blue-10);
+        border-radius: var(--radius-sm);
+        margin-bottom: var(--spacing-s);
+      }
+      .contact-strip p {
+        margin: 0;
+      }
+      .placeholder {
+        margin-top: var(--spacing-m);
+        padding: var(--spacing-xm);
+        background: var(--color-blue-10);
+        border-radius: var(--radius-sm);
+      }
+      .placeholder p {
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body class="govbb-page">
+    <!-- Official banner -->
+    <div class="govbb-official-banner">
+      <div class="govbb-container govbb-official-banner__inner">
+        <div class="govbb-official-banner__crest">
+          <img
+            class="govbb-official-banner__icon"
+            src="https://unpkg.com/@govtech-bb/styles@1.0.0-alpha.16/dist/assets/images/govbb-creast.svg"
+            alt=""
+          />
+        </div>
+        <div class="govbb-official-banner__text">
+          <span>Official government website</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <header class="govbb-header">
+      <div class="govbb-container govbb-header__inner">
+        <a href="#start" aria-label="Go to the start page">
+          <img
+            class="govbb-header__logo"
+            src="https://unpkg.com/@govtech-bb/styles@1.0.0-alpha.16/dist/assets/images/govbb-logo.svg"
+            alt="GOVBB"
+          />
+        </a>
+      </div>
+    </header>
+
+    <main class="govbb-page__main">
+      <!-- Alpha status banner -->
+      <div
+        class="govbb-status-banner govbb-status-banner--alpha"
+        role="status"
+        aria-label="alpha status banner"
+        aria-live="polite"
+      >
+        <div class="govbb-container">
+          <p>
+            This page is in
+            <a class="govbb-link govbb-link--secondary" href="#start">Alpha</a>.
+          </p>
+        </div>
+      </div>
+
+      <div class="govbb-container">
+        <div class="page">
+          <!-- ============ RESULT SCREENS ============ -->
+          <div class="screen" id="results-open">
+            <a class="govbb-link back-link" href="#start">Back</a>
+            <h1 class="govbb-text-h1">Open pharmacies</h1>
+            <p class="govbb-text-body">
+              Showing government pharmacies and participating private pharmacies
+              that are open now.
+            </p>
+            <div class="placeholder">
+              <p class="govbb-text-body">
+                This is a prototype. Real pharmacy results, opening hours and a
+                map would appear here.
+              </p>
+            </div>
+          </div>
+
+          <div class="screen" id="results-government">
+            <a class="govbb-link back-link" href="#start">Back</a>
+            <h1 class="govbb-text-h1">Government pharmacies</h1>
+            <p class="govbb-text-body">
+              Showing government pharmacies open to the public.
+            </p>
+            <div class="placeholder">
+              <p class="govbb-text-body">
+                This is a prototype. Real government pharmacy results, opening
+                hours and a map would appear here.
+              </p>
+            </div>
+          </div>
+
+          <div class="screen" id="results-private">
+            <a class="govbb-link back-link" href="#start">Back</a>
+            <h1 class="govbb-text-h1">Participating private pharmacies</h1>
+            <p class="govbb-text-body">
+              Showing private pharmacies that work with the Barbados Drug
+              Service.
+            </p>
+            <div class="placeholder">
+              <p class="govbb-text-body">
+                This is a prototype. Real participating private pharmacy
+                results, opening hours and a map would appear here.
+              </p>
+            </div>
+          </div>
+
+          <!-- ============ SUPPORT SCREENS ============ -->
+          <div class="screen" id="prescription-colours">
+            <a class="govbb-link back-link" href="#start">Back</a>
+            <h1 class="govbb-text-h1">Where you can use your prescription</h1>
+            <div class="placeholder">
+              <p class="govbb-text-body">
+                The full guidance on where you can use your prescription would
+                appear here.
+              </p>
+            </div>
+          </div>
+
+          <div class="screen" id="medicine-list">
+            <a class="govbb-link back-link" href="#start">Back</a>
+            <h1 class="govbb-text-h1">Check if your medicine is listed</h1>
+            <div class="placeholder">
+              <p class="govbb-text-body">
+                The full search of the Barbados National Drug Formulary, the
+                list of medicines covered by the Barbados Drug Service, would
+                appear here.
+              </p>
+            </div>
+          </div>
+
+          <div class="screen" id="who-can-get-help">
+            <a class="govbb-link back-link" href="#start">Back</a>
+            <h1 class="govbb-text-h1">Who can get help with medicine costs</h1>
+            <div class="placeholder">
+              <p class="govbb-text-body">
+                The full guidance on who can get help with medicine costs would
+                appear here.
+              </p>
+            </div>
+          </div>
+
+          <div class="screen" id="contact">
+            <a class="govbb-link back-link" href="#start">Back</a>
+            <h1 class="govbb-text-h1">Contact Barbados Drug Service</h1>
+            <div class="placeholder">
+              <p class="govbb-text-body">
+                The full contact details for the Barbados Drug Service would
+                appear here.
+              </p>
+            </div>
+          </div>
+
+          <!-- ============ START SCREEN (default, kept last) ============ -->
+          <div class="screen" id="start">
+            <!-- Page title and intro -->
+            <h1 class="govbb-text-h1">
+              Find a government or participating private pharmacy
+            </h1>
+
+            <p class="govbb-text-body">Use this service to find:</p>
+            <ul class="govbb-list govbb-list--bullet govbb-text-body">
+              <li>government pharmacies</li>
+              <li>
+                private pharmacies that work with the Barbados Drug Service
+              </li>
+            </ul>
+            <p class="govbb-text-body">
+              You can also check which pharmacies are open now.
+            </p>
+
+            <!-- Choose how to search -->
+            <section aria-labelledby="search-heading">
+              <h2 id="search-heading" class="govbb-text-h2">
+                Choose how to search
+              </h2>
+
+              <div class="cards">
+                <!-- Card 1 -->
+                <div class="card">
+                  <h3 class="govbb-text-h3">Open pharmacies</h3>
+                  <p class="govbb-text-body">
+                    Shows government pharmacies and participating private
+                    pharmacies that are open now.
+                  </p>
+                  <p class="govbb-text-body">
+                    You can share your location to see nearby results first.
+                  </p>
+                  <a class="govbb-btn" href="#results-open"
+                    >Show open pharmacies</a
+                  >
+                </div>
+
+                <!-- Card 2 -->
+                <div class="card">
+                  <h3 class="govbb-text-h3">Government pharmacies</h3>
+                  <p class="govbb-text-body">
+                    Government pharmacies only provide medicines covered by the
+                    Barbados Drug Service.
+                  </p>
+                  <p class="govbb-text-body">
+                    Some medicines may still cost money.
+                  </p>
+                  <a class="govbb-btn" href="#results-government"
+                    >Show government pharmacies</a
+                  >
+                </div>
+
+                <!-- Card 3 -->
+                <div class="card">
+                  <h3 class="govbb-text-h3">Participating private pharmacies</h3>
+                  <p class="govbb-text-body">
+                    These are private pharmacies that work with the Barbados
+                    Drug Service.
+                  </p>
+                  <p class="govbb-text-body">
+                    They may have longer opening hours.
+                  </p>
+                  <p class="govbb-text-body">
+                    They may sell other medicines and items you can buy without
+                    a prescription.
+                  </p>
+                  <p class="govbb-text-body">
+                    You pay a fee to prepare your medicine.
+                  </p>
+                  <a class="govbb-btn" href="#results-private"
+                    >Show participating private pharmacies</a
+                  >
+                </div>
+              </div>
+            </section>
+
+            <!-- What you may pay -->
+            <section aria-labelledby="pay-heading">
+              <h2 id="pay-heading" class="govbb-text-h2">What you may pay</h2>
+              <p class="govbb-text-body">Some medicines may still cost money.</p>
+              <p class="govbb-text-body">
+                The Barbados Drug Service may help lower the cost of some
+                medicines.
+              </p>
+              <p class="govbb-text-body">
+                At participating private pharmacies, you pay a fee to prepare
+                your medicine. This is called a dispensing fee.
+              </p>
+            </section>
+
+            <!-- Where you can use your prescription -->
+            <section aria-labelledby="prescription-heading">
+              <h2 id="prescription-heading" class="govbb-text-h2">
+                Where you can use your prescription
+              </h2>
+              <p class="govbb-text-body">
+                Prescriptions may be different colours.
+              </p>
+              <p class="govbb-text-body">
+                The colour can help show which pharmacy can fill it.
+              </p>
+              <p>
+                <a class="govbb-link" href="#prescription-colours"
+                  >Check where you can use your prescription</a
+                >
+              </p>
+            </section>
+
+            <!-- Check if your medicine is listed -->
+            <section aria-labelledby="listed-heading">
+              <h2 id="listed-heading" class="govbb-text-h2">
+                Check if your medicine is listed
+              </h2>
+              <p class="govbb-text-body">
+                The Barbados National Drug Formulary is the list of medicines
+                covered by the Barbados Drug Service.
+              </p>
+              <p>
+                <a class="govbb-link" href="#medicine-list"
+                  >Check if your medicine is listed</a
+                >
+              </p>
+            </section>
+
+            <!-- What to take to the pharmacy -->
+            <section aria-labelledby="take-heading">
+              <h2 id="take-heading" class="govbb-text-h2">
+                What to take to the pharmacy
+              </h2>
+              <p class="govbb-text-body">Take:</p>
+              <ul class="govbb-list govbb-list--bullet govbb-text-body">
+                <li>the prescription</li>
+                <li>accepted ID for the person the medicine is for</li>
+              </ul>
+              <p class="govbb-text-body">
+                Accepted ID means a Barbados National Identification (ID) card,
+                Barbados passport or Barbados driver&rsquo;s licence.
+              </p>
+              <p class="govbb-text-body">
+                For a child, a child health book is also accepted.
+              </p>
+              <p class="govbb-text-body">
+                Take the original ID. Photocopies are not accepted.
+              </p>
+            </section>
+
+            <!-- Who can get help with medicine costs -->
+            <section aria-labelledby="help-heading">
+              <h2 id="help-heading" class="govbb-text-h2">
+                Who can get help with medicine costs
+              </h2>
+              <p class="govbb-text-body">
+                The Barbados Drug Service may help lower the cost of some
+                medicines.
+              </p>
+              <p class="govbb-text-body">
+                This can depend on the person&rsquo;s age or health condition.
+              </p>
+              <p>
+                <a class="govbb-link" href="#who-can-get-help"
+                  >Check who can get help with medicine costs</a
+                >
+              </p>
+            </section>
+
+            <!-- If you need help before you pay -->
+            <section aria-labelledby="before-pay-heading">
+              <h2 id="before-pay-heading" class="govbb-text-h2">
+                If you need help before you pay
+              </h2>
+              <p class="govbb-text-body">
+                Call the Barbados Drug Service before you pay full price.
+              </p>
+              <div class="contact-strip">
+                <p class="govbb-text-body">
+                  Phone:
+                  <a class="govbb-link" href="tel:+12465354300"
+                    >(246) 535-4300</a
+                  >
+                </p>
+              </div>
+              <p>
+                <a class="govbb-link" href="#contact"
+                  >Contact Barbados Drug Service</a
+                >
+              </p>
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="govbb-footer">
+      <div class="govbb-container govbb-footer__inner">
+        <nav class="govbb-footer__nav" aria-label="Footer">
+          <a class="govbb-footer__link" href="#start">Home</a>
+          <a class="govbb-footer__link" href="#">Cookie Policy</a>
+          <a class="govbb-footer__link" href="#">Terms &amp; Conditions</a>
+          <a class="govbb-footer__link" href="#">Sitemap</a>
+        </nav>
+        <hr class="govbb-footer__divider" aria-hidden="true" />
+        <div class="govbb-footer__end">
+          <img
+            class="govbb-footer__coat"
+            src="https://unpkg.com/@govtech-bb/styles@1.0.0-alpha.16/dist/assets/images/govbb-creast.svg"
+            alt="Government of Barbados Coat of Arms"
+          />
+          <p class="govbb-footer__copy">© 2026 Government of Barbados</p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
