@@ -52,7 +52,8 @@
       #nav-search:checked ~ #search,
       #nav-medicine-list:checked ~ #medicine-list,
       #nav-prescription-colours:checked ~ #prescription-colours,
-      #nav-report:checked ~ #report {
+      #nav-report:checked ~ #report,
+      #nav-problem:checked ~ #problem {
         display: block;
       }
       label.govbb-btn,
@@ -247,6 +248,7 @@
           <input class="screen-nav" type="radio" name="nav" id="nav-medicine-list" />
           <input class="screen-nav" type="radio" name="nav" id="nav-prescription-colours" />
           <input class="screen-nav" type="radio" name="nav" id="nav-report" />
+          <input class="screen-nav" type="radio" name="nav" id="nav-problem" />
 
           <!-- ============ SEARCH SCREEN ============ -->
           <div class="screen" id="search">
@@ -356,6 +358,17 @@
               </p>
               <p class="govbb-text-body">Photocopies are not accepted.</p>
             </section>
+
+            <!-- Problem-at-pharmacy link (above results) -->
+            <p class="govbb-text-body">
+              Check what to do if your ID is not accepted, the pharmacy asks you
+              to pay more than expected, or the pharmacy is out of stock.
+            </p>
+            <p>
+              <label class="govbb-link" for="nav-problem"
+                >What to do if there is a problem at the pharmacy</label
+              >
+            </p>
 
             <ul class="results-list">
               <li class="pharmacy">
@@ -600,6 +613,80 @@
             </div>
           </div>
 
+          <!-- ============ SUPPORT: problem at the pharmacy ============ -->
+          <div class="screen" id="problem">
+            <label class="govbb-link back-link" for="nav-start">Back</label>
+            <h1 class="govbb-text-h1">
+              What if there is a problem at the pharmacy?
+            </h1>
+            <p class="govbb-text-body">
+              Use this page to find out what to do if there is a problem at the
+              pharmacy.
+            </p>
+
+            <section aria-labelledby="prob-id-heading">
+              <h2 id="prob-id-heading" class="govbb-text-h2">
+                Your ID was not accepted
+              </h2>
+              <p class="govbb-text-body">Ask the pharmacist:</p>
+              <ul class="govbb-list govbb-list--bullet govbb-text-body">
+                <li>why the ID was not accepted</li>
+                <li>what ID they need</li>
+                <li>to check again if you think the ID should be accepted</li>
+              </ul>
+            </section>
+
+            <section aria-labelledby="prob-pay-heading">
+              <h2 id="prob-pay-heading" class="govbb-text-h2">
+                The pharmacy asked you to pay more than expected
+              </h2>
+              <p class="govbb-text-body">
+                Before you pay, ask the pharmacist to check if you should get
+                help with the cost of your medicine.
+              </p>
+              <p class="govbb-text-body">If you already paid:</p>
+              <ul class="govbb-list govbb-list--bullet govbb-text-body">
+                <li>keep your receipt</li>
+                <li>
+                  write down the medicine name, pharmacy name and amount you paid
+                </li>
+                <li>then contact the Barbados Drug Service</li>
+              </ul>
+            </section>
+
+            <section aria-labelledby="prob-stock-heading">
+              <h2 id="prob-stock-heading" class="govbb-text-h2">
+                The pharmacy is out of stock
+              </h2>
+              <p class="govbb-text-body">Ask the pharmacist:</p>
+              <ul class="govbb-list govbb-list--bullet govbb-text-body">
+                <li>when the medicine may be available</li>
+                <li>if another pharmacy has the medicine</li>
+                <li>if they can help you find where to go next</li>
+              </ul>
+            </section>
+
+            <section aria-labelledby="prob-contact-heading">
+              <h2 id="prob-contact-heading" class="govbb-text-h2">
+                Contact the Barbados Drug Service
+              </h2>
+              <div class="contact-strip">
+                <p class="govbb-text-body">
+                  Phone:
+                  <a class="govbb-link" href="tel:+12465354300"
+                    >(246) 535-4300</a
+                  >
+                </p>
+                <p class="govbb-text-body">
+                  Email:
+                  <a class="govbb-link" href="mailto:management@drugservice.gov.bb"
+                    >management@drugservice.gov.bb</a
+                  >
+                </p>
+              </div>
+            </section>
+          </div>
+
           <!-- ============ START SCREEN (default, kept last) ============ -->
           <div class="screen" id="start">
             <h1 class="govbb-text-h1">
@@ -678,7 +765,8 @@
                 </li>
                 <li>
                   At a participating private pharmacy, you pay a fee to prepare
-                  your medicine. This is called a dispensing fee.
+                  your medicine. This is called a dispensing fee. The amount
+                  depends on the medicine.
                 </li>
               </ul>
             </section>
@@ -720,13 +808,24 @@
               <p class="govbb-text-body">Photocopies are not accepted.</p>
             </section>
 
-            <!-- Need help before you pay? -->
-            <section aria-labelledby="before-pay-heading">
-              <h2 id="before-pay-heading" class="govbb-text-h2">
-                Need help before you pay?
+            <!-- Need help at the pharmacy? -->
+            <section aria-labelledby="help-pharmacy-heading">
+              <h2 id="help-pharmacy-heading" class="govbb-text-h2">
+                Need help at the pharmacy?
               </h2>
+              <p class="govbb-text-body">Check what to do if:</p>
+              <ul class="govbb-list govbb-list--bullet govbb-text-body">
+                <li>your ID is not accepted</li>
+                <li>the pharmacy asks you to pay more than expected</li>
+                <li>the pharmacy is out of stock</li>
+              </ul>
+              <p>
+                <label class="govbb-link" for="nav-problem"
+                  >What to do if there is a problem at the pharmacy</label
+                >
+              </p>
               <p class="govbb-text-body">
-                Call the Barbados Drug Service before you pay full price.
+                You can also contact the Barbados Drug Service.
               </p>
               <div class="contact-strip">
                 <p class="govbb-text-body">
