@@ -1,0 +1,680 @@
+<!doctype html>
+<!-- Pharmacy finder prototype 2: single search start page -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Find a pharmacy for Barbados Drug Service prescription medicine — The Government of Barbados</title>
+    <link
+      rel="icon"
+      href="https://unpkg.com/@govtech-bb/styles@1.0.0-alpha.16/dist/assets/images/favicon.ico"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/@govtech-bb/styles@1.0.0-alpha.16/dist/styles.css"
+    />
+    <style>
+      @media (max-width: 40rem) {
+        .govbb-page__main {
+          --font-size-h1: 2rem;
+          --font-size-h2: 1.5rem;
+          --font-size-h3: 1.25rem;
+          --font-size-body: 1.0625rem;
+        }
+      }
+      @media (min-width: 40rem) {
+        .govbb-page__main {
+          --font-size-h1: 2.75rem;
+        }
+      }
+
+      .page {
+        max-width: 48rem;
+        margin-inline: auto;
+        padding-block: var(--spacing-m) var(--spacing-l);
+      }
+
+      /* CSS-only navigation: one hidden radio per screen, toggled by clicking a
+         label. No links and no JavaScript, so it works inside the preview
+         panel (which does not follow link/anchor clicks). */
+      .screen-nav {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+      }
+      .screen {
+        display: none;
+      }
+      #nav-start:checked ~ #start,
+      #nav-search:checked ~ #search,
+      #nav-medicine-list:checked ~ #medicine-list,
+      #nav-prescription-colours:checked ~ #prescription-colours {
+        display: block;
+      }
+      label.govbb-btn,
+      label.govbb-link,
+      .logo-label {
+        cursor: pointer;
+      }
+
+      .page h1 {
+        margin: 0 0 var(--spacing-s);
+      }
+      .page section {
+        margin-top: var(--spacing-l);
+      }
+      .page h2 {
+        margin: 0 0 var(--spacing-s);
+      }
+      .page p {
+        margin: 0 0 var(--spacing-s);
+      }
+      .page ul {
+        margin: 0 0 var(--spacing-s);
+      }
+      .page li {
+        margin-bottom: var(--spacing-xxs);
+      }
+      .back-link {
+        display: inline-block;
+        margin-bottom: var(--spacing-m);
+      }
+
+      /* Primary call to action */
+      .cta-row {
+        margin: var(--spacing-m) 0 0;
+      }
+
+      /* Contact details block */
+      .contact-strip {
+        padding: var(--spacing-s) var(--spacing-xm);
+        background: var(--color-blue-10);
+        border-radius: var(--radius-sm);
+      }
+      .contact-strip p {
+        margin: 0 0 var(--spacing-xs);
+      }
+      .contact-strip p:last-child {
+        margin: 0;
+      }
+
+      /* Search page filters */
+      .filters {
+        display: grid;
+        gap: var(--spacing-m);
+        margin: var(--spacing-m) 0;
+        padding: var(--spacing-m);
+        background: var(--color-blue-10);
+        border-radius: var(--radius-sm);
+      }
+      .filter-group__legend,
+      .filter-group__label {
+        margin-bottom: var(--spacing-xs);
+      }
+      .filter-group .govbb-radio-item {
+        margin-bottom: var(--spacing-xs);
+      }
+      .govbb-select-wrapper {
+        max-width: 22rem;
+      }
+      .filter-open {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-s);
+      }
+
+      /* Result cards */
+      .results-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: var(--spacing-s);
+      }
+      .pharmacy {
+        padding: var(--spacing-m);
+        background: var(--color-white-00);
+        border: var(--border-width-form) solid var(--color-grey-00);
+        border-radius: var(--radius-sm);
+      }
+      .pharmacy__head {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-xs);
+        align-items: baseline;
+        justify-content: space-between;
+      }
+      .pharmacy__head h3 {
+        margin: 0;
+      }
+      .pharmacy__meta {
+        margin: var(--spacing-xxs) 0 0;
+        color: var(--color-text-muted);
+      }
+      .pharmacy__type {
+        margin: var(--spacing-xxs) 0 0;
+        font-weight: var(--font-weight-bold);
+      }
+      .pharmacy p:last-child {
+        margin: var(--spacing-xs) 0 0;
+      }
+      .tag {
+        display: inline-block;
+        font-size: var(--font-size-caption);
+        font-weight: var(--font-weight-bold);
+        padding: 2px var(--spacing-xs);
+        border-radius: var(--radius-sm);
+        white-space: nowrap;
+      }
+      .tag--open {
+        background: var(--color-green-10);
+        color: var(--color-green-00);
+      }
+      .tag--closed {
+        background: var(--color-red-10);
+        color: var(--color-red-00);
+      }
+      .tag--unknown {
+        background: var(--color-grey-00);
+        color: var(--color-text-muted);
+      }
+      .placeholder {
+        margin-top: var(--spacing-m);
+        padding: var(--spacing-xm);
+        background: var(--color-blue-10);
+        border-radius: var(--radius-sm);
+      }
+      .placeholder p {
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body class="govbb-page">
+    <!-- Official banner -->
+    <div class="govbb-official-banner">
+      <div class="govbb-container govbb-official-banner__inner">
+        <div class="govbb-official-banner__crest">
+          <img
+            class="govbb-official-banner__icon"
+            src="https://unpkg.com/@govtech-bb/styles@1.0.0-alpha.16/dist/assets/images/govbb-creast.svg"
+            alt=""
+          />
+        </div>
+        <div class="govbb-official-banner__text">
+          <span>Official government website</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <header class="govbb-header">
+      <div class="govbb-container govbb-header__inner">
+        <label for="nav-start" class="logo-label" aria-label="Go to the start page">
+          <img
+            class="govbb-header__logo"
+            src="https://unpkg.com/@govtech-bb/styles@1.0.0-alpha.16/dist/assets/images/govbb-logo.svg"
+            alt="GOVBB"
+          />
+        </label>
+      </div>
+    </header>
+
+    <main class="govbb-page__main">
+      <!-- Alpha status banner -->
+      <div
+        class="govbb-status-banner govbb-status-banner--alpha"
+        role="status"
+        aria-label="alpha status banner"
+        aria-live="polite"
+      >
+        <div class="govbb-container">
+          <p>
+            This page is in
+            <label class="govbb-link govbb-link--secondary" for="nav-start" style="cursor: pointer">Alpha</label>.
+          </p>
+        </div>
+      </div>
+
+      <div class="govbb-container">
+        <div class="page">
+          <!-- CSS-only navigation: hidden radios toggled by the labels below -->
+          <input class="screen-nav" type="radio" name="nav" id="nav-start" checked />
+          <input class="screen-nav" type="radio" name="nav" id="nav-search" />
+          <input class="screen-nav" type="radio" name="nav" id="nav-medicine-list" />
+          <input class="screen-nav" type="radio" name="nav" id="nav-prescription-colours" />
+
+          <!-- ============ SEARCH SCREEN ============ -->
+          <div class="screen" id="search">
+            <label class="govbb-link back-link" for="nav-start">Back</label>
+            <h1 class="govbb-text-h1">Search for a pharmacy</h1>
+            <p class="govbb-text-body">
+              This search shows government pharmacies and private pharmacies that
+              work with the Barbados Drug Service.
+            </p>
+
+            <div class="filters">
+              <fieldset class="govbb-fieldset filter-group">
+                <legend class="govbb-fieldset__legend filter-group__legend">
+                  Pharmacy type
+                </legend>
+                <div class="govbb-radio-item">
+                  <input
+                    class="govbb-radio"
+                    type="radio"
+                    name="ptype"
+                    id="ptype-all"
+                    checked
+                  />
+                  <label class="govbb-radio-item__label" for="ptype-all"
+                    >All pharmacies in this service</label
+                  >
+                </div>
+                <div class="govbb-radio-item">
+                  <input
+                    class="govbb-radio"
+                    type="radio"
+                    name="ptype"
+                    id="ptype-gov"
+                  />
+                  <label class="govbb-radio-item__label" for="ptype-gov"
+                    >Government pharmacies</label
+                  >
+                </div>
+                <div class="govbb-radio-item">
+                  <input
+                    class="govbb-radio"
+                    type="radio"
+                    name="ptype"
+                    id="ptype-priv"
+                  />
+                  <label class="govbb-radio-item__label" for="ptype-priv"
+                    >Participating private pharmacies</label
+                  >
+                </div>
+                <p class="govbb-hint" style="margin-top: var(--spacing-xs)">
+                  Participating private pharmacies work with the Barbados Drug
+                  Service. They may also sell other medicines and items you can
+                  buy without a prescription.
+                </p>
+              </fieldset>
+
+              <div class="filter-group">
+                <label class="govbb-label filter-group__label" for="parish"
+                  >Parish</label
+                >
+                <div class="govbb-select-wrapper">
+                  <select class="govbb-select" id="parish">
+                    <option>All parishes</option>
+                    <option>Christ Church</option>
+                    <option>St. Andrew</option>
+                    <option>St. George</option>
+                    <option>St. James</option>
+                    <option>St. John</option>
+                    <option>St. Joseph</option>
+                    <option>St. Lucy</option>
+                    <option>St. Michael</option>
+                    <option>St. Peter</option>
+                    <option>St. Philip</option>
+                    <option>St. Thomas</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="filter-group filter-open">
+                <input type="checkbox" class="govbb-checkbox" id="open-now" />
+                <label class="govbb-checkbox-item__label" for="open-now"
+                  >Show only pharmacies open now</label
+                >
+              </div>
+            </div>
+
+            <!-- Short reminder; full accepted ID list stays on the start page -->
+            <section aria-labelledby="before-you-go-heading">
+              <h2 id="before-you-go-heading" class="govbb-text-h2">
+                Before you go
+              </h2>
+              <p class="govbb-text-body">
+                Take your prescription and original accepted ID for the person
+                the medicine is for.
+              </p>
+              <p class="govbb-text-body">Photocopies are not accepted.</p>
+            </section>
+
+            <ul class="results-list">
+              <li class="pharmacy">
+                <div class="pharmacy__head">
+                  <h3 class="govbb-text-h3">Winston Scott Polyclinic</h3>
+                  <span class="tag tag--open">Open now</span>
+                </div>
+                <p class="pharmacy__type">Government pharmacy</p>
+                <p class="pharmacy__meta">
+                  Mon&ndash;Fri 8:15am&ndash;10:00pm &middot; Sat 8:15am&ndash;4:30pm
+                </p>
+                <p class="pharmacy__meta">Jemmotts Lane, St. Michael</p>
+                <p>
+                  <a class="govbb-link" href="tel:+12465363419">(246) 536-3419</a>
+                </p>
+                <p><a class="govbb-link" href="#">View on map</a></p>
+              </li>
+
+              <li class="pharmacy">
+                <div class="pharmacy__head">
+                  <h3 class="govbb-text-h3">iMart Pharmacy &mdash; Sheraton Mall</h3>
+                  <span class="tag tag--open">Open now</span>
+                </div>
+                <p class="pharmacy__type">Participating private pharmacy</p>
+                <p class="pharmacy__meta">Mon&ndash;Sat 9:00am&ndash;8:00pm</p>
+                <p class="pharmacy__meta">Sheraton Mall, Wildey, St. Michael</p>
+                <p class="pharmacy__meta">May also sell other medicines and items.</p>
+                <p>
+                  <a class="govbb-link" href="tel:+12462713784">(246) 271-3784</a>
+                </p>
+                <p><a class="govbb-link" href="#">View on map</a></p>
+              </li>
+
+              <li class="pharmacy">
+                <div class="pharmacy__head">
+                  <h3 class="govbb-text-h3">St. Andrew Outpatient Clinic</h3>
+                  <span class="tag tag--closed">Closed</span>
+                </div>
+                <p class="pharmacy__type">Government pharmacy</p>
+                <p class="pharmacy__meta">Wed 8:15am&ndash;12:00pm only</p>
+                <p class="pharmacy__meta">Belleplaine, St. Andrew</p>
+                <p>
+                  <a class="govbb-link" href="tel:+12465364071">(246) 536-4071</a>
+                </p>
+                <p><a class="govbb-link" href="#">View on map</a></p>
+              </li>
+
+              <li class="pharmacy">
+                <div class="pharmacy__head">
+                  <h3 class="govbb-text-h3">Lewis Drug Mart</h3>
+                  <span class="tag tag--unknown">Status not confirmed</span>
+                </div>
+                <p class="pharmacy__type">Participating private pharmacy</p>
+                <p class="pharmacy__meta">Call before you visit</p>
+                <p class="pharmacy__meta">Rockley Main Road, Christ Church</p>
+                <p class="pharmacy__meta">May also sell other medicines and items.</p>
+                <p>
+                  <a class="govbb-link" href="tel:+12464358090">(246) 435-8090</a>
+                </p>
+                <p><a class="govbb-link" href="#">View on map</a></p>
+              </li>
+            </ul>
+
+            <div class="placeholder">
+              <p class="govbb-text-body">
+                This is a prototype. Real pharmacy results, opening hours and a
+                map would appear here.
+              </p>
+            </div>
+          </div>
+
+          <!-- ============ SUPPORT SCREEN ============ -->
+          <div class="screen" id="medicine-list">
+            <label class="govbb-link back-link" for="nav-start">Back</label>
+            <h1 class="govbb-text-h1">Check if your medicine is listed</h1>
+            <p class="govbb-text-body">
+              The Barbados National Drug Formulary is the list of medicines
+              covered by the Barbados Drug Service.
+            </p>
+            <div class="placeholder">
+              <p class="govbb-text-body">
+                This is a prototype. A search of the Barbados National Drug
+                Formulary would appear here.
+              </p>
+            </div>
+          </div>
+
+          <!-- ============ GUIDANCE: prescription colours ============ -->
+          <div class="screen" id="prescription-colours">
+            <label class="govbb-link back-link" for="nav-start">Back</label>
+            <h1 class="govbb-text-h1">What prescription colours mean</h1>
+            <p class="govbb-text-body">
+              Your prescription colour can help show which pharmacy can fill it.
+            </p>
+            <p class="govbb-text-body">
+              Where you can use your prescription also depends on where it came
+              from.
+            </p>
+
+            <section aria-labelledby="rx-blue">
+              <h2 id="rx-blue" class="govbb-text-h2">Blue prescription</h2>
+              <p class="govbb-text-body">
+                This is usually from a public polyclinic or outpatient clinic.
+              </p>
+              <p class="govbb-text-body">You can take it to:</p>
+              <ul class="govbb-list govbb-list--bullet govbb-text-body">
+                <li>a government pharmacy</li>
+                <li>a participating private pharmacy</li>
+              </ul>
+              <p class="govbb-text-body">
+                At a participating private pharmacy, you pay a fee to prepare
+                your medicine. This is called a dispensing fee.
+              </p>
+            </section>
+
+            <section aria-labelledby="rx-yellow">
+              <h2 id="rx-yellow" class="govbb-text-h2">
+                Yellow or green prescription
+              </h2>
+              <p class="govbb-text-body">
+                This is usually from the Queen Elizabeth Hospital.
+              </p>
+              <p class="govbb-text-body">You can take it to:</p>
+              <ul class="govbb-list govbb-list--bullet govbb-text-body">
+                <li>the Queen Elizabeth Hospital pharmacy</li>
+                <li>some government pharmacies for selected medicines</li>
+              </ul>
+              <p class="govbb-text-body">
+                If you take it to a participating private pharmacy, you may have
+                to pay the full cost.
+              </p>
+            </section>
+
+            <section aria-labelledby="rx-pink">
+              <h2 id="rx-pink" class="govbb-text-h2">
+                Pink or white prescription
+              </h2>
+              <p class="govbb-text-body">
+                This is usually from a private doctor.
+              </p>
+              <p class="govbb-text-body">You can take it to:</p>
+              <ul class="govbb-list govbb-list--bullet govbb-text-body">
+                <li>a government pharmacy</li>
+                <li>a participating private pharmacy</li>
+              </ul>
+              <p class="govbb-text-body">
+                At a participating private pharmacy, you pay a fee to prepare
+                your medicine. This is called a dispensing fee.
+              </p>
+              <p class="govbb-text-body">Some medicines may still cost money.</p>
+            </section>
+
+            <section aria-labelledby="rx-unsure">
+              <h2 id="rx-unsure" class="govbb-text-h2">If you are not sure</h2>
+              <p class="govbb-text-body">
+                Ask the pharmacist to check before you pay.
+              </p>
+              <p class="govbb-text-body">
+                You can also call the Barbados Drug Service.
+              </p>
+              <div class="contact-strip">
+                <p class="govbb-text-body">
+                  Phone:
+                  <a class="govbb-link" href="tel:+12465354300"
+                    >(246) 535-4300</a
+                  >
+                </p>
+              </div>
+            </section>
+          </div>
+
+          <!-- ============ START SCREEN (default, kept last) ============ -->
+          <div class="screen" id="start">
+            <h1 class="govbb-text-h1">
+              Find a pharmacy for Barbados Drug Service prescription medicine
+            </h1>
+
+            <p class="govbb-text-body">Use this service to search for:</p>
+            <ul class="govbb-list govbb-list--bullet govbb-text-body">
+              <li>government pharmacies</li>
+              <li>
+                private pharmacies that work with the Barbados Drug Service
+              </li>
+            </ul>
+            <p class="govbb-text-body">
+              The Barbados Drug Service helps lower the cost of some prescription
+              medicines. Some medicines may still cost money.
+            </p>
+
+            <p class="cta-row">
+              <label class="govbb-btn" for="nav-search">Search for a pharmacy</label>
+            </p>
+
+            <!-- Who can get help with medicine costs -->
+            <section aria-labelledby="help-heading">
+              <h2 id="help-heading" class="govbb-text-h2">
+                Who can get help with medicine costs
+              </h2>
+              <p class="govbb-text-body">
+                You may be able to get help with medicine costs if you are:
+              </p>
+              <ul class="govbb-list govbb-list--bullet govbb-text-body">
+                <li>a Barbadian citizen</li>
+                <li>a permanent resident</li>
+                <li>covered by CARICOM free movement</li>
+              </ul>
+              <p class="govbb-text-body">You must also have:</p>
+              <ul class="govbb-list govbb-list--bullet govbb-text-body">
+                <li>
+                  a prescription from a doctor registered with the Medical
+                  Council of Barbados. Your doctor can work in the public or
+                  private health service.
+                </li>
+                <li>
+                  a prescription medicine on the Barbados National Drug Formulary
+                </li>
+              </ul>
+              <p class="govbb-text-body">
+                The Barbados National Drug Formulary is the list of medicines
+                covered by the Barbados Drug Service.
+              </p>
+              <p>
+                <label class="govbb-link" for="nav-medicine-list"
+                  >Check if your medicine is listed</label
+                >
+              </p>
+            </section>
+
+            <!-- Prescription colour -->
+            <section aria-labelledby="rx-colour-heading">
+              <h2 id="rx-colour-heading" class="govbb-text-h2">
+                Prescription colour
+              </h2>
+              <p class="govbb-text-body">
+                Your prescription colour can affect which pharmacies can fill it.
+              </p>
+              <p>
+                <label class="govbb-link" for="nav-prescription-colours"
+                  >Check what prescription colours mean</label
+                >
+              </p>
+            </section>
+
+            <!-- What to take to the pharmacy -->
+            <section aria-labelledby="take-heading">
+              <h2 id="take-heading" class="govbb-text-h2">
+                What to take to the pharmacy
+              </h2>
+              <p class="govbb-text-body">Take:</p>
+              <ul class="govbb-list govbb-list--bullet govbb-text-body">
+                <li>the prescription</li>
+                <li>
+                  original accepted ID for the person the medicine is for
+                </li>
+              </ul>
+              <p class="govbb-text-body">Accepted ID can be:</p>
+              <ul class="govbb-list govbb-list--bullet govbb-text-body">
+                <li>Barbados National Identification (ID) card</li>
+                <li>Barbados passport</li>
+                <li>Barbados driver&rsquo;s licence</li>
+                <li>child health book, if the medicine is for a child</li>
+              </ul>
+              <p class="govbb-text-body">Photocopies are not accepted.</p>
+            </section>
+
+            <!-- What you may pay -->
+            <section aria-labelledby="pay-heading">
+              <h2 id="pay-heading" class="govbb-text-h2">What you may pay</h2>
+              <p class="govbb-text-body">Some medicines may still cost money.</p>
+              <ul class="govbb-list govbb-list--bullet govbb-text-body">
+                <li>
+                  At a government pharmacy, you do not pay a fee to prepare your
+                  medicine.
+                </li>
+                <li>
+                  At a participating private pharmacy, you pay a fee to prepare
+                  your medicine. This is called a dispensing fee.
+                </li>
+              </ul>
+            </section>
+
+            <!-- Need help before you pay? -->
+            <section aria-labelledby="before-pay-heading">
+              <h2 id="before-pay-heading" class="govbb-text-h2">
+                Need help before you pay?
+              </h2>
+              <p class="govbb-text-body">
+                Call the Barbados Drug Service before you pay full price.
+              </p>
+              <div class="contact-strip">
+                <p class="govbb-text-body">
+                  Phone:
+                  <a class="govbb-link" href="tel:+12465354300"
+                    >(246) 535-4300</a
+                  >
+                </p>
+                <p class="govbb-text-body">
+                  Email:
+                  <a class="govbb-link" href="mailto:management@drugservice.gov.bb"
+                    >management@drugservice.gov.bb</a
+                  >
+                </p>
+              </div>
+            </section>
+
+            <!-- Bottom button -->
+            <p class="cta-row">
+              <label class="govbb-btn" for="nav-search">Search for a pharmacy</label>
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="govbb-footer">
+      <div class="govbb-container govbb-footer__inner">
+        <nav class="govbb-footer__nav" aria-label="Footer">
+          <label class="govbb-footer__link" for="nav-start" style="cursor: pointer">Home</label>
+          <a class="govbb-footer__link" href="#">Cookie Policy</a>
+          <a class="govbb-footer__link" href="#">Terms &amp; Conditions</a>
+          <a class="govbb-footer__link" href="#">Sitemap</a>
+        </nav>
+        <hr class="govbb-footer__divider" aria-hidden="true" />
+        <div class="govbb-footer__end">
+          <img
+            class="govbb-footer__coat"
+            src="https://unpkg.com/@govtech-bb/styles@1.0.0-alpha.16/dist/assets/images/govbb-creast.svg"
+            alt="Government of Barbados Coat of Arms"
+          />
+          <p class="govbb-footer__copy">© 2026 Government of Barbados</p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
