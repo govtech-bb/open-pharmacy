@@ -51,7 +51,8 @@
       #nav-start:checked ~ #start,
       #nav-search:checked ~ #search,
       #nav-medicine-list:checked ~ #medicine-list,
-      #nav-prescription-colours:checked ~ #prescription-colours {
+      #nav-prescription-colours:checked ~ #prescription-colours,
+      #nav-report:checked ~ #report {
         display: block;
       }
       label.govbb-btn,
@@ -245,15 +246,33 @@
           <input class="screen-nav" type="radio" name="nav" id="nav-search" />
           <input class="screen-nav" type="radio" name="nav" id="nav-medicine-list" />
           <input class="screen-nav" type="radio" name="nav" id="nav-prescription-colours" />
+          <input class="screen-nav" type="radio" name="nav" id="nav-report" />
 
           <!-- ============ SEARCH SCREEN ============ -->
           <div class="screen" id="search">
             <label class="govbb-link back-link" for="nav-start">Back</label>
             <h1 class="govbb-text-h1">Search for a pharmacy</h1>
+            <p class="govbb-text-body">This search shows:</p>
+            <ul class="govbb-list govbb-list--bullet govbb-text-body">
+              <li>government pharmacies open to the public</li>
+              <li>
+                private pharmacies that work with the Barbados Drug Service and
+                may sell other medicines and items
+              </li>
+            </ul>
             <p class="govbb-text-body">
-              This search shows government pharmacies and private pharmacies that
-              work with the Barbados Drug Service.
+              There are 16 government pharmacies. Twelve are open to the public.
             </p>
+            <p class="govbb-text-body">
+              These 4 government pharmacies are not shown in this search because
+              they only fill prescriptions written at that location:
+            </p>
+            <ul class="govbb-list govbb-list--bullet govbb-text-body">
+              <li>Geriatric Hospital</li>
+              <li>St. Philip District Hospital</li>
+              <li>Psychiatric Hospital</li>
+              <li>Queen Elizabeth Hospital</li>
+            </ul>
 
             <div class="filters">
               <fieldset class="govbb-fieldset filter-group">
@@ -294,11 +313,6 @@
                     >Participating private pharmacies</label
                   >
                 </div>
-                <p class="govbb-hint" style="margin-top: var(--spacing-xs)">
-                  Participating private pharmacies work with the Barbados Drug
-                  Service. They may also sell other medicines and items you can
-                  buy without a prescription.
-                </p>
               </fieldset>
 
               <div class="filter-group">
@@ -411,6 +425,22 @@
                 map would appear here.
               </p>
             </div>
+
+            <!-- Report wrong pharmacy details -->
+            <section aria-labelledby="report-heading">
+              <h2 id="report-heading" class="govbb-text-h2">
+                Report wrong pharmacy details
+              </h2>
+              <p class="govbb-text-body">
+                Tell the Barbados Drug Service if a pharmacy detail is wrong or
+                missing.
+              </p>
+              <p>
+                <label class="govbb-link" for="nav-report"
+                  >Report wrong pharmacy details</label
+                >
+              </p>
+            </section>
           </div>
 
           <!-- ============ SUPPORT SCREEN ============ -->
@@ -421,12 +451,32 @@
               The Barbados National Drug Formulary is the list of medicines
               covered by the Barbados Drug Service.
             </p>
-            <div class="placeholder">
+            <p class="govbb-text-body">
+              Check if your medicine is on the list before you go to the
+              pharmacy.
+            </p>
+            <p class="cta-row">
+              <a
+                class="govbb-btn"
+                href="https://formulary.drugservice.gov.bb/bndf2022/menu.php"
+                target="_blank"
+                rel="noopener"
+                >Check the Barbados National Drug Formulary</a
+              >
+            </p>
+            <section aria-labelledby="not-listed-heading">
+              <h2 id="not-listed-heading" class="govbb-text-h2">
+                If your medicine is not listed
+              </h2>
+              <p class="govbb-text-body">Ask your doctor:</p>
+              <ul class="govbb-list govbb-list--bullet govbb-text-body">
+                <li>if there is another listed medicine you can use</li>
+                <li>if they can ask for special approval</li>
+              </ul>
               <p class="govbb-text-body">
-                This is a prototype. A search of the Barbados National Drug
-                Formulary would appear here.
+                Special approval is only for government pharmacy use.
               </p>
-            </div>
+            </section>
           </div>
 
           <!-- ============ GUIDANCE: prescription colours ============ -->
@@ -513,6 +563,43 @@
             </section>
           </div>
 
+          <!-- ============ SUPPORT: report wrong pharmacy details ============ -->
+          <div class="screen" id="report">
+            <label class="govbb-link back-link" for="nav-start">Back</label>
+            <h1 class="govbb-text-h1">Report wrong pharmacy details</h1>
+            <p class="govbb-text-body">Pharmacy details can change.</p>
+            <p class="govbb-text-body">Tell the Barbados Drug Service if:</p>
+            <ul class="govbb-list govbb-list--bullet govbb-text-body">
+              <li>an address is wrong</li>
+              <li>a phone number is wrong</li>
+              <li>opening hours are wrong</li>
+              <li>a pharmacy has closed</li>
+              <li>a pharmacy should be added</li>
+              <li>a map pin is in the wrong place</li>
+            </ul>
+            <p class="govbb-text-body">
+              Email:
+              <a class="govbb-link" href="mailto:management@drugservice.gov.bb"
+                >management@drugservice.gov.bb</a
+              >
+            </p>
+            <p class="govbb-text-body">Include:</p>
+            <ul class="govbb-list govbb-list--bullet govbb-text-body">
+              <li>the pharmacy name</li>
+              <li>what needs to be changed</li>
+              <li>your name and contact details, if you want a reply</li>
+            </ul>
+            <p class="govbb-text-body">
+              You can also call the Barbados Drug Service.
+            </p>
+            <div class="contact-strip">
+              <p class="govbb-text-body">
+                Phone:
+                <a class="govbb-link" href="tel:+12465354300">(246) 535-4300</a>
+              </p>
+            </div>
+          </div>
+
           <!-- ============ START SCREEN (default, kept last) ============ -->
           <div class="screen" id="start">
             <h1 class="govbb-text-h1">
@@ -546,18 +633,23 @@
                 Who can get help with medicine costs
               </h2>
               <p class="govbb-text-body">
-                You may be able to get help with medicine costs if you are:
+                Barbadian citizens, permanent residents and people covered by
+                CARICOM free movement can get help with medicine costs if they
+                are:
               </p>
               <ul class="govbb-list govbb-list--bullet govbb-text-body">
-                <li>a Barbadian citizen</li>
-                <li>a permanent resident</li>
-                <li>covered by CARICOM free movement</li>
+                <li>under 16</li>
+                <li>65 or over</li>
+                <li>
+                  any age and need medicine for diabetes, asthma, high blood
+                  pressure, cancer, epilepsy or glaucoma
+                </li>
               </ul>
-              <p class="govbb-text-body">You must also have:</p>
+              <p class="govbb-text-body">They must also have:</p>
               <ul class="govbb-list govbb-list--bullet govbb-text-body">
                 <li>
                   a prescription from a doctor registered with the Medical
-                  Council of Barbados. Your doctor can work in the public or
+                  Council of Barbados. The doctor can work in the public or
                   private health service.
                 </li>
                 <li>
