@@ -1993,11 +1993,21 @@
         maxBoundsViscosity: 1.0
       });
       pharmacyMap.fitBounds(bounds);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors',
+      // CARTO Voyager (key-free production CDN) as the primary base layer, matching the govbb-directory
+      // skill. Raw OSM volunteer tiles load ONLY as a fallback if CARTO fails — never as the default,
+      // because the volunteer servers can rate-limit/block a public service under their Tile Usage Policy.
+      const cartoTiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        subdomains: 'abcd',
+        attribution: '© <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions" target="_blank">CARTO</a>',
         minZoom: 10,
         maxZoom: 17
       }).addTo(pharmacyMap);
+      const osmTiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors',
+        minZoom: 10,
+        maxZoom: 17
+      });
+      cartoTiles.on('tileerror', function () { osmTiles.addTo(pharmacyMap); });
 
       clusterGroup = L.markerClusterGroup({ showCoverageOnHover: false, maxClusterRadius: 40, spiderfyOnMaxZoom: true });
       PHARMACIES.forEach(p => {
