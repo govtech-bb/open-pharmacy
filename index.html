@@ -8,9 +8,14 @@
   <link rel="icon" href="./dist/assets/images/favicon.ico">
   <link rel="stylesheet" href="./dist/styles.css">
   <style>
-    /* H1 needs top breathing room and bottom gap */
-    .service-info-section > .govbb-container > h1 {
+    /* "Last updated" caption — top breathing room + grey, matching find.html */
+    .service-info-section > .govbb-container > .page-updated {
       padding-top: var(--spacing-m);
+      margin: 0 0 var(--spacing-s);
+      color: var(--color-mid-grey-00);
+    }
+    /* H1 bottom gap (top spacing now sits on the caption above it) */
+    .service-info-section > .govbb-container > h1 {
       margin-bottom: var(--spacing-s);
     }
 
@@ -37,9 +42,12 @@
         justify-content: center;
       }
     }
+    .skip-link { position:absolute; left:-999px; top:0; z-index:3000; background:var(--color-teal-00); color:#fff; padding:10px 16px; font-weight:var(--font-weight-bold); border-radius:0 0 4px 0; }
+    .skip-link:focus { left:0; }
   </style>
 </head>
 <body class="govbb-page">
+  <a class="skip-link" href="#main">Skip to main content</a>
 
   <!-- Official banner -->
   <div class="govbb-official-banner">
@@ -59,9 +67,14 @@
   <header class="govbb-header">
     <div class="govbb-container">
       <div class="govbb-header__inner">
-        <a href="https://gov.bb" aria-label="Government of Barbados home">
-          <img src="./dist/assets/images/govbb-logo.svg" alt="GOVBB" class="govbb-header__logo">
+        <a href="https://alpha.gov.bb/" aria-label="Government of Barbados home">
+          <img src="./dist/assets/images/govbb-logo.svg" alt="Government of Barbados" class="govbb-header__logo">
         </a>
+        <nav class="govbb-header__nav" aria-label="Site navigation">
+          <a href="https://alpha.gov.bb/" class="govbb-header__nav-link">Home</a>
+          <a href="https://alpha.gov.bb/services" class="govbb-header__nav-link">Services</a>
+          <a href="https://alpha.gov.bb/government/organisations" class="govbb-header__nav-link">Organisations</a>
+        </nav>
       </div>
     </div>
   </header>
@@ -69,7 +82,7 @@
   <!-- Alpha banner -->
   <div class="govbb-status-banner govbb-status-banner--alpha">
     <div class="govbb-container">
-      <p>This page is in <a href="https://www.gov.bb/alpha" class="govbb-link">Alpha</a>.</p>
+      <p>This page is in <a href="https://alpha.gov.bb/what-we-mean-by-alpha" class="govbb-link">Alpha</a>.</p>
     </div>
   </div>
 
@@ -78,17 +91,17 @@
     <div class="govbb-container">
       <ol class="govbb-breadcrumbs__list">
         <li class="govbb-breadcrumbs__item">
-          <a href="https://gov.bb" class="govbb-breadcrumbs__link">Home</a>
+          <a href="https://alpha.gov.bb/" class="govbb-breadcrumbs__link">Home</a>
         </li>
         <li class="govbb-breadcrumbs__item">
-          <a href="https://gov.bb/services" class="govbb-breadcrumbs__link">Services</a>
+          <a href="https://alpha.gov.bb/health-and-emergency-services" class="govbb-breadcrumbs__link">Health and emergency services</a>
         </li>
         <li class="govbb-breadcrumbs__item" aria-current="page">Get free or subsidised medication</li>
       </ol>
     </div>
   </nav>
 
-  <main>
+  <main id="main">
 
     <!--
       All content sits in ONE service-info-section.
@@ -102,20 +115,37 @@
       <div class="govbb-container">
 
         <!-- ── Page heading ── -->
+        <p class="govbb-text-caption page-updated">Last updated on 15th May 2026</p>
         <h1 class="govbb-text-h1">Get free or subsidised medication</h1>
 
         <p class="govbb-text-body">
           Use this service to find pharmacies where you can use the Special Benefit Service (SBS). SBS is a Barbados Drug Service programme that can lower or remove the cost of some prescription medicines.
         </p>
-        <p class="govbb-text-body">You can search for:</p>
+        <p class="govbb-text-body">You can look for:</p>
         <ul class="govbb-list govbb-list--bullet">
           <li>government pharmacies</li>
           <li>private pharmacies that work with the Barbados Drug Service</li>
         </ul>
 
         <div class="cta-wrap">
-          <a href="find.html" class="govbb-btn govbb-btn--cta">Search for a pharmacy</a>
+          <a href="find.html" class="govbb-btn govbb-btn--cta">Find a pharmacy</a>
         </div>
+
+        <!-- ── What to take ── -->
+        <h2 class="govbb-text-h2" id="what-to-take">What to take to the pharmacy</h2>
+
+        <ul class="govbb-list govbb-list--bullet">
+          <li>the prescription</li>
+          <li>original accepted ID for the person the medicine is for</li>
+        </ul>
+        <p class="govbb-text-body">Accepted ID can be:</p>
+        <ul class="govbb-list govbb-list--bullet">
+          <li>Barbados National Identification (ID) card</li>
+          <li>Barbados passport</li>
+          <li>Barbados driver's licence</li>
+          <li>child health book, if the medicine is for a child</li>
+        </ul>
+        <p class="govbb-text-body">Photocopies are not accepted.</p>
 
         <!-- ── Who can get help ── -->
         <h2 class="govbb-text-h2" id="eligibility">Who can get help with medicine costs</h2>
@@ -125,9 +155,9 @@
         </p>
         <p class="govbb-text-body">One of these must also apply:</p>
         <ul class="govbb-list govbb-list--bullet">
+          <li>you need medicine for diabetes, asthma, high blood pressure, cancer, epilepsy or glaucoma (any age)</li>
           <li>you are under 16</li>
           <li>you are 65 or over</li>
-          <li>you are any age and need medicine for diabetes, asthma, high blood pressure, cancer, epilepsy or glaucoma</li>
         </ul>
         <p class="govbb-text-body">You will also need:</p>
         <ul class="govbb-list govbb-list--bullet">
@@ -170,24 +200,8 @@
 
         <p class="govbb-text-body">Your prescription colour can affect which pharmacies can fill it.</p>
         <p class="govbb-text-body">
-          <a href="rx-colours.html" class="govbb-link">Check what prescription colours mean</a>
+          <a href="rx-colours.html" class="govbb-link" target="_blank" rel="noopener">Check what prescription colours mean</a>
         </p>
-
-        <!-- ── What to take ── -->
-        <h2 class="govbb-text-h2" id="what-to-take">What to take to the pharmacy</h2>
-
-        <ul class="govbb-list govbb-list--bullet">
-          <li>the prescription</li>
-          <li>original accepted ID for the person the medicine is for</li>
-        </ul>
-        <p class="govbb-text-body">Accepted ID can be:</p>
-        <ul class="govbb-list govbb-list--bullet">
-          <li>Barbados National Identification (ID) card</li>
-          <li>Barbados passport</li>
-          <li>Barbados driver's licence</li>
-          <li>child health book, if the medicine is for a child</li>
-        </ul>
-        <p class="govbb-text-body">Photocopies are not accepted.</p>
 
         <!-- ── Need help ── -->
         <h2 class="govbb-text-h2" id="help">Need help at the pharmacy?</h2>
@@ -198,12 +212,11 @@
           <li>the pharmacy asks you to pay more than expected</li>
           <li>the pharmacy is out of stock</li>
         </ul>
-        <p class="govbb-text-body">
-          <a href="help.html" class="govbb-link">What to do if there is a problem at the pharmacy</a>
-        </p>
-        <p class="govbb-text-body">You can also contact the Barbados Drug Service.</p>
+        <p class="govbb-text-body">Contact the Barbados Drug Service.</p>
         <p class="govbb-text-body">Phone: <a href="tel:+12465354300" class="govbb-link">(246) 535-4300</a></p>
         <p class="govbb-text-body">Email: <a href="mailto:management@drugservice.gov.bb" class="govbb-link">management@drugservice.gov.bb</a></p>
+        <p class="govbb-text-body">Website: <a href="https://drugservice.gov.bb" class="govbb-link">drugservice.gov.bb</a></p>
+        <p class="govbb-text-body">Address: 6th Floor, Warrens Tower II</p>
 
       </div>
     </section>
@@ -225,10 +238,9 @@
     <div class="govbb-container">
       <div class="govbb-footer__inner">
         <nav class="govbb-footer__nav" aria-label="Footer navigation">
-          <a href="https://gov.bb" class="govbb-footer__link">Home</a>
-          <a href="#" class="govbb-footer__link">Cookie Policy</a>
-          <a href="#" class="govbb-footer__link">Terms &amp; Conditions</a>
-          <a href="#" class="govbb-footer__link">Sitemap</a>
+          <a href="https://alpha.gov.bb/" class="govbb-footer__link">Home</a>
+          <a href="https://alpha.gov.bb/terms-conditions" class="govbb-footer__link">Terms &amp; Conditions</a>
+          <a href="https://job-boards.greenhouse.io/govtechbarbados" class="govbb-footer__link">Careers</a>
         </nav>
         <hr class="govbb-footer__divider">
         <div class="govbb-footer__end">
@@ -241,5 +253,6 @@
     </div>
   </footer>
 
+  <script src="comments.js" defer></script>
 </body>
 </html>

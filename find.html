@@ -3,11 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="description" content="Directory of Barbados pharmacies that accept Special Benefit Service prescriptions. See opening hours, filter by parish, and find one open now.">
-  <title>Find an open pharmacy — Barbados Drug Service</title>
+  <meta name="description" content="Directory of Barbados pharmacies that accept Special Benefit Service (SBS) prescriptions. Filter by parish or type, view opening hours, and find one on the map.">
+  <title>Find a Special Benefit Service (SBS) pharmacy — Barbados Drug Service</title>
   <link rel="icon" href="./dist/assets/images/favicon.ico">
   <link rel="stylesheet" href="./dist/styles.css">
   <link rel="stylesheet" href="./dist/leaflet.min.css">
+  <link rel="stylesheet" href="./dist/MarkerCluster.css">
+  <link rel="stylesheet" href="./dist/MarkerCluster.Default.css">
   <style>
     /* ── Pharmacy Finder custom styles ── */
 
@@ -75,8 +77,8 @@
 
     /* ── Filter bar ── */
     .filter-bar {
-      background: var(--color-teal-10, #e6f4f0);
-      border-bottom: 2px solid var(--color-teal-00);
+      background: var(--color-blue-10);
+      border-bottom: 1px solid var(--color-grey-00);
       padding: var(--spacing-s) 0;
       position: sticky;
       top: 0;
@@ -193,7 +195,7 @@
       font-weight: var(--font-weight-bold);
       color: var(--color-text);
       white-space: nowrap;
-      margin-left: auto;
+      margin-right: auto;
     }
     .mobile-filter-btn.has-filters {
       background: var(--color-teal-00);
@@ -257,11 +259,6 @@
       font-size: var(--font-size-body);
       font-weight: var(--font-weight-bold);
     }
-    #open-filter-note {
-      font-size: var(--font-size-caption-sm);
-      color: var(--color-mid-grey-00);
-      width: 100%;
-    }
     #filter-context {
       font-size: var(--font-size-caption);
       color: var(--color-text);
@@ -279,7 +276,7 @@
     }
     .gds-checkbox__label {
       font-size: var(--font-size-body);
-      font-weight: var(--font-weight-bold);
+      font-weight: var(--font-weight-normal);
       color: var(--color-text);
       cursor: pointer;
     }
@@ -435,35 +432,29 @@
     .pharmacy-card--private    { border-left: 5px solid var(--color-yellow-00); }
     .pharmacy-card--unconfirmed{ border-left: 5px solid var(--color-grey-40); }
 
+    /* Header always stacks: name on its own line(s), badges beneath — no
+       row layout, so a long name can never crowd or sit under the badge. */
     .pharmacy-card__top {
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
       align-items: flex-start;
-      gap: 8px;
+      gap: 6px;
     }
     .pharmacy-card__name {
       font-size: var(--font-size-h4);
       line-height: var(--line-height-h4);
       font-weight: var(--font-weight-bold);
-      flex: 1;
+      min-width: 0;
+      overflow-wrap: anywhere;
     }
     .pharmacy-card__status-wrap {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
+      flex-wrap: wrap;
       gap: 4px;
-      align-items: flex-end;
-      flex-shrink: 0;
+      align-items: flex-start;
     }
-    /* On small screens, stack the name above the badges and let badges wrap */
-    @media (max-width: 639px) {
-      .pharmacy-card__top { flex-direction: column; gap: 6px; }
-      .pharmacy-card__status-wrap {
-        flex-direction: row;
-        flex-wrap: wrap;
-        align-items: flex-start;
-      }
-      .badge { white-space: normal; }
-    }
+    .badge { white-space: normal; }
 
     .pharmacy-card__address {
       font-size: var(--font-size-caption);
@@ -478,8 +469,7 @@
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      font-size: var(--font-size-body);
-      font-weight: var(--font-weight-bold);
+      font-size: var(--font-size-caption);
       color: var(--color-teal-00);
       text-decoration: none;
     }
@@ -522,6 +512,30 @@
     .empty-state__icon { font-size: 3rem; margin-bottom: var(--spacing-s); }
     .empty-state h3 { font-size: var(--font-size-h3); color: var(--color-text); }
 
+    /* ── Finder layout: list + map side by side ── */
+    .finder-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--spacing-m);
+      align-items: start;
+    }
+    @media (min-width: 900px) {
+      .finder-layout { grid-template-columns: 1fr 1fr; }
+      .finder-map-col { position: sticky; top: 84px; }
+    }
+    /* Mobile: show the map first, then the list */
+    @media (max-width: 899px) {
+      .finder-map-col { order: -1; }
+    }
+    /* Map turned off from the filter bar → list uses the full width */
+    .finder-layout--no-map { grid-template-columns: 1fr !important; }
+    .finder-map-col[hidden] { display: none; }
+    .map-note {
+      font-size: var(--font-size-caption-sm);
+      color: var(--color-mid-grey-00);
+      margin-top: var(--spacing-xs);
+    }
+
     /* ── Map ── */
     .map-wrap {
       position: relative;
@@ -530,13 +544,12 @@
       border-radius: 8px;
       overflow: hidden;
       border: 2px solid var(--color-grey-00);
-      margin-bottom: var(--spacing-s);
     }
     #pharmacy-map {
-      height: 380px;
+      height: 400px;
       width: 100%;
     }
-    @media (min-width: 768px) { #pharmacy-map { height: 460px; } }
+    @media (min-width: 900px) { #pharmacy-map { height: 560px; } }
 
     .map-legend {
       display: flex;
@@ -561,27 +574,103 @@
       flex-shrink: 0;
     }
     .map-dot--gov  { background: var(--color-blue-100); }
-    .map-dot--priv { background: var(--color-yellow-00); }
+    .map-dot--priv { background: #8a5a00; }
     .map-dot--unc  { background: var(--color-grey-40); }
 
-    .map-toggle-btn {
+    /* Filter-bar + card buttons use the design-system secondary button;
+       these rules only add icon alignment and the selected (pressed) state. */
+    .filter-btn, .card-map-btn {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 6px 14px;
-      border: 2px solid var(--color-teal-00);
-      border-radius: 4px;
-      background: none;
-      color: var(--color-teal-00);
-      font-family: var(--font-family-base);
-      font-size: var(--font-size-caption);
-      font-weight: var(--font-weight-bold);
-      cursor: pointer;
-      transition: background 0.15s, color 0.15s;
       white-space: nowrap;
     }
-    .map-toggle-btn:hover,
-    .map-toggle-btn.active { background: var(--color-teal-00); color: white; }
+    .filter-btn svg, .card-map-btn svg { flex-shrink: 0; }
+    .filter-btn[aria-pressed="true"], .card-map-btn[aria-pressed="true"] {
+      background: var(--color-teal-00);
+      color: #fff;
+      border-color: var(--color-teal-00);
+    }
+
+    /* Parish dropdown — full-height chevron cell flush with the outer box */
+    .filter-bar__group .govbb-select-wrapper {
+      position: relative;
+      display: block;
+      overflow: hidden;
+      background: var(--color-white-00);
+    }
+    #parish-select {
+      appearance: none;
+      -webkit-appearance: none;
+      border: none;
+      background: transparent;
+      width: 100%;
+      padding: 10px 52px 10px 12px;   /* leave room on the right for the chevron */
+    }
+    .parish-chevron {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f0f2f4;
+      border-left: 2px solid var(--color-text);
+      color: var(--color-text);
+      pointer-events: none;   /* clicks fall through to the select underneath */
+    }
+
+    /* ── Map markers (Rx pins) ── */
+    .rx-marker {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: var(--font-weight-bold); font-size: 12px; color: #fff;
+      border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+      transition: transform 0.1s;
+    }
+    .rx-marker--government { background: var(--color-blue-100); }
+    .rx-marker--private    { background: #8a5a00; color: #fff; }
+    /* Approximate (parish/area-level) pins: dashed ring */
+    .rx-marker--approx { border-style: dashed; border-width: 2px; }
+    .pharmacy-card__approx {
+      margin: 0;
+      font-size: var(--font-size-caption-sm);
+      color: var(--color-mid-grey-00);
+    }
+    .pharmacy-popup__approx {
+      font-size: var(--font-size-caption-sm);
+      color: var(--color-mid-grey-00);
+      margin: 2px 0;
+    }
+    .map-dot--approx {
+      background: transparent;
+      border: 2px dashed var(--color-mid-grey-00);
+      box-shadow: none;
+    }
+    .rx-marker--selected {
+      background: var(--color-teal-00) !important; color: #fff !important;
+      border: 3px solid #fff; transform: scale(1.25);
+      box-shadow: 0 0 0 4px rgba(0,86,90,0.4);
+    }
+    /* Dim non-selected pins + clusters while a selection is active */
+    .ph-focused .rx-marker:not(.rx-marker--selected) { opacity: 0.35; }
+    .ph-focused .marker-cluster { opacity: 0.45; }
+
+    /* ── Card selected state ── */
+    .pharmacy-card.is-selected {
+      border-color: var(--color-teal-00);
+      box-shadow: 0 0 0 2px var(--color-teal-00) inset, 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    /* ── Map popup ── */
+    .pharmacy-popup__name { display: block; font-size: var(--font-size-body); font-weight: var(--font-weight-bold); }
+    .pharmacy-popup__type { display: block; color: var(--color-mid-grey-00); font-size: var(--font-size-caption-sm); margin: 2px 0 6px; }
+    .pharmacy-popup__row,
+    .pharmacy-popup__hours { font-size: var(--font-size-caption); margin: 2px 0; }
+    .pharmacy-popup__actions { margin-top: 8px; }
 
     /* Utility */
     .hidden { display: none !important; }
@@ -604,9 +693,27 @@
 
     main { padding-bottom: var(--spacing-l); }
     .section-pad { padding: var(--spacing-m) 0; }
+
+    /* Back-to-top button — slightly darker shadow for lift */
+    #scroll-fab { box-shadow: 0 4px 12px rgba(0,0,0,0.35); }
+
+    /* Skip to content — off-screen until focused (WCAG 2.4.1) */
+    .skip-link {
+      position: absolute;
+      left: -999px;
+      top: 0;
+      z-index: 3000;
+      background: var(--color-teal-00);
+      color: #fff;
+      padding: 10px 16px;
+      font-weight: var(--font-weight-bold);
+      border-radius: 0 0 4px 0;
+    }
+    .skip-link:focus { left: 0; }
   </style>
 </head>
 <body class="govbb-page">
+  <a class="skip-link" href="#main">Skip to main content</a>
 
   <!-- ── Official Banner ── -->
   <div class="govbb-official-banner">
@@ -653,7 +760,7 @@
           <li class="govbb-breadcrumbs__item"><a href="https://alpha.gov.bb/" class="govbb-breadcrumbs__link">Home</a></li>
           <li class="govbb-breadcrumbs__item"><a href="https://alpha.gov.bb/health-and-emergency-services" class="govbb-breadcrumbs__link">Health and emergency services</a></li>
           <li class="govbb-breadcrumbs__item"><a href="index.html" class="govbb-breadcrumbs__link">Get free or subsidised medication</a></li>
-          <li class="govbb-breadcrumbs__item" aria-current="page">Find an open pharmacy</li>
+          <li class="govbb-breadcrumbs__item" aria-current="page">Find a Special Benefit Service (SBS) pharmacy</li>
         </ol>
       </nav>
     </div>
@@ -665,13 +772,10 @@
     <!-- Hero -->
     <section class="page-hero">
       <div class="govbb-container">
-        <h1 class="govbb-text-h2">Find an open pharmacy</h1>
-        <div class="time-chip" id="current-time" aria-live="polite">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          <span id="time-text">Loading…</span>
-        </div>
+        <p class="govbb-text-caption page-updated">Last updated on 15th May 2026</p>
+        <h1 class="govbb-text-h1">Find a Special Benefit Service (SBS) pharmacy</h1>
         <p class="govbb-text-body" style="margin-top: var(--spacing-s);">
-          Find a government or private pharmacy that accepts Special Benefit Service (SBS) prescriptions. Search by name or area, or filter by type.
+          Find a government or private pharmacy that accepts Special Benefit Service (SBS) prescriptions. Filter by parish or type, browse the map, or use your location to find the nearest one.
         </p>
       </div>
     </section>
@@ -680,20 +784,7 @@
     <div class="filter-bar" role="search" aria-label="Filter pharmacies">
       <div class="govbb-container">
         <div class="filter-bar__inner">
-          <div class="filter-search">
-            <label class="search-box__label" for="search-input">Search by pharmacy name or area</label>
-            <div class="search-box">
-              <input type="search" id="search-input" class="search-box__input" placeholder="For example, a name or parish" autocomplete="off" aria-controls="pharmacy-grid">
-              <button type="button" class="search-box__button" id="search-btn">Search</button>
-            </div>
-          </div>
           <div class="filter-controls-row">
-
-            <!-- Open pharmacies shown by default; tick to include closed -->
-            <div class="gds-checkbox">
-              <input type="checkbox" id="include-closed" class="gds-checkbox__input">
-              <label class="gds-checkbox__label" for="include-closed">Include pharmacies that are closed</label>
-            </div>
 
             <!-- Mobile: Filters button -->
             <button class="mobile-filter-btn" id="mobile-filter-btn" aria-expanded="false" aria-controls="filter-extra">
@@ -705,6 +796,17 @@
             <!-- Extra filters: collapsed on mobile -->
             <div class="filter-extra" id="filter-extra">
 
+              <!-- Parish filter -->
+              <div class="filter-bar__group">
+                <label class="filter-label" for="parish-select">Parish:</label>
+                <div class="govbb-select-wrapper">
+                  <select id="parish-select" class="govbb-select" aria-label="Filter by parish">
+                    <option value="">All parishes</option>
+                  </select>
+                  <span class="parish-chevron" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+                </div>
+              </div>
+
               <!-- Type filter -->
               <div class="filter-bar__group" role="group" aria-label="Filter by pharmacy type">
                 <span class="filter-label">Type:</span>
@@ -714,16 +816,25 @@
                     <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--color-blue-100);vertical-align:middle;margin-right:3px;"></span>Government
                   </button>
                   <button class="type-pill"         data-type="private-sbs" aria-pressed="false">
-                    <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--color-yellow-00);vertical-align:middle;margin-right:3px;"></span>Private (PPP)
-                  </button>
-                  <button class="type-pill"         data-type="unconfirmed" aria-pressed="false">
-                    <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--color-grey-40);vertical-align:middle;margin-right:3px;"></span>Not confirmed
+                    <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#8a5a00;vertical-align:middle;margin-right:3px;"></span>Private
                   </button>
                 </div>
               </div>
 
-              <!-- Map toggle -->
-              <button id="map-toggle-btn" class="map-toggle-btn" aria-expanded="false" aria-controls="map-wrap" style="margin-left: auto;">
+              <!-- Open now (optional; off by default) -->
+              <div class="gds-checkbox">
+                <input type="checkbox" id="open-now" class="gds-checkbox__input">
+                <label class="gds-checkbox__label" for="open-now">Only open now</label>
+              </div>
+
+              <!-- Use my location -->
+              <button id="near-me-btn" class="govbb-btn--secondary filter-btn" type="button" aria-pressed="false">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                Use my location
+              </button>
+
+              <!-- Show / hide map -->
+              <button id="map-toggle-btn" class="govbb-btn--secondary filter-btn" type="button" aria-pressed="false" aria-controls="map-wrap">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
                 Show map
               </button>
@@ -735,8 +846,10 @@
     </div>
 
     <!-- Results -->
-    <section aria-label="Pharmacy directory">
+    <section aria-labelledby="directory-heading">
       <div class="govbb-container">
+
+        <h2 id="directory-heading" class="sr-only">Pharmacies</h2>
 
         <div class="results-meta">
           <div class="results-meta__top">
@@ -744,29 +857,38 @@
           </div>
           <p id="filter-context" class="hidden" aria-live="polite"></p>
           <p id="near-me-status" class="hidden" role="status"></p>
-          <p id="open-filter-note" class="hidden">Pharmacies with unconfirmed opening hours are not shown by default. Tick &lsquo;Include pharmacies that are closed&rsquo; to see them.</p>
         </div>
 
-        <!-- Map (hidden by default) -->
-        <div id="map-wrap" class="map-wrap hidden" aria-hidden="true">
-          <div id="pharmacy-map"></div>
-          <div class="map-legend" aria-label="Map key">
-            <div class="map-legend-item"><span class="map-dot map-dot--gov"></span>Government</div>
-            <div class="map-legend-item"><span class="map-dot map-dot--priv"></span>PPP · Fee</div>
-            <div class="map-legend-item"><span class="map-dot map-dot--unc"></span>Not confirmed</div>
-            <div class="map-legend-item" style="margin-left:auto;">
-              <span style="width:8px;height:8px;border-radius:50%;background:var(--color-green-00);display:inline-block;"></span>Green dot = open now
+        <noscript>
+          <p class="govbb-text-body">This page needs JavaScript to list and map pharmacies. To find a Special Benefit Service (SBS) pharmacy, call the Barbados Drug Service on <a href="tel:+12465354300" class="govbb-link">(246) 535-4300</a>.</p>
+        </noscript>
+
+        <div class="finder-layout finder-layout--no-map">
+
+          <!-- List -->
+          <div class="finder-list-col">
+            <div class="pharmacy-grid" id="pharmacy-grid" aria-live="polite" aria-atomic="false">
+              <!-- Cards injected by JS -->
             </div>
+            <nav class="pagination" id="pagination" aria-label="Pharmacy list pages"></nav>
           </div>
+
+          <!-- Map -->
+          <div class="finder-map-col" hidden>
+            <div id="map-wrap" class="map-wrap">
+              <div id="pharmacy-map" role="region" aria-label="Map of pharmacies"></div>
+              <div class="map-legend" aria-label="Map key">
+                <div class="map-legend-item"><span class="map-dot map-dot--gov" aria-hidden="true"></span>Government</div>
+                <div class="map-legend-item"><span class="map-dot map-dot--priv" aria-hidden="true"></span>Private · Fee</div>
+                <div class="map-legend-item"><span class="map-dot map-dot--approx" aria-hidden="true"></span>Dashed pin = approximate location</div>
+              </div>
+            </div>
+            <p class="map-note">Pins are approximate — always check the address in the list. Select a pharmacy in the list or on the map to link the two.</p>
+          </div>
+
         </div>
 
-        <!-- List -->
-        <div class="pharmacy-grid" id="pharmacy-grid" aria-live="polite" aria-atomic="false">
-          <!-- Cards injected by JS -->
-        </div>
-
-        <!-- Pagination -->
-        <nav class="pagination" id="pagination" aria-label="Pharmacy list pages"></nav>
+        <p class="govbb-text-caption source-note">Source: Barbados Drug Service SBS pharmacy register, verified May 2026. Opening hours and SBS participation can change — call ahead to confirm.</p>
 
       </div>
     </section>
@@ -775,17 +897,12 @@
     <section class="section-pad" aria-label="Barbados Drug Service contact">
       <div class="govbb-container">
         <hr class="section-divider">
-        <div class="bds-banner">
-          <div style="flex-shrink:0; color: var(--color-blue-100);">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          </div>
-          <div class="bds-banner__body">
-            <p class="govbb-text-body" style="font-weight: var(--font-weight-bold);">Barbados Drug Service</p>
-            <p class="govbb-text-caption">6th Floor, Warrens Tower II · <strong>(246) 535-4300</strong> · <a href="mailto:management@drugservice.gov.bb" class="govbb-link">management@drugservice.gov.bb</a> · <a href="https://drugservice.gov.bb" class="govbb-link">drugservice.gov.bb</a></p>
-            <p class="govbb-text-caption" style="margin-top:4px;">If a pharmacy is refusing your SBS prescription, call BDS before you pay.</p>
-          </div>
-          <a href="tel:+12465354300" class="govbb-btn">Call BDS</a>
-        </div>
+        <h2 class="govbb-text-h2">Barbados Drug Service</h2>
+        <p class="govbb-text-body">If a pharmacy is refusing your SBS prescription, contact the Barbados Drug Service before you pay.</p>
+        <p class="govbb-text-body">Phone: <a href="tel:+12465354300" class="govbb-link">(246) 535-4300</a></p>
+        <p class="govbb-text-body">Email: <a href="mailto:management@drugservice.gov.bb" class="govbb-link">management@drugservice.gov.bb</a></p>
+        <p class="govbb-text-body">Website: <a href="https://drugservice.gov.bb" class="govbb-link">drugservice.gov.bb</a></p>
+        <p class="govbb-text-body">Address: 6th Floor, Warrens Tower II</p>
       </div>
     </section>
 
@@ -890,7 +1007,7 @@
       phone: '(246) 416-7000',
       hours: [{ days: [1,2,3,4,5], open: 510, close: 990 }],
       hoursText: 'Mon–Fri 8:30am–4:30pm',
-      notes: 'Serves eastern parishes.', routes: 'Routes 3B or 5 from Bridgetown'
+      notes: '', routes: 'Routes 3B or 5 from Bridgetown'
     },
     {
       id: 'gov-8', name: 'Maurice Byer Polyclinic', type: 'government',
@@ -936,7 +1053,7 @@
       notes: 'Three days per week.', routes: 'Route 6 from Bridgetown'
     },
 
-    /* ── Private Participating Pharmacies (PPP) — dispensing fee applies ── */
+    /* ── Private pharmacies (dispensing fee applies) ── */
     {
       id: 'priv-1', name: 'iMart Pharmacy — Lanterns Mall', type: 'private-sbs',
       address: 'Lanterns Mall, Christ Church', parish: 'Christ Church',
@@ -951,7 +1068,7 @@
     },
     {
       id: 'priv-2', name: 'iMart Pharmacy — Sheraton Mall', type: 'private-sbs',
-      address: 'Sheraton Mall, Wildey, St. Michael', parish: 'St. Michael',
+      address: 'Sheraton Centre, Sargeant\'s Village, Christ Church', parish: 'Christ Church',
       phone: '(246) 271-3784',
       hours: [{ days: [1,2,3,4,5,6], open: 540, close: 1200 }],
       hoursText: 'Mon–Sat 9:00am–8:00pm · Closed Sundays',
@@ -1237,123 +1354,13 @@
       notes: 'Address, phone and opening days to be confirmed with BDS.', routes: ''
     },
 
-    /* ── SBS Status Unconfirmed ── */
-    {
-      id: 'unc-1', name: 'Ace Pharmacy', type: 'unconfirmed',
-      address: 'Pine Housing Estate, St. Michael', parish: 'St. Michael',
-      phone: '(246) 228-2026',
-      hours: [], hoursText: 'Call to confirm', notes: '', routes: ''
-    },
-    {
-      id: 'unc-2', name: 'Bayside Pharmacy', type: 'unconfirmed',
-      address: 'Mall Internationale, Haggatt Hall, St. Michael', parish: 'St. Michael',
-      phone: '(246) 228-2255',
-      hours: [], hoursText: 'Call to confirm', notes: '', routes: ''
-    },
-    {
-      id: 'unc-3', name: 'C S Pharmacy', type: 'unconfirmed',
-      address: 'Trident House, Broad Street, Bridgetown', parish: 'St. Michael',
-      phone: '(246) 427-2047',
-      hours: [], hoursText: 'Call to confirm', notes: '', routes: ''
-    },
-    {
-      id: 'unc-4', name: 'Collins Limited', type: 'unconfirmed',
-      address: 'Broad Street, Bridgetown', parish: 'St. Michael',
-      phone: '(246) 426-4515',
-      hours: [], hoursText: 'Call to confirm', notes: '', routes: ''
-    },
-    {
-      id: 'unc-5', name: 'Delaware Dispensary', type: 'unconfirmed',
-      address: 'Jemmotts Lane, St. Michael', parish: 'St. Michael',
-      phone: '(246) 429-7430',
-      hours: [], hoursText: 'Call to confirm', notes: '', routes: ''
-    },
-    {
-      id: 'unc-6', name: 'Eagle Hall Pharmacy', type: 'unconfirmed',
-      address: 'Eagle Hall, St. Michael', parish: 'St. Michael',
-      phone: '',
-      hours: [], hoursText: 'Call to confirm', notes: '', routes: ''
-    },
-    {
-      id: 'unc-7', name: 'Elgar Pharmacy', type: 'unconfirmed',
-      address: '7 Thorpes, St. James', parish: 'St. James',
-      phone: '(246) 438-5693',
-      hours: [], hoursText: 'Call to confirm', notes: '', routes: ''
-    },
-    {
-      id: 'unc-8', name: 'Family Health Pharmacy', type: 'unconfirmed',
-      address: 'Warrens Industrial Park, St. Michael', parish: 'St. Michael',
-      phone: '(246) 421-8245',
-      hours: [], hoursText: 'Call to confirm', notes: '', routes: ''
-    },
-    {
-      id: 'unc-9', name: 'Flanders Pharmacy', type: 'unconfirmed',
-      address: '5 Ricketts Street, Bridgetown', parish: 'St. Michael',
-      phone: '(246) 426-7198',
-      hours: [], hoursText: 'Call to confirm', notes: '', routes: ''
-    },
-    {
-      id: 'unc-10', name: 'Friendship Pharmacy', type: 'unconfirmed',
-      address: '23 Baxters Road, St. Michael', parish: 'St. Michael',
-      phone: '(246) 438-9218',
-      hours: [], hoursText: 'Call to confirm', notes: '', routes: ''
-    },
-    {
-      id: 'unc-11', name: 'Grants Pharmacy & Cosmetique', type: 'unconfirmed',
-      address: 'Fairchild Street, Bridgetown', parish: 'St. Michael',
-      phone: '(246) 228-0496',
-      hours: [], hoursText: 'Call to confirm', notes: '', routes: ''
-    },
+    /* ── Private pharmacy previously listed with unconfirmed SBS status ── */
     {
       id: 'unc-12', name: 'Holborn Pharmacy', type: 'private-sbs',
       address: '36A Pine Road, St. Michael', parish: 'St. Michael',
       phone: '(246) 427-8143',
       hours: [{ days: [1,2,3,4,5,6], open: 480, close: 1080 }],
       hoursText: 'Mon–Sat 8:00am–6:00pm', notes: 'Opening days assumed Mon–Sat — confirm with BDS.', routes: ''
-    },
-    {
-      id: 'unc-13', name: 'Maxwell Pharmacy', type: 'unconfirmed',
-      address: 'Maxwell, Christ Church', parish: 'Christ Church',
-      phone: '', hours: [], hoursText: 'Call to confirm', notes: '', routes: ''
-    },
-    {
-      id: 'unc-14', name: 'Medic Aid Dispensary', type: 'unconfirmed',
-      address: 'Corner Wavell Ave & Black Rock Main Rd, St. Michael', parish: 'St. Michael',
-      phone: '(246) 425-9999',
-      hours: [], hoursText: 'Call to confirm', notes: '', routes: ''
-    },
-    {
-      id: 'unc-15', name: 'Neighbourhood Care Pharmacy', type: 'unconfirmed',
-      address: 'Rock Dundo, Cave Hill, St. Michael', parish: 'St. Michael',
-      phone: '', hours: [], hoursText: 'Call to confirm', notes: '', routes: ''
-    },
-    {
-      id: 'unc-16', name: 'Pharm-N-Care Pharmacy', type: 'unconfirmed',
-      address: 'St. Michael (call for address)', parish: 'St. Michael',
-      phone: '', hours: [], hoursText: 'Call to confirm', notes: '', routes: ''
-    },
-    {
-      id: 'unc-17', name: 'The Pharmacy Shoppe', type: 'unconfirmed',
-      address: 'Welchman Hall, St. Thomas', parish: 'St. Thomas',
-      phone: '(246) 438-5926',
-      hours: [], hoursText: 'Call to confirm', notes: '', routes: ''
-    },
-    {
-      id: 'unc-18', name: 'Pharmacy World Inc', type: 'unconfirmed',
-      address: 'St. Michael (call for address)', parish: 'St. Michael',
-      phone: '', hours: [], hoursText: 'Call to confirm', notes: '', routes: ''
-    },
-    {
-      id: 'unc-19', name: 'Station Hill Medical Complex Pharmacy', type: 'unconfirmed',
-      address: 'Godding Road, Station Hill, St. Peter', parish: 'St. Peter',
-      phone: '', hours: [], hoursText: 'Call to confirm', notes: '', routes: ''
-    },
-    {
-      id: 'unc-20', name: 'JillAnDeeHLP — Island-wide Delivery', type: 'unconfirmed',
-      address: 'Island-wide delivery service', parish: 'All parishes',
-      phone: '(246) 264-6768',
-      hours: [], hoursText: 'Contact for schedule',
-      notes: 'Delivery service available island-wide.', routes: ''
     }
   ];
 
@@ -1443,26 +1450,11 @@
 
   const TYPE_LABELS = {
     'government':  { label: 'Government',                cls: 'badge--government' },
-    'private-sbs': { label: 'Private (PPP) · Fee', cls: 'badge--private'    },
-    'unconfirmed': { label: 'SBS status not confirmed',  cls: 'badge--unconfirmed'}
+    'private-sbs': { label: 'Private · Fee', cls: 'badge--private'    }
   };
 
   function buildCard(p) {
-    const status   = openStatus(p);
     const typeMeta = TYPE_LABELS[p.type];
-
-    let statusBadge = '';
-    if (status === true) {
-      const cl = closingMinutes(p);
-      const closingNote = cl !== null ? ` · closes ${formatMins(cl)} (today)` : '';
-      statusBadge = `<span class="badge badge--open badge--dot" role="status">Open now${closingNote}</span>`;
-    } else if (status === false) {
-      const nextOpen = nextOpenText(p);
-      const nextNote = nextOpen ? ` · opens ${nextOpen}` : '';
-      statusBadge = `<span class="badge badge--closed badge--dot" role="status">Closed now${nextNote}</span>`;
-    } else {
-      statusBadge = `<span class="badge badge--unknown" role="status">Hours unconfirmed</span>`;
-    }
 
     const phoneDigits = p.phone.replace(/[^0-9]/g, '');
     const phoneLink   = p.phone
@@ -1477,29 +1469,26 @@
       : '';
 
     const notesHTML  = p.notes  ? `<p class="pharmacy-card__note">${p.notes}</p>` : '';
-    const cautionHTML = p.type === 'unconfirmed'
-      ? `<p class="pharmacy-card__note" style="background:var(--color-yellow-40);color:#5a3e00;font-style:normal;font-weight:var(--font-weight-bold);">SBS coverage is not confirmed for this pharmacy. Call before relying on it.</p>`
-      : '';
-    const busText = p.routes ? p.routes.replace(/\s*from Bridgetown(\s+Terminal)?\s*/i, ' ').replace(/\s{2,}/g, ' ').trim() : '';
-    const routesHTML = busText ? `<p class="pharmacy-card__address" style="margin-top: 2px;">${MAP_SVG}<span><strong>By bus from Bridgetown:</strong> ${busText}</span></p>` : '';
+
+    const isSel = (p.id === selectedId);
+    const hasPin = (typeof COORDS !== 'undefined') && !!COORDS[p.id];
 
     return `
-<article class="pharmacy-card pharmacy-card--${p.type}" data-type="${p.type}" data-parish="${p.parish}" data-open="${status}" aria-label="${p.name}">
+<article class="pharmacy-card pharmacy-card--${p.type}${isSel ? ' is-selected' : ''}" data-type="${p.type}" data-parish="${p.parish}" data-id="${p.id}" aria-label="${p.name}">
   <div class="pharmacy-card__top">
     <h3 class="pharmacy-card__name">${p.name}</h3>
     <div class="pharmacy-card__status-wrap">
       <span class="badge ${typeMeta.cls}">${typeMeta.label}</span>
-      ${statusBadge}
     </div>
   </div>
   <p class="pharmacy-card__address">${PIN_SVG}<span>${p.address}</span></p>
+  ${isApprox(p.id) ? '<p class="pharmacy-card__approx"><span aria-hidden="true">◌</span> Approximate location on the map — check the address above</p>' : ''}
   ${phoneLink}
   <div class="pharmacy-card__hours-row">${CLOCK_SVG}<span>${p.hoursText}</span></div>
   ${notesHTML}
-  ${cautionHTML}
-  ${routesHTML}
   ${whatsappLink}
   <div class="pharmacy-card__actions">
+    ${hasPin ? `<button type="button" class="govbb-btn--secondary card-map-btn" data-map-id="${p.id}" aria-pressed="${isSel}" aria-label="${isSel ? 'Hide ' + p.name + ' on the map' : 'Show ' + p.name + ' on the map'}">${MAP_SVG} ${isSel ? 'On map' : 'Show on map'}</button>` : ''}
     <a href="${mapsURL}" target="_blank" rel="noopener" class="govbb-btn" aria-label="Get directions to ${p.name}">${MAP_SVG} Directions</a>
   </div>
 </article>`;
@@ -1510,17 +1499,17 @@
 
   const PAGE_SIZE  = 20;
   let activeType   = 'all';
-  let openOnly     = true;
   let currentPage  = 1;
   let userLatLng   = null;    // {lat, lng} once the user shares location
   let nearMode     = false;   // sort results by distance to the user
-  let searchQuery  = '';      // text search by pharmacy name or address
-  let sortBy       = 'open';  // 'open' | 'name' | 'closing'
+  let parishFilter = '';      // parish chosen in the dropdown ('' = all)
+  let openNowOnly  = false;   // optional "only open now" filter (off by default)
+  let selectedId   = null;    // pharmacy linked between the list and the map
+  let currentView  = [];      // current filtered + sorted list (drives pagination + map)
 
   const TYPE_NAMES = {
     government:    'Government pharmacies',
-    'private-sbs': 'Private Participating Pharmacies (PPP)',
-    unconfirmed:   'Pharmacies with unconfirmed SBS status'
+    'private-sbs': 'Private pharmacies'
   };
 
   function distanceKm(lat1, lon1, lat2, lon2) {
@@ -1543,19 +1532,17 @@
   }
 
   function getFiltered() {
-    // A name/area search overrides the other filters, so a known pharmacy always surfaces
-    if (searchQuery) {
-      return PHARMACIES.filter(p => (p.name + ' ' + p.address + ' ' + (p.parish || '')).toLowerCase().includes(searchQuery));
-    }
+    // Every pharmacy is shown; the user narrows by type and parish only
     return PHARMACIES.filter(p => {
       if (activeType !== 'all' && p.type !== activeType) return false;
-      if (openOnly && openStatus(p) !== true) return false;
+      if (parishFilter && p.parish !== parishFilter) return false;
+      if (openNowOnly && openStatus(p) !== true) return false;
       return true;
     });
   }
 
   function sortedPharmacies(list) {
-    const typeOrder = { government: 0, 'private-sbs': 1, unconfirmed: 2 };
+    const typeOrder = { government: 0, 'private-sbs': 1 };
     if (nearMode && userLatLng) {
       return list.slice().sort((a, b) => {
         const da = pharmacyDistance(a), db = pharmacyDistance(b);
@@ -1563,23 +1550,11 @@
         return a.name.localeCompare(b.name);
       });
     }
-    if (sortBy === 'name') {
-      return list.slice().sort((a, b) => a.name.localeCompare(b.name));
-    }
-    if (sortBy === 'closing') {
-      // Open pharmacies by soonest closing time; closed/unknown after
-      return list.slice().sort((a, b) => {
-        const ca = closingMinutes(a), cb = closingMinutes(b);
-        if (ca !== null && cb === null) return -1;
-        if (cb !== null && ca === null) return  1;
-        if (ca !== null && cb !== null && ca !== cb) return ca - cb;
-        return a.name.localeCompare(b.name);
-      });
-    }
+    // Default: open pharmacies first; then government before private; then name.
+    // When nothing is open, the open-tie falls through to government-first.
     return list.slice().sort((a, b) => {
-      const as = openStatus(a), bs = openStatus(b);
-      if (as === true && bs !== true) return -1;
-      if (bs === true && as !== true) return  1;
+      const ao = openStatus(a) === true, bo = openStatus(b) === true;
+      if (ao !== bo) return ao ? -1 : 1;
       if (typeOrder[a.type] !== typeOrder[b.type]) return typeOrder[a.type] - typeOrder[b.type];
       return a.name.localeCompare(b.name);
     });
@@ -1588,49 +1563,45 @@
   function updateFilterContext() {
     const el = document.getElementById('filter-context');
     if (!el) return;
-    const bits = [];
-    if (searchQuery) {
-      bits.push('matching “' + escHtml(searchQuery) + '”');
+    const typeWord = activeType === 'government' ? 'Government'
+                   : activeType === 'private-sbs' ? 'Private' : '';
+    const hasFilter = !!parishFilter || !!typeWord || openNowOnly;
+    let html;
+    if (!hasFilter) {
+      html = 'Showing all pharmacies that accept SBS prescriptions. ';
     } else {
-      if (activeType !== 'all') bits.push(TYPE_NAMES[activeType] || activeType);
-      if (openOnly)             bits.push('open now');
+      html = 'Showing ' + (typeWord ? typeWord + ' pharmacies' : 'pharmacies');
+      if (parishFilter) html += ' in ' + escHtml(parishFilter);
+      if (openNowOnly)  html += ' open now';
+      html += '. ';
+      if (openNowOnly) html += 'Based on published hours (in Barbados time) — call to confirm. ';
     }
-    let html = '';
-    if (bits.length)            html += 'Showing ' + bits.join(', ') + '. ';
     if (nearMode && userLatLng) html += 'Sorted by distance from you. ';
-    if (html)                   html += '<a href="#" id="clear-filters" class="govbb-link">Clear all filters (show all ' + PHARMACIES.length + ' pharmacies)</a>';
+    if (hasFilter || (nearMode && userLatLng)) html += '<a href="#" id="clear-filters" class="govbb-link">Clear all filters</a>';
     el.innerHTML = html;
-    el.classList.toggle('hidden', !html);
+    el.classList.remove('hidden');
   }
 
   function render() {
     const filtered    = sortedPharmacies(getFiltered());
+    currentView = filtered;
+    // Drop a selection that is no longer in the filtered view
+    if (selectedId && !filtered.some(p => p.id === selectedId)) selectedId = null;
     const grid        = document.getElementById('pharmacy-grid');
     const countEl     = document.getElementById('results-count');
     const pagEl       = document.getElementById('pagination');
-    const filterNote  = document.getElementById('open-filter-note');
-    if (filterNote) filterNote.classList.toggle('hidden', !openOnly);
     updateFilterContext();
 
-    const openCount  = filtered.filter(p => openStatus(p) === true).length;
     const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
     if (currentPage > totalPages) currentPage = totalPages;
     if (currentPage < 1)          currentPage = 1;
 
     if (filtered.length === 0) {
-      let title, body;
-      if (searchQuery) {
-        title = 'No pharmacies match your search';
-        body = 'No pharmacy name or area matches “' + escHtml(searchQuery) + '”. Check the spelling, or <a href="#" id="empty-clear-search" class="govbb-link">clear the search</a>.';
-      } else if (activeType === 'government' && openOnly) {
-        title = 'No government pharmacies are open right now';
-        body = `Government district pharmacies open between 8:15am and 8:30am, Monday to Friday. The Winston Scott Polyclinic (Jemmotts Lane, St. Michael) also opens on Saturdays at 8:15am. <a href="#" id="empty-turn-off-open" class="govbb-link">Show all government pharmacies and their hours</a>.`;
-      } else if (activeType === 'unconfirmed' && openOnly) {
-        title = "These pharmacies can't be shown by default";
-        body = `Pharmacies with unconfirmed SBS status don't have confirmed hours, so they aren't shown while closed pharmacies are excluded. <a href="#" id="empty-turn-off-open" class="govbb-link">Include pharmacies that are closed</a> to see them.`;
-      } else {
-        title = 'No pharmacies match your filters';
-        body = `Change the type filter, or <a href="#" id="empty-turn-off-open" class="govbb-link">include pharmacies that are closed</a>.`;
+      let title = 'No pharmacies match your filters';
+      let body = `<a href="#" id="clear-filters" class="govbb-link">Clear all filters</a> to see all pharmacies.`;
+      if (openNowOnly) {
+        title = 'No pharmacies are open right now';
+        body = `This is based on published opening hours (in Barbados time). <a href="#" id="clear-filters" class="govbb-link">Clear all filters</a> to see all pharmacies and their hours, then call ahead to confirm.`;
       }
       grid.innerHTML = `
         <div class="empty-state">
@@ -1647,8 +1618,7 @@
     const end   = Math.min(start + PAGE_SIZE, filtered.length);
     grid.innerHTML = filtered.slice(start, end).map(buildCard).join('');
 
-    const openLabel = openCount > 0 ? ` · ${openCount} open now` : '';
-    countEl.innerHTML = `Showing ${start + 1}–${end} of ${filtered.length} pharmacies${openLabel}`;
+    countEl.innerHTML = `Showing ${start + 1}–${end} of ${filtered.length} pharmacies`;
 
     if (totalPages > 1) {
       const parts = [];
@@ -1672,15 +1642,19 @@
     if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-
-  /* ───────── CLOCK ───────── */
-
-  function updateClock() {
-    const now = getBarbadosDate();
-    const timeEl = document.getElementById('time-text');
-    if (timeEl) {
-      timeEl.textContent = `Time now: ${DAY_NAMES[now.getDay()]} ${ordinal(now.getDate())} ${MONTH_NAMES[now.getMonth()]}, ${formatBarbadosTime(now)}`;
-    }
+  // After any filter change, bring the user back to the top of the results so
+  // they see the new list from the start instead of being stranded mid-scroll.
+  // Uses an absolute window scroll (scrollIntoView is unreliable on the sticky
+  // filter bar — when it's already stuck to the top it won't move the page).
+  function scrollToResults() {
+    requestAnimationFrame(() => {
+      const sec = document.querySelector('section[aria-labelledby="directory-heading"]');
+      if (!sec) return;
+      const bar  = document.querySelector('.filter-bar');
+      const barH = (bar && getComputedStyle(bar).position === 'sticky') ? bar.offsetHeight : 0;
+      const y = sec.getBoundingClientRect().top + window.scrollY - barH - 8;
+      window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+    });
   }
 
 
@@ -1708,8 +1682,8 @@
   function requestNearMe() {
     const btn = document.getElementById('near-me-btn');
     if (!('geolocation' in navigator)) {
-      if (btn) btn.innerHTML = NEAR_SVG + ' Nearest to me';
-      showNearMeStatus('Your browser cannot share your location. You can still search by name, filter by parish and type, or use the map.');
+      if (btn) btn.innerHTML = NEAR_SVG + ' Use my location';
+      showNearMeStatus('Your browser cannot share your location. You can still filter by parish and type, or use the map.');
       return;
     }
     if (btn) { btn.disabled = true; btn.innerHTML = NEAR_SVG + ' Finding you...'; }
@@ -1722,17 +1696,17 @@
           btn.disabled = false;
           btn.classList.add('active');
           btn.setAttribute('aria-pressed', 'true');
-          btn.innerHTML = NEAR_SVG + ' Nearest to me';
+          btn.innerHTML = NEAR_SVG + ' Use my location';
         }
         currentPage = 1;
         render();
       },
       (err) => {
-        if (btn) { btn.disabled = false; btn.innerHTML = NEAR_SVG + ' Nearest to me'; }
+        if (btn) { btn.disabled = false; btn.innerHTML = NEAR_SVG + ' Use my location'; }
         const denied = err && err.code === 1;
         showNearMeStatus(denied
-          ? 'Location permission is blocked, so we cannot sort by distance. Allow location in your browser settings, or search by name, filter by parish and type, or use the map.'
-          : 'We could not get your location, so results are not sorted by distance. Try again, or search by name, filter by parish and type, or use the map.');
+          ? 'Location permission is blocked, so we cannot sort by distance. Allow location in your browser settings, or filter by parish and type, or use the map.'
+          : 'We could not get your location, so results are not sorted by distance. Try again, or filter by parish and type, or use the map.');
       },
       { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
     );
@@ -1740,34 +1714,34 @@
 
   function clearAllFilters() {
     activeType = 'all';
-    openOnly = false;
     nearMode = false;
     userLatLng = null;
     currentPage = 1;
     setActiveTypePill('all');
-    const inc = document.getElementById('include-closed');
-    if (inc) inc.checked = true;
     const nearBtn = document.getElementById('near-me-btn');
-    if (nearBtn) { nearBtn.classList.remove('active'); nearBtn.setAttribute('aria-pressed', 'false'); nearBtn.innerHTML = NEAR_SVG + ' Nearest to me'; }
-    searchQuery = '';
-    sortBy = 'open';
-    const si = document.getElementById('search-input'); if (si) si.value = '';
-    const ss = document.getElementById('sort-select'); if (ss) ss.value = 'open';
+    if (nearBtn) { nearBtn.classList.remove('active'); nearBtn.setAttribute('aria-pressed', 'false'); nearBtn.innerHTML = NEAR_SVG + ' Use my location'; }
+    parishFilter = '';
+    openNowOnly = false;
+    selectedId = null;
+    const ps = document.getElementById('parish-select'); if (ps) ps.value = '';
+    const on = document.getElementById('open-now'); if (on) on.checked = false;
     clearNearMeStatus();
     render();
+    scrollToResults();
   }
 
   function applyFiltersFromURL() {
     const q = new URLSearchParams(location.search);
     const t = q.get('type');
-    if (t && ['government', 'private-sbs', 'unconfirmed', 'all'].includes(t)) {
+    if (t && ['government', 'private-sbs', 'all'].includes(t)) {
       activeType = t;
       setActiveTypePill(t);
     }
-    if (q.get('open') === '1') {
-      openOnly = true;
-      const inc = document.getElementById('include-closed');
-      if (inc) inc.checked = false;
+    const par = q.get('parish');
+    if (par) {
+      const ps = document.getElementById('parish-select');
+      const match = ps && Array.from(ps.options).find(o => o.value.toLowerCase() === par.toLowerCase());
+      if (match) { parishFilter = match.value; ps.value = match.value; }
     }
     if (q.get('near') === '1') requestNearMe();
   }
@@ -1777,15 +1751,38 @@
 
   document.addEventListener('DOMContentLoaded', () => {
 
-    updateClock();
-    setInterval(() => { updateClock(); render(); }, 60000);
+    // Populate the parish dropdown from the pharmacy data
+    const parishSelect = document.getElementById('parish-select');
+    if (parishSelect) {
+      const parishes = [...new Set(PHARMACIES.map(p => p.parish).filter(Boolean))].sort();
+      parishes.forEach(par => {
+        const opt = document.createElement('option');
+        opt.value = par;
+        opt.textContent = par;
+        parishSelect.appendChild(opt);
+      });
+      parishSelect.addEventListener('change', () => {
+        parishFilter = parishSelect.value;
+        currentPage = 1;
+        render();
+        updateMobileFilterCount();
+        if (typeof showMap === 'function') showMap();
+        scrollToResults();
+      });
+    }
 
-    const includeClosed = document.getElementById('include-closed');
-    includeClosed.addEventListener('change', () => {
-      openOnly = !includeClosed.checked;
-      currentPage = 1;
-      render();
-    });
+    // Optional "open now" filter (off by default)
+    const openNowCb = document.getElementById('open-now');
+    if (openNowCb) {
+      openNowCb.addEventListener('change', () => {
+        openNowOnly = openNowCb.checked;
+        currentPage = 1;
+        render();
+        updateMobileFilterCount();
+        if (openNowOnly && typeof showMap === 'function') showMap();
+        scrollToResults();
+      });
+    }
 
     document.querySelectorAll('.type-pill').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -1796,35 +1793,16 @@
         });
         currentPage = 1;
         render();
+        if (typeof showMap === 'function') showMap();
+        scrollToResults();
       });
     });
 
-    const searchInput = document.getElementById('search-input');
-    if (searchInput) {
-      searchInput.addEventListener('input', () => {
-        searchQuery = searchInput.value.trim().toLowerCase();
-        currentPage = 1;
-        render();
-      });
-    }
-    const searchBtn = document.getElementById('search-btn');
-    if (searchBtn && searchInput) {
-      searchBtn.addEventListener('click', () => {
-        searchQuery = searchInput.value.trim().toLowerCase();
-        currentPage = 1;
-        render();
-        searchInput.focus();
-      });
-    }
-
-    const sortSelect = document.getElementById('sort-select');
-    if (sortSelect) {
-      sortSelect.addEventListener('change', () => {
-        sortBy = sortSelect.value;
-        currentPage = 1;
-        render();
-      });
-    }
+    // Link a card to its map pin (and back)
+    document.getElementById('pharmacy-grid').addEventListener('click', e => {
+      const mapBtn = e.target.closest('.card-map-btn');
+      if (mapBtn) { e.preventDefault(); selectRecord(mapBtn.dataset.mapId, false); }
+    });
 
     document.getElementById('pagination').addEventListener('click', e => {
       const btn = e.target.closest('.pagination__btn');
@@ -1846,6 +1824,8 @@
     function updateMobileFilterCount() {
       let count = 0;
       if (activeType !== 'all') count++;
+      if (parishFilter) count++;
+      if (openNowOnly) count++;
       if (count > 0) {
         mobileFilterCount.textContent = count;
         mobileFilterCount.hidden = false;
@@ -1876,33 +1856,23 @@
           userLatLng = null;
           nearBtn.classList.remove('active');
           nearBtn.setAttribute('aria-pressed', 'false');
-          nearBtn.innerHTML = NEAR_SVG + ' Nearest to me';
+          nearBtn.innerHTML = NEAR_SVG + ' Use my location';
           clearNearMeStatus();
           render();
         } else {
+          if (typeof showMap === 'function') showMap();
           requestNearMe();
         }
       });
     }
 
-    // Filter-context + empty-state recovery links
+    // Filter-context + empty-state recovery link
     document.addEventListener('click', e => {
       const clear = e.target.closest('#clear-filters');
       if (clear) { e.preventDefault(); clearAllFilters(); updateMobileFilterCount(); return; }
-      const cs = e.target.closest('#empty-clear-search');
-      if (cs) { e.preventDefault(); searchQuery = ''; const si = document.getElementById('search-input'); if (si) si.value = ''; currentPage = 1; render(); return; }
-      const off = e.target.closest('#empty-turn-off-open');
-      if (off) {
-        e.preventDefault();
-        openOnly = false;
-        const inc = document.getElementById('include-closed');
-        if (inc) inc.checked = true;
-        currentPage = 1;
-        render();
-      }
     });
 
-    // Apply ?type= / ?open= / ?near= deep links from the landing page
+    // Apply ?type= / ?parish= / ?near= deep links from the landing page
     applyFiltersFromURL();
     updateMobileFilterCount();
 
@@ -1912,122 +1882,98 @@
 
   <!-- Leaflet JS -->
   <script src="./dist/leaflet.min.js"></script>
+  <script src="./dist/leaflet.markercluster.min.js"></script>
 
   <script>
   /* ── Pharmacy coordinates (approximate) ── */
   const COORDS = {
-    'gov-1':  [13.1002, -59.6197],
-    'gov-2':  [13.1002, -59.6310],
-    'gov-3':  [13.0955, -59.5958],
-    'gov-4':  [13.1088, -59.6118],
-    'gov-5':  [13.0672, -59.5372],
-    'gov-6':  [13.1282, -59.5702],
-    'gov-7':  [13.1752, -59.5348],
-    'gov-8':  [13.2112, -59.6362],
-    'gov-9':  [13.0942, -59.5022],
-    'gov-10': [13.2148, -59.5658],
-    'gov-11': [13.1818, -59.5432],
-    'gov-12': [13.1448, -59.6102],
-    'priv-1':  [13.0812, -59.5688],
-    'priv-2':  [13.0958, -59.5965],
-    'priv-3':  [13.0972, -59.5978],
-    'priv-4':  [13.0802, -59.5832],
-    'priv-5':  [13.0962, -59.5962],
-    'priv-6':  [13.0945, -59.5022],
-    'priv-7':  [13.1235, -59.5535],
-    'priv-7b': [13.1465, -59.6015],
-    'priv-8':  [13.0968, -59.6118],
-    'priv-9':  [13.1005, -59.6298],
-    'priv-10': [13.2492, -59.6488],
-    'priv-11': [13.2490, -59.6485],
-    'priv-12': [13.1705, -59.6385],
-    'priv-13': [13.0755, -59.5845],
-    'priv-14': [13.0688, -59.5468],
-    'priv-15': [13.0944, -59.5025],
-    'priv-16': [13.0942, -59.5022],
-    'priv-17': [13.1305, -59.5815],
-    'priv-18': [13.1048, -59.6188],
-    'priv-19': [13.1052, -59.6102],
-    'priv-20': [13.0935, -59.6180],
-    'priv-21': [13.1880, -59.6385],
-    'priv-22': [13.1060, -59.6090],
-    'priv-23': [13.0958, -59.5968],
-    'priv-24': [13.0995, -59.6190],
-    'priv-27': [13.0875, -59.6135],
-    'priv-28': [13.1280, -59.5700],
-    'unc-1':  [13.0982, -59.6052],
-    'unc-2':  [13.0970, -59.5975],
-    'unc-3':  [13.1002, -59.6172],
-    'unc-4':  [13.1000, -59.6170],
-    'unc-5':  [13.1003, -59.6195],
-    'unc-6':  [13.1035, -59.6252],
-    'unc-7':  [13.1752, -59.6382],
-    'unc-8':  [13.1090, -59.6115],
-    'unc-9':  [13.1002, -59.6168],
-    'unc-10': [13.1048, -59.6182],
-    'unc-11': [13.0995, -59.6162],
-    'unc-12': [13.0948, -59.6012],
-    'unc-13': [13.0792, -59.5545],
-    'unc-14': [13.1005, -59.6280],
-    'unc-15': [13.1102, -59.6082],
-    'unc-16': [13.1000, -59.6100],
-    'unc-17': [13.1455, -59.6118],
-    'unc-18': [13.1000, -59.6102],
-    'unc-19': [13.2112, -59.6358],
+    'gov-1': [13.092107, -59.607141],
+    'gov-2': [13.118089, -59.618137],
+    'gov-3': [13.092702, -59.586323],
+    'gov-4': [13.141018, -59.605905],
+    'gov-5': [13.062149, -59.540746],
+    'gov-6': [13.135065, -59.563367],
+    'gov-7': [13.18188, -59.496353],
+    'gov-8': [13.25357, -59.638514],
+    'gov-9': [13.118084, -59.476286],
+    'gov-10': [13.245924, -59.562718],
+    'gov-11': [13.20032, -59.538796],
+    'gov-12': [13.186991, -59.604351],
+    'priv-1': [13.076846, -59.594315],
+    'priv-2': [13.083436, -59.567168],
+    'priv-3': [13.108289, -59.578744],
+    'priv-4': [13.066199, -59.549544],
+    'priv-5': [13.093034, -59.585114],
+    'priv-6': [13.114623, -59.478382],
+    'priv-7': [13.108816, -59.543474],
+    'priv-7b': [13.153556, -59.614486],
+    'priv-8': [13.096193, -59.604674],
+    'priv-9': [13.117568, -59.603521],
+    'priv-10': [13.249453, -59.643237],
+    'priv-11': [13.249252, -59.643067],
+    'priv-12': [13.154253, -59.636022],
+    'unc-12': [13.095956, -59.601443],
+    'priv-13': [13.072427, -59.590732],
+    'priv-14': [13.080449, -59.537356],
+    'priv-15': [13.113997, -59.474283],
+    'priv-16': [13.115869, -59.475892],
+    'priv-17': [13.150422, -59.556477],
+    'priv-18': [13.113246, -59.610157],
+    'priv-19': [13.117679, -59.599399],
+    'priv-20': [13.101808, -59.618736],
+    'priv-21': [13.182416, -59.635393],
+    'priv-22': [13.11936, -59.599512],
+    'priv-23': [13.093211, -59.583437],
+    'priv-24': [13.094866, -59.606997],
+    'priv-25': [13.120539, -59.600774],
+    'priv-26': [13.120687, -59.601353],
+    'priv-27': [13.085684, -59.608612],
+    'priv-28': [13.154822, -59.553607]
   };
+
+  // Pins geocoded only to parish/area level (not a precise street address).
+  // These get an "Approximate location" note and a dashed pin.
+  const APPROX = new Set(["gov-10", "gov-11", "priv-3", "priv-4", "priv-5", "priv-6", "priv-7", "priv-7b", "priv-8", "priv-9", "priv-10", "priv-11", "priv-14", "priv-16", "priv-19", "priv-22", "priv-23", "priv-25", "priv-26"]);
+  function isApprox(id) { return typeof APPROX !== 'undefined' && APPROX.has(id); }
 
   let pharmacyMap    = null;
   let mapInitialised = false;
-  const leafletMarkers = [];
+  let clusterGroup   = null;
+  let lastViewKey    = '';    // signature of the shown pins, so we only re-fit when they change
+  const markersById  = {};
+  // Barbados only — the map cannot be panned or zoomed out beyond the island
+  const BARBADOS_BOUNDS = [[12.99, -59.69], [13.34, -59.40]];
 
-  const TYPE_COLORS = {
-    government:   '#00267f',
-    'private-sbs':'#e8a833',
-    unconfirmed:  '#c8cdd3'
+  const TYPE_MARKER = { government: 'government', 'private-sbs': 'private' };
+  const TYPE_POPUP_LABEL = {
+    government:    'Government',
+    'private-sbs': 'Private pharmacy · Dispensing fee'
   };
 
-  function markerIcon(pharmacy) {
-    const bg  = TYPE_COLORS[pharmacy.type];
-    const st  = openStatus(pharmacy);
-    const dot = st === true ? '#00654a' : st === false ? '#a42c2c' : '#aaa';
+  function byId(id) { return PHARMACIES.find(p => p.id === id) || null; }
+
+  function markerIcon(p, selected) {
+    let cls = 'rx-marker rx-marker--' + (TYPE_MARKER[p.type] || 'government');
+    if (isApprox(p.id)) cls += ' rx-marker--approx';
+    if (selected) cls += ' rx-marker--selected';
     return L.divIcon({
       className: '',
-      html: `<div style="width:16px;height:16px;border-radius:50%;background:${bg};border:2.5px solid white;box-shadow:0 1px 5px rgba(0,0,0,0.35);position:relative;">
-        <div style="width:7px;height:7px;border-radius:50%;background:${dot};border:1.5px solid white;position:absolute;bottom:-3px;right:-3px;"></div>
-      </div>`,
-      iconSize:    [16, 16],
-      iconAnchor:  [8,  8],
-      popupAnchor: [0, -12]
+      html: `<div class="${cls}" aria-hidden="true">Rx</div>`,
+      iconSize: [30, 30], iconAnchor: [15, 15], popupAnchor: [0, -16]
     });
   }
 
   function popupHTML(p) {
-    const st = openStatus(p);
-    const stTxt = st === true
-      ? '<span class="pharmacy-popup__status--open">● Open now</span>'
-      : st === false
-        ? '<span class="pharmacy-popup__status--closed">● Closed now</span>'
-        : '<span class="pharmacy-popup__status--unknown">○ Hours unconfirmed</span>';
-    const typeLabel = {
-      government:   'Government',
-      'private-sbs':'Private Participating Pharmacy (PPP) · Dispensing fee',
-      unconfirmed:  'SBS status not confirmed'
-    }[p.type];
     const phoneHtml = p.phone
-      ? `<div><a class="pharmacy-popup__phone" href="tel:+1${p.phone.replace(/\D/g,'')}">📞 ${p.phone}</a></div>`
+      ? `<div class="pharmacy-popup__row"><a class="govbb-link" href="tel:+1${p.phone.replace(/\D/g,'')}">${p.phone}</a></div>`
       : '';
-    const mapsQ   = encodeURIComponent(`${p.name}, ${p.address}, Barbados`);
-    const mapsURL = `https://maps.google.com/maps?q=${mapsQ}`;
     return `<div class="pharmacy-popup">
       <strong class="pharmacy-popup__name">${p.name}</strong>
-      <span class="pharmacy-popup__type">${typeLabel}</span>
-      <div class="pharmacy-popup__status">${stTxt}</div>
-      <div class="pharmacy-popup__row">📍 ${p.address}</div>
+      <span class="pharmacy-popup__type">${TYPE_POPUP_LABEL[p.type] || ''}</span>
+      ${isApprox(p.id) ? '<div class="pharmacy-popup__approx"><span aria-hidden="true">◌</span> Approximate location — check the address</div>' : ''}
+      <div class="pharmacy-popup__row">${p.address}</div>
       ${phoneHtml}
-      <div class="pharmacy-popup__hours">🕐 ${p.hoursText}</div>
-      <div class="pharmacy-popup__actions">
-        <a href="${mapsURL}" target="_blank" rel="noopener" class="govbb-btn">Directions</a>
-      </div>
+      <div class="pharmacy-popup__hours">${p.hoursText}</div>
     </div>`;
   }
 
@@ -2038,60 +1984,139 @@
       return;
     }
     try {
-      pharmacyMap = L.map('pharmacy-map', { zoomControl: true }).setView([13.15, -59.62], 11);
+      const bounds = L.latLngBounds(BARBADOS_BOUNDS);
+      pharmacyMap = L.map('pharmacy-map', {
+        zoomControl: true,
+        minZoom: 10,
+        maxZoom: 17,
+        maxBounds: bounds,
+        maxBoundsViscosity: 1.0
+      });
+      pharmacyMap.fitBounds(bounds);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors',
-        maxZoom: 18
+        minZoom: 10,
+        maxZoom: 17
       }).addTo(pharmacyMap);
 
+      clusterGroup = L.markerClusterGroup({ showCoverageOnHover: false, maxClusterRadius: 40, spiderfyOnMaxZoom: true });
       PHARMACIES.forEach(p => {
         const ll = COORDS[p.id];
         if (!ll) return;
-        const marker = L.marker(ll, { icon: markerIcon(p) }).bindPopup(popupHTML(p), { maxWidth: 300 });
-        marker.addTo(pharmacyMap);
-        leafletMarkers.push({ marker, id: p.id, pharmacy: p });
+        const marker = L.marker(ll, { icon: markerIcon(p, false) }).bindPopup(popupHTML(p), { maxWidth: 300 });
+        marker.on('click', () => selectRecord(p.id, true));
+        markersById[p.id] = marker;
       });
+      pharmacyMap.addLayer(clusterGroup);
 
       mapInitialised = true;
-      setTimeout(() => pharmacyMap.invalidateSize(), 50);
+      updateMapMarkers();
+      setTimeout(() => pharmacyMap.invalidateSize(), 60);
 
     } catch (err) {
       container.innerHTML = '<div class="map-error map-error--danger">Map failed to initialise. Please refresh the page and try again.</div>';
     }
   }
 
+  // Rebuild the cluster with just the pharmacies in the current view, reflecting selection
   function updateMapMarkers() {
     if (!mapInitialised) return;
-    leafletMarkers.forEach(({ marker, pharmacy: p }) => {
-      const show = (() => {
-        if (activeType !== 'all' && p.type !== activeType) return false;
-        if (openOnly && openStatus(p) !== true) return false;
-        return true;
-      })();
-      if (show  && !pharmacyMap.hasLayer(marker)) marker.addTo(pharmacyMap);
-      if (!show &&  pharmacyMap.hasLayer(marker)) pharmacyMap.removeLayer(marker);
+    clusterGroup.clearLayers();
+    const ids = currentView.map(p => p.id).filter(id => markersById[id]);
+    ids.forEach(id => {
+      const marker = markersById[id];
+      marker.setIcon(markerIcon(byId(id), id === selectedId));
+      clusterGroup.addLayer(marker);
     });
+    const mapEl = document.getElementById('pharmacy-map');
+    if (mapEl) mapEl.classList.toggle('ph-focused', selectedId !== null);
+
+    // Frame the shown pins ONLY when nothing is selected and the set changed —
+    // the selected-pin zoom is handled separately (once, after the map is sized).
+    const key = ids.join(',');
+    if (selectedId == null && key !== lastViewKey && clusterGroup.getBounds().isValid()) {
+      pharmacyMap.fitBounds(clusterGroup.getBounds(), { padding: [30, 30], maxZoom: 15 });
+    }
+    lastViewKey = key;
+  }
+
+  // Zoom to + open the selected pin. Called once, after the map is on-screen and sized.
+  function focusSelected() {
+    if (!mapInitialised || selectedId == null) return;
+    const m = markersById[selectedId];
+    if (m) clusterGroup.zoomToShowLayer(m, () => m.openPopup());
+  }
+
+  function mapIsHidden() {
+    const c = document.querySelector('.finder-map-col');
+    return !!c && c.hidden;
+  }
+
+  // Link a pharmacy between the list and the map. fromMap: click came from a pin.
+  function selectRecord(id, fromMap) {
+    if (selectedId === id) { clearSelection(); return; }
+    if (!markersById[id]) return;   // no pin (address unknown) — nothing to show
+    selectedId = id;
+    const idx = currentView.findIndex(p => p.id === id);
+    if (idx >= 0) {
+      const page = Math.floor(idx / PAGE_SIZE) + 1;
+      if (page !== currentPage) currentPage = page;
+    }
+    const wasHidden = mapIsHidden();
+    showMap();   // reveal the map if it was off
+    render();    // draw cards (is-selected) + markers + dim — no zoom here
+    // One clean focus after the map is visible and correctly sized
+    setTimeout(() => {
+      if (pharmacyMap) pharmacyMap.invalidateSize();
+      focusSelected();
+      if (fromMap) {
+        const card = document.querySelector(`.pharmacy-card[data-id="${id}"]`);
+        if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else if (window.innerWidth < 900) {
+        const mapWrap = document.getElementById('map-wrap');
+        if (mapWrap) mapWrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, wasHidden ? 220 : 60);
+  }
+
+  function clearSelection() {
+    selectedId = null;
+    if (pharmacyMap) pharmacyMap.closePopup();
+    render();
   }
 
   const _origRender = render;
   render = function () { _origRender(); updateMapMarkers(); };
 
-  const _mapToggleBtn = document.getElementById('map-toggle-btn');
-  if (_mapToggleBtn) _mapToggleBtn.addEventListener('click', function () {
-    const wrap   = document.getElementById('map-wrap');
-    const hidden = wrap.classList.toggle('hidden');
-    wrap.setAttribute('aria-hidden', hidden.toString());
-    this.classList.toggle('active', !hidden);
-    this.setAttribute('aria-expanded', (!hidden).toString());
-    const svg = this.querySelector('svg').outerHTML;
-    this.innerHTML = svg + (hidden ? ' Show map' : ' Hide map');
+  // Show/hide the map (off by default; revealed by the toggle or any filter action)
+  function setMapVisible(visible) {
+    const btn    = document.getElementById('map-toggle-btn');
+    const layout = document.querySelector('.finder-layout');
+    const mapCol = document.querySelector('.finder-map-col');
+    if (!btn || !layout || !mapCol) return;
+    mapCol.hidden = !visible;
+    layout.classList.toggle('finder-layout--no-map', !visible);
+    btn.setAttribute('aria-pressed', String(visible));
+    const svg = btn.querySelector('svg').outerHTML;
+    btn.innerHTML = svg + (visible ? ' Hide map' : ' Show map');
+    if (visible && pharmacyMap) setTimeout(() => {
+      pharmacyMap.invalidateSize();
+      lastViewKey = ''; updateMapMarkers();   // re-fit now that the map has real size
+    }, 60);
+  }
+  function showMap() {
+    const mapCol = document.querySelector('.finder-map-col');
+    if (mapCol && mapCol.hidden) setMapVisible(true);
+  }
 
-    if (!hidden) {
-      if (!mapInitialised) {
-        setTimeout(() => { initMap(); updateMapMarkers(); }, 300);
-      } else {
-        setTimeout(() => pharmacyMap.invalidateSize(), 300);
-      }
+  document.addEventListener('DOMContentLoaded', () => {
+    initMap();   // map starts hidden (see finder-map-col[hidden]); shown on demand
+    const mapToggleBtn = document.getElementById('map-toggle-btn');
+    if (mapToggleBtn) {
+      mapToggleBtn.addEventListener('click', () => {
+        const mapCol = document.querySelector('.finder-map-col');
+        setMapVisible(!!mapCol && mapCol.hidden);   // hidden → show, visible → hide
+      });
     }
   });
 
