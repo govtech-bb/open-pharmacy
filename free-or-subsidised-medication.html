@@ -3,44 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Find a pharmacy that's open now anywhere in Barbados. You can also find pharmacies offering free or subsidised medication through the Barbados Drug Service, and check who qualifies.">
-  <title>Find an open pharmacy — The Government of Barbados</title>
+  <meta name="description" content="Check who can get free or subsidised medication through the Barbados Drug Service (Special Benefit Service), what to bring to the pharmacy, and what it costs.">
+  <title>Get free or subsidised medication — The Government of Barbados</title>
   <link rel="icon" href="./dist/assets/images/favicon.ico">
   <link rel="stylesheet" href="./dist/styles.css">
   <style>
-    /* "Last updated" caption — top breathing room + grey, matching find.html */
     .service-info-section > .govbb-container > .page-updated {
       padding-top: var(--spacing-m);
       margin: 0 0 var(--spacing-s);
       color: var(--color-mid-grey-00);
     }
-    /* H1 bottom gap (top spacing now sits on the caption above it) */
-    .service-info-section > .govbb-container > h1 {
-      margin-bottom: var(--spacing-s);
-    }
-
-    /* CTA button wrapper — sits between paragraphs */
-    .cta-wrap {
-      margin-bottom: var(--spacing-s);
-    }
-
-    /* Accordion sits in content flow */
+    .service-info-section > .govbb-container > h1 { margin-bottom: var(--spacing-s); }
+    .cta-wrap { margin-bottom: var(--spacing-s); }
     .service-info-section > .govbb-container > details {
       margin-top: var(--spacing-xs);
       margin-bottom: var(--spacing-s);
     }
-
-    /* Bottom page padding */
-    .service-info-section:last-of-type {
-      padding-bottom: var(--spacing-l);
-    }
-
-    /* Mobile: full-width CTA */
+    .service-info-section:last-of-type { padding-bottom: var(--spacing-l); }
     @media (max-width: 639px) {
-      .cta-wrap .govbb-btn--cta {
-        width: 100%;
-        justify-content: center;
-      }
+      .cta-wrap .govbb-btn--cta { width: 100%; justify-content: center; }
     }
     .skip-link { position:absolute; left:-999px; top:0; z-index:3000; background:var(--color-teal-00); color:#fff; padding:10px 16px; font-weight:var(--font-weight-bold); border-radius:0 0 4px 0; }
     .skip-link:focus { left:0; }
@@ -91,37 +72,82 @@
         <li class="govbb-breadcrumbs__item">
           <a href="https://alpha.gov.bb/health-and-emergency-services" class="govbb-breadcrumbs__link">Health and emergency services</a>
         </li>
-        <li class="govbb-breadcrumbs__item" aria-current="page">Find an open pharmacy</li>
+        <li class="govbb-breadcrumbs__item">
+          <a href="index.html" class="govbb-breadcrumbs__link">Find an open pharmacy</a>
+        </li>
+        <li class="govbb-breadcrumbs__item" aria-current="page">Free or subsidised medication</li>
       </ol>
     </div>
   </nav>
 
   <main id="main">
-
-    <!--
-      All content sits in ONE service-info-section.
-      The design system CSS handles:
-        • p  → margin-bottom: spacing-s
-        • ul → margin-bottom: spacing-s
-        • h2 → margin-top: spacing-l + margin-bottom: spacing-s
-               (h2:first-child gets margin-top: 0, but ours are not first-child)
-    -->
     <section class="service-info-section">
       <div class="govbb-container">
 
         <!-- ── Page heading ── -->
         <p class="govbb-text-caption page-updated">Last updated on May 15, 2026</p>
-        <h1 class="govbb-text-h1">Find an open pharmacy</h1>
+        <h1 class="govbb-text-h1">Get free or subsidised medication</h1>
 
         <p class="govbb-text-body">
-          Find a pharmacy that's open now, anywhere in Barbados. You can check opening hours, filter by parish, or use your location to sort pharmacies by distance.
+          The Barbados Drug Service can lower or remove the cost of some prescription medicines through the Special Benefit Service (SBS). This page explains who can get help, what to bring, and what it costs.
         </p>
+        <ul class="govbb-list govbb-list--bullet">
+          <li>free at government (polyclinic) pharmacies</li>
+          <li>at a lower cost at private pharmacies that work with the Barbados Drug Service</li>
+        </ul>
+
+        <!-- ── Who can get help ── -->
+        <h2 class="govbb-text-h2" id="eligibility">Who can get help with medicine costs</h2>
+
+        <p class="govbb-text-body">
+          You can get help if you are a Barbadian citizen or permanent resident, or you are covered by CARICOM free movement.
+        </p>
+        <p class="govbb-text-body">One of these must also apply:</p>
+        <ul class="govbb-list govbb-list--bullet">
+          <li>you need medicine for diabetes, asthma, high blood pressure, cancer, epilepsy or glaucoma (any age)</li>
+          <li>you are under 16</li>
+          <li>you are 65 or over</li>
+        </ul>
+        <p class="govbb-text-body">You will also need:</p>
+        <ul class="govbb-list govbb-list--bullet">
+          <li>a prescription from a doctor registered with the Medical Council of Barbados — the doctor can work in the public or private health service</li>
+          <li>a prescription for a medicine on the Barbados National Drug Formulary</li>
+        </ul>
+        <p class="govbb-text-body">
+          The Barbados National Drug Formulary is the list of medicines covered by the Barbados Drug Service.
+        </p>
+        <p class="govbb-text-body">
+          <a href="https://formulary.drugservice.gov.bb/bndf2022/menu.php"
+             class="govbb-link" target="_blank" rel="noopener">
+            Check if your medicine is listed (opens in a new tab)
+          </a>
+        </p>
+
+        <details class="govbb-show-hide">
+          <summary class="govbb-show-hide__summary">What if my medicine is not listed?</summary>
+          <div class="govbb-show-hide__content">
+            <p class="govbb-text-body">Ask your doctor:</p>
+            <ul class="govbb-list govbb-list--bullet">
+              <li>if there is another listed medicine you can use</li>
+              <li>if they can ask for special approval</li>
+            </ul>
+            <p class="govbb-text-body">Special approval is only for government pharmacy use.</p>
+          </div>
+        </details>
 
         <!-- ── What to take ── -->
         <h2 class="govbb-text-h2" id="what-to-take">What to take to the pharmacy</h2>
+
         <ul class="govbb-list govbb-list--bullet">
-          <li>your prescription</li>
-          <li>original accepted ID for the person the medicine is for — a Barbados National Identification (ID) card, passport, driver's licence, or child health book</li>
+          <li>the prescription</li>
+          <li>original accepted ID for the person the medicine is for</li>
+        </ul>
+        <p class="govbb-text-body">Accepted ID can be:</p>
+        <ul class="govbb-list govbb-list--bullet">
+          <li>Barbados National Identification (ID) card</li>
+          <li>Barbados passport</li>
+          <li>Barbados driver's licence</li>
+          <li>child health book, if the medicine is for a child</li>
         </ul>
         <p class="govbb-text-body">Photocopies are not accepted.</p>
 
@@ -129,27 +155,34 @@
           <a href="find.html" class="govbb-btn govbb-btn--cta">Find an open pharmacy</a>
         </div>
 
-        <!-- ── Free or subsidised medication ── -->
-        <h2 class="govbb-text-h2" id="free-subsidised">Get free or subsidised medication</h2>
-        <p class="govbb-text-body">
-          Some pharmacies can lower or remove the cost of your prescription medicine through the Barbados Drug Service, if you qualify — free at government (polyclinic) pharmacies, or at a lower cost at private pharmacies that work with the Drug Service. Not all private pharmacies take part — at those, you pay the full price.
-        </p>
-        <p class="govbb-text-body">
-          <a href="free-or-subsidised-medication.html" class="govbb-link">Check who qualifies and what to bring</a>
-        </p>
+        <!-- ── What you may pay ── -->
+        <h2 class="govbb-text-h2" id="costs">What you may pay</h2>
 
-        <!-- ── Prescription slip colours ── -->
-        <h2 class="govbb-text-h2" id="rx-colour">Prescription slip colours</h2>
-        <p class="govbb-text-body">
-          Prescriptions in Barbados come on different coloured slips. The colour of your slip can affect which pharmacy can fill it.
-        </p>
+        <p class="govbb-text-body">Some medicines may still cost money.</p>
+        <ul class="govbb-list govbb-list--bullet">
+          <li>At a government pharmacy, there is no fee to prepare your medicine.</li>
+          <li>At a private pharmacy that works with the Barbados Drug Service, you pay a fee to prepare your medicine. This is called a dispensing fee. The amount depends on the medicine.</li>
+          <li>At a private pharmacy that is not part of the Barbados Drug Service, you pay the full price.</li>
+        </ul>
+
+        <!-- ── Prescription colour ── -->
+        <h2 class="govbb-text-h2" id="rx-colour">Prescription colour</h2>
+
+        <p class="govbb-text-body">The colour of your prescription slip — the paper your doctor or clinic gives you — can affect which pharmacies can fill it.</p>
         <p class="govbb-text-body">
           <a href="rx-colours.html" class="govbb-link" target="_blank" rel="noopener">Check what the prescription slip colours mean (opens in a new tab)</a>
         </p>
 
-        <!-- ── Get help ── -->
-        <h2 class="govbb-text-h2" id="help">Get help</h2>
-        <p class="govbb-text-body">If a pharmacy will not accept your Barbados Drug Service prescription, or you have a problem getting your medicine, contact the Barbados Drug Service.</p>
+        <!-- ── Need help ── -->
+        <h2 class="govbb-text-h2" id="help">Need help at the pharmacy?</h2>
+
+        <p class="govbb-text-body">You may need help if:</p>
+        <ul class="govbb-list govbb-list--bullet">
+          <li>your ID is not accepted</li>
+          <li>the pharmacy asks you to pay more than expected</li>
+          <li>the pharmacy is out of stock</li>
+        </ul>
+        <p class="govbb-text-body">Contact the Barbados Drug Service.</p>
         <p class="govbb-text-body">Phone: <a href="tel:+12465354300" class="govbb-link">(246) 535-4300</a></p>
         <p class="govbb-text-body">Email: <a href="mailto:management@drugservice.gov.bb" class="govbb-link">management@drugservice.gov.bb</a></p>
         <p class="govbb-text-body">Website: <a href="https://drugservice.gov.bb" class="govbb-link">drugservice.gov.bb</a></p>
@@ -157,7 +190,6 @@
 
       </div>
     </section>
-
   </main>
 
   <!-- Feedback -->
