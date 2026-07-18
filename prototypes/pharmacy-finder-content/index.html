@@ -1,0 +1,856 @@
+<!doctype html>
+<!-- Barbados Drug Service — pharmacy finder content prototype -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Find a pharmacy for Barbados Drug Service prescription medicine — The Government of Barbados</title>
+    <link
+      rel="icon"
+      href="https://unpkg.com/@govtech-bb/styles@1.0.0-alpha.16/dist/assets/images/favicon.ico"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/@govtech-bb/styles@1.0.0-alpha.16/dist/styles.css"
+    />
+    <style>
+      /* Page-specific layout, built from design-system tokens only. */
+      @media (max-width: 40rem) {
+        .govbb-page__main {
+          --font-size-h1: 2rem;
+          --font-size-h2: 1.5rem;
+          --font-size-h3: 1.25rem;
+          --font-size-body: 1.0625rem;
+        }
+      }
+
+      /* On desktop, ease the very large default H1 so the long page title
+         sits on about two lines rather than many short ones. */
+      @media (min-width: 40rem) {
+        .govbb-page__main {
+          --font-size-h1: 2.75rem;
+        }
+      }
+
+      .page {
+        max-width: 48rem;
+        margin-inline: auto;
+        padding-block: var(--spacing-m) var(--spacing-l);
+      }
+
+      /* CSS-only navigation: one hidden radio per screen, toggled by clicking
+         a label. Uses no links and no JavaScript, so it works inside the
+         preview panel (which does not follow link/anchor clicks). */
+      .screen-nav {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+      }
+      .screen {
+        display: none;
+      }
+      #nav-start:checked ~ #start,
+      #nav-results-government:checked ~ #results-government,
+      #nav-results-private:checked ~ #results-private,
+      #nav-prescription-colours:checked ~ #prescription-colours,
+      #nav-medicine-list:checked ~ #medicine-list,
+      #nav-who-can-get-help:checked ~ #who-can-get-help,
+      #nav-contact:checked ~ #contact {
+        display: block;
+      }
+      label.govbb-btn,
+      label.govbb-link,
+      .logo-label {
+        cursor: pointer;
+      }
+
+      .page h1 {
+        margin: 0 0 var(--spacing-s);
+      }
+      .page section {
+        margin-top: var(--spacing-l);
+      }
+      .page h2 {
+        margin: 0 0 var(--spacing-s);
+      }
+      .page p {
+        margin: 0 0 var(--spacing-s);
+      }
+      .page ul {
+        margin: 0 0 var(--spacing-s);
+      }
+      .page li {
+        margin-bottom: var(--spacing-xxs);
+      }
+
+      .back-link {
+        display: inline-block;
+        margin-bottom: var(--spacing-m);
+      }
+
+      /* Action cards for the three search routes */
+      .cards {
+        display: grid;
+        gap: var(--spacing-m);
+        margin-top: var(--spacing-m);
+      }
+      .card {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-s);
+        padding: var(--spacing-m);
+        background: var(--color-white-00);
+        border: var(--border-width-form) solid var(--color-grey-00);
+        border-radius: var(--radius-sm);
+      }
+      .card h3 {
+        margin: 0;
+      }
+      .card p {
+        margin: 0;
+      }
+      .card .govbb-btn {
+        margin-top: var(--spacing-xs);
+        width: 100%;
+      }
+
+      /* Quiet info strips */
+      .contact-strip {
+        padding: var(--spacing-s) var(--spacing-xm);
+        background: var(--color-blue-10);
+        border-radius: var(--radius-sm);
+        margin-bottom: var(--spacing-s);
+      }
+      .contact-strip p {
+        margin: 0;
+      }
+      .contact-details {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: var(--spacing-xxs) var(--spacing-s);
+        margin-top: var(--spacing-s);
+      }
+      .contact-details dt {
+        color: var(--color-text-muted);
+      }
+      .contact-details dd {
+        margin: 0;
+      }
+
+      /* In-page results: pharmacy lists + pure-CSS "open now" filter */
+      .open-toggle {
+        margin: var(--spacing-m) var(--spacing-s) var(--spacing-m) 0;
+        vertical-align: middle;
+      }
+      .open-label {
+        vertical-align: middle;
+      }
+      .open-toggle:checked ~ .pharmacy-list .pharmacy--closed {
+        display: none;
+      }
+      .pharmacy-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: var(--spacing-s);
+      }
+      .pharmacy {
+        padding: var(--spacing-m);
+        background: var(--color-white-00);
+        border: var(--border-width-form) solid var(--color-grey-00);
+        border-radius: var(--radius-sm);
+      }
+      .pharmacy__head {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-xs);
+        align-items: baseline;
+        justify-content: space-between;
+      }
+      .pharmacy__head h2 {
+        margin: 0;
+      }
+      .pharmacy__meta {
+        margin: var(--spacing-xxs) 0 0;
+        color: var(--color-text-muted);
+      }
+      .pharmacy p:last-child {
+        margin: var(--spacing-xs) 0 0;
+      }
+      .tag {
+        display: inline-block;
+        font-size: var(--font-size-caption);
+        font-weight: var(--font-weight-bold);
+        padding: 2px var(--spacing-xs);
+        border-radius: var(--radius-sm);
+        white-space: nowrap;
+      }
+      .tag--open {
+        background: var(--color-green-10);
+        color: var(--color-green-00);
+      }
+      .tag--closed {
+        background: var(--color-red-10);
+        color: var(--color-red-00);
+      }
+      .tag--unknown {
+        background: var(--color-grey-00);
+        color: var(--color-text-muted);
+      }
+      .rx-colour dt {
+        font-weight: var(--font-weight-bold);
+        margin-top: var(--spacing-s);
+      }
+      .rx-colour dd {
+        margin: var(--spacing-xxs) 0 0;
+      }
+      .placeholder {
+        margin-top: var(--spacing-m);
+        padding: var(--spacing-xm);
+        background: var(--color-blue-10);
+        border-radius: var(--radius-sm);
+      }
+      .placeholder p {
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body class="govbb-page">
+    <!-- Official banner -->
+    <div class="govbb-official-banner">
+      <div class="govbb-container govbb-official-banner__inner">
+        <div class="govbb-official-banner__crest">
+          <img
+            class="govbb-official-banner__icon"
+            src="https://unpkg.com/@govtech-bb/styles@1.0.0-alpha.16/dist/assets/images/govbb-creast.svg"
+            alt=""
+          />
+        </div>
+        <div class="govbb-official-banner__text">
+          <span>Official government website</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <header class="govbb-header">
+      <div class="govbb-container govbb-header__inner">
+        <label for="nav-start" class="logo-label" aria-label="Go to the start page">
+          <img
+            class="govbb-header__logo"
+            src="https://unpkg.com/@govtech-bb/styles@1.0.0-alpha.16/dist/assets/images/govbb-logo.svg"
+            alt="GOVBB"
+          />
+        </label>
+      </div>
+    </header>
+
+    <main class="govbb-page__main">
+      <!-- Alpha status banner -->
+      <div
+        class="govbb-status-banner govbb-status-banner--alpha"
+        role="status"
+        aria-label="alpha status banner"
+        aria-live="polite"
+      >
+        <div class="govbb-container">
+          <p>
+            This page is in
+            <label class="govbb-link govbb-link--secondary" for="nav-start" style="cursor: pointer">Alpha</label>.
+          </p>
+        </div>
+      </div>
+
+      <div class="govbb-container">
+        <div class="page">
+          <!-- CSS-only navigation: hidden radios toggled by the labels below -->
+          <input class="screen-nav" type="radio" name="nav" id="nav-start" checked />
+          <input class="screen-nav" type="radio" name="nav" id="nav-results-government" />
+          <input class="screen-nav" type="radio" name="nav" id="nav-results-private" />
+          <input class="screen-nav" type="radio" name="nav" id="nav-prescription-colours" />
+          <input class="screen-nav" type="radio" name="nav" id="nav-medicine-list" />
+          <input class="screen-nav" type="radio" name="nav" id="nav-who-can-get-help" />
+          <input class="screen-nav" type="radio" name="nav" id="nav-contact" />
+
+          <!-- ============ RESULT SCREENS ============ -->
+          <div class="screen" id="results-government">
+            <label class="govbb-link back-link" for="nav-start">Back</label>
+            <h1 class="govbb-text-h1">Government pharmacies</h1>
+            <p class="govbb-text-body">
+              Showing government pharmacies open to the public.
+            </p>
+            <input type="checkbox" id="open-gov" class="govbb-checkbox open-toggle" />
+            <label class="open-label govbb-checkbox-item__label" for="open-gov"
+              >Show only pharmacies open now</label
+            >
+            <ul class="pharmacy-list">
+              <li class="pharmacy pharmacy--open">
+                <div class="pharmacy__head">
+                  <h2 class="govbb-text-h3">Winston Scott Polyclinic</h2>
+                  <span class="tag tag--open">Open now</span>
+                </div>
+                <p class="pharmacy__meta">Jemmotts Lane, St. Michael</p>
+                <p class="pharmacy__meta">
+                  Mon&ndash;Fri 8:15am&ndash;10:00pm &middot; Sat 8:15am&ndash;4:30pm
+                </p>
+                <p><a class="govbb-link" href="tel:+12465363419">(246) 536-3419</a></p>
+              </li>
+              <li class="pharmacy pharmacy--open">
+                <div class="pharmacy__head">
+                  <h2 class="govbb-text-h3">Branford Taitt Polyclinic</h2>
+                  <span class="tag tag--open">Open now</span>
+                </div>
+                <p class="pharmacy__meta">Black Rock Main Road, St. Michael</p>
+                <p class="pharmacy__meta">Mon&ndash;Fri 8:30am&ndash;4:30pm</p>
+                <p><a class="govbb-link" href="tel:+12465363701">(246) 536-3701</a></p>
+              </li>
+              <li class="pharmacy pharmacy--open">
+                <div class="pharmacy__head">
+                  <h2 class="govbb-text-h3">Edgar Cochrane Polyclinic</h2>
+                  <span class="tag tag--open">Open now</span>
+                </div>
+                <p class="pharmacy__meta">Wildey, St. Michael</p>
+                <p class="pharmacy__meta">Mon&ndash;Fri 8:30am&ndash;4:30pm</p>
+                <p><a class="govbb-link" href="tel:+12465364103">(246) 536-4103</a></p>
+              </li>
+              <li class="pharmacy pharmacy--open">
+                <div class="pharmacy__head">
+                  <h2 class="govbb-text-h3">Eunice Gibson Polyclinic</h2>
+                  <span class="tag tag--open">Open now</span>
+                </div>
+                <p class="pharmacy__meta">Henry Dunant Road, Warrens, St. Michael</p>
+                <p class="pharmacy__meta">Mon&ndash;Fri 8:15am&ndash;4:30pm</p>
+                <p><a class="govbb-link" href="tel:+12465364000">(246) 536-4000</a></p>
+              </li>
+              <li class="pharmacy pharmacy--open">
+                <div class="pharmacy__head">
+                  <h2 class="govbb-text-h3">Randal Phillips Polyclinic</h2>
+                  <span class="tag tag--open">Open now</span>
+                </div>
+                <p class="pharmacy__meta">Oistins Main Road, Christ Church</p>
+                <p class="pharmacy__meta">
+                  Mon 7:30am&ndash;5:30pm &middot; Tue, Wed &amp; Fri
+                  8:15am&ndash;4:30pm &middot; Thu 8:30am&ndash;4:30pm
+                </p>
+                <p><a class="govbb-link" href="tel:+12465364300">(246) 536-4300</a></p>
+              </li>
+              <li class="pharmacy pharmacy--open">
+                <div class="pharmacy__head">
+                  <h2 class="govbb-text-h3">Frederick Miller Polyclinic</h2>
+                  <span class="tag tag--open">Open now</span>
+                </div>
+                <p class="pharmacy__meta">Glebe, St. George</p>
+                <p class="pharmacy__meta">Mon&ndash;Fri 8:30am&ndash;4:30pm</p>
+                <p><a class="govbb-link" href="tel:+12465363940">(246) 536-3940</a></p>
+              </li>
+              <li class="pharmacy pharmacy--open">
+                <div class="pharmacy__head">
+                  <h2 class="govbb-text-h3">David Thompson Health Complex</h2>
+                  <span class="tag tag--open">Open now</span>
+                </div>
+                <p class="pharmacy__meta">Colleton Road, Glebe, St. John</p>
+                <p class="pharmacy__meta">Mon&ndash;Fri 8:30am&ndash;4:30pm</p>
+                <p><a class="govbb-link" href="tel:+12464167000">(246) 416-7000</a></p>
+              </li>
+              <li class="pharmacy pharmacy--open">
+                <div class="pharmacy__head">
+                  <h2 class="govbb-text-h3">Maurice Byer Polyclinic</h2>
+                  <span class="tag tag--open">Open now</span>
+                </div>
+                <p class="pharmacy__meta">Station Hill, St. Peter</p>
+                <p class="pharmacy__meta">Mon&ndash;Fri 8:15am&ndash;4:30pm</p>
+                <p><a class="govbb-link" href="tel:+12465363200">(246) 536-3200</a></p>
+              </li>
+              <li class="pharmacy pharmacy--open">
+                <div class="pharmacy__head">
+                  <h2 class="govbb-text-h3">St. Philip Polyclinic</h2>
+                  <span class="tag tag--open">Open now</span>
+                </div>
+                <p class="pharmacy__meta">Six Roads, St. Philip</p>
+                <p class="pharmacy__meta">Mon&ndash;Fri 8:15am&ndash;4:30pm</p>
+                <p><a class="govbb-link" href="tel:+12465364215">(246) 536-4215</a></p>
+              </li>
+              <li class="pharmacy pharmacy--closed">
+                <div class="pharmacy__head">
+                  <h2 class="govbb-text-h3">St. Andrew Outpatient Clinic</h2>
+                  <span class="tag tag--closed">Closed today</span>
+                </div>
+                <p class="pharmacy__meta">Belleplaine, St. Andrew</p>
+                <p class="pharmacy__meta">Wed 8:15am&ndash;12:00pm only</p>
+                <p><a class="govbb-link" href="tel:+12465364071">(246) 536-4071</a></p>
+              </li>
+              <li class="pharmacy pharmacy--closed">
+                <div class="pharmacy__head">
+                  <h2 class="govbb-text-h3">St. Joseph Outpatient Clinic</h2>
+                  <span class="tag tag--closed">Closed today</span>
+                </div>
+                <p class="pharmacy__meta">Horse Hill, St. Joseph</p>
+                <p class="pharmacy__meta">Tue, Wed &amp; Fri 8:15am&ndash;4:30pm</p>
+                <p><a class="govbb-link" href="tel:+12465363285">(246) 536-3285</a></p>
+              </li>
+              <li class="pharmacy pharmacy--open">
+                <div class="pharmacy__head">
+                  <h2 class="govbb-text-h3">St. Thomas Outpatient Clinic</h2>
+                  <span class="tag tag--open">Open now</span>
+                </div>
+                <p class="pharmacy__meta">Rock Hall, St. Thomas</p>
+                <p class="pharmacy__meta">Tue, Thu &amp; Fri 8:15am&ndash;4:30pm</p>
+                <p><a class="govbb-link" href="tel:+12465364952">(246) 536-4952</a></p>
+              </li>
+            </ul>
+          </div>
+
+          <div class="screen" id="results-private">
+            <label class="govbb-link back-link" for="nav-start">Back</label>
+            <h1 class="govbb-text-h1">Participating private pharmacies</h1>
+            <p class="govbb-text-body">
+              Showing private pharmacies that work with the Barbados Drug
+              Service.
+            </p>
+            <p class="govbb-text-body" style="color: var(--color-text-muted)">
+              Some pharmacies list &ldquo;Hours not confirmed&rdquo;. Call before
+              you visit.
+            </p>
+            <input type="checkbox" id="open-priv" class="govbb-checkbox open-toggle" />
+            <label class="open-label govbb-checkbox-item__label" for="open-priv"
+              >Show only pharmacies open now</label
+            >
+            <ul class="pharmacy-list">
+              <li class="pharmacy pharmacy--open">
+                <div class="pharmacy__head">
+                  <h2 class="govbb-text-h3">iMart Pharmacy &mdash; Lanterns Mall</h2>
+                  <span class="tag tag--open">Open now</span>
+                </div>
+                <p class="pharmacy__meta">Lanterns Mall, Christ Church</p>
+                <p class="pharmacy__meta">
+                  Mon&ndash;Sat 8:00am&ndash;8:00pm &middot; Sun 9:00am&ndash;2:00pm
+                </p>
+                <p><a class="govbb-link" href="tel:+12462713784">(246) 271-3784</a></p>
+              </li>
+              <li class="pharmacy pharmacy--open">
+                <div class="pharmacy__head">
+                  <h2 class="govbb-text-h3">iMart Pharmacy &mdash; Sheraton Mall</h2>
+                  <span class="tag tag--open">Open now</span>
+                </div>
+                <p class="pharmacy__meta">Sheraton Mall, Wildey, St. Michael</p>
+                <p class="pharmacy__meta">Mon&ndash;Sat 9:00am&ndash;8:00pm</p>
+                <p><a class="govbb-link" href="tel:+12462713784">(246) 271-3784</a></p>
+              </li>
+              <li class="pharmacy pharmacy--open">
+                <div class="pharmacy__head">
+                  <h2 class="govbb-text-h3">iMart Pharmacy &mdash; Haggatt Hall</h2>
+                  <span class="tag tag--open">Open now</span>
+                </div>
+                <p class="pharmacy__meta">Haggatt Hall, St. Michael</p>
+                <p class="pharmacy__meta">
+                  Mon&ndash;Sat 8:00am&ndash;8:00pm &middot; Sun 9:00am&ndash;2:00pm
+                </p>
+                <p><a class="govbb-link" href="tel:+12462713784">(246) 271-3784</a></p>
+              </li>
+              <li class="pharmacy pharmacy--open">
+                <div class="pharmacy__head">
+                  <h2 class="govbb-text-h3">BT Pharmacy</h2>
+                  <span class="tag tag--open">Open now</span>
+                </div>
+                <p class="pharmacy__meta">
+                  Sandy Crest Medical Centre, Holetown, St. James
+                </p>
+                <p class="pharmacy__meta">
+                  Mon&ndash;Sat 8:00am&ndash;7:00pm &middot; Sun 8:00am&ndash;4:00pm
+                </p>
+                <p><a class="govbb-link" href="tel:+12464220488">(246) 422-0488</a></p>
+              </li>
+              <li class="pharmacy pharmacy--open">
+                <div class="pharmacy__head">
+                  <h2 class="govbb-text-h3">Top Tier Pharmacy</h2>
+                  <span class="tag tag--open">Open now</span>
+                </div>
+                <p class="pharmacy__meta">
+                  Rouen Road, Neil&rsquo;s Tenantry, St. Michael
+                </p>
+                <p class="pharmacy__meta">
+                  Mon, Wed &amp; Fri 8:00am&ndash;5:00pm &middot; Tue &amp; Thu
+                  8:00am&ndash;7:00pm &middot; Sat 9:00am&ndash;5:00pm
+                </p>
+                <p><a class="govbb-link" href="tel:+12465475674">(246) 547-5674</a></p>
+              </li>
+              <li class="pharmacy pharmacy--open">
+                <div class="pharmacy__head">
+                  <h2 class="govbb-text-h3">OneUp Pharmacy &mdash; Wildey Mall</h2>
+                  <span class="tag tag--open">Open now</span>
+                </div>
+                <p class="pharmacy__meta">Wildey Mall, St. Michael</p>
+                <p class="pharmacy__meta">
+                  Mon&ndash;Fri 8:30am&ndash;3:30pm &middot; Sat 8:30am&ndash;4:30pm
+                </p>
+                <p><a class="govbb-link" href="tel:+12464266387">(246) 426-6387</a></p>
+              </li>
+              <li class="pharmacy pharmacy--open">
+                <div class="pharmacy__head">
+                  <h2 class="govbb-text-h3">Callies Pharmacy &mdash; Bayside</h2>
+                  <span class="tag tag--open">Open now</span>
+                </div>
+                <p class="pharmacy__meta">Bayside Plaza, Bay Street, St. Michael</p>
+                <p class="pharmacy__meta">
+                  Mon&ndash;Fri 8:30am&ndash;4:30pm &middot; Sat 8:30am&ndash;2:00pm
+                </p>
+                <p><a class="govbb-link" href="tel:+12464319560">(246) 431-9560</a></p>
+              </li>
+              <li class="pharmacy pharmacy--closed">
+                <div class="pharmacy__head">
+                  <h2 class="govbb-text-h3">Lewis Drug Mart</h2>
+                  <span class="tag tag--unknown">Hours not confirmed</span>
+                </div>
+                <p class="pharmacy__meta">Rockley Main Road, Christ Church</p>
+                <p class="pharmacy__meta">Call before you visit</p>
+                <p><a class="govbb-link" href="tel:+12464358090">(246) 435-8090</a></p>
+              </li>
+              <li class="pharmacy pharmacy--closed">
+                <div class="pharmacy__head">
+                  <h2 class="govbb-text-h3">Pharmaceuticals Plus Inc</h2>
+                  <span class="tag tag--unknown">Hours not confirmed</span>
+                </div>
+                <p class="pharmacy__meta">Omni Mall, Speightstown, St. Peter</p>
+                <p class="pharmacy__meta">Call before you visit</p>
+                <p><a class="govbb-link" href="tel:+12464221095">(246) 422-1095</a></p>
+              </li>
+              <li class="pharmacy pharmacy--closed">
+                <div class="pharmacy__head">
+                  <h2 class="govbb-text-h3">Felimar Plus Pharmacy</h2>
+                  <span class="tag tag--unknown">Hours not confirmed</span>
+                </div>
+                <p class="pharmacy__meta">Appleby Road, St. James</p>
+                <p class="pharmacy__meta">Call before you visit</p>
+                <p><a class="govbb-link" href="tel:+12465385685">(246) 538-5685</a></p>
+              </li>
+            </ul>
+          </div>
+
+          <!-- ============ SUPPORT SCREENS ============ -->
+          <div class="screen" id="prescription-colours">
+            <label class="govbb-link back-link" for="nav-start">Back</label>
+            <h1 class="govbb-text-h1">Where you can use your prescription</h1>
+            <p class="govbb-text-body">Prescriptions may be different colours.</p>
+            <p class="govbb-text-body">
+              The colour can help show which pharmacy can fill it.
+            </p>
+            <dl class="rx-colour govbb-text-body">
+              <dt>Blue</dt>
+              <dd>
+                From a public polyclinic or health centre. A government or a
+                private pharmacy can fill it.
+              </dd>
+              <dt>Pink</dt>
+              <dd>
+                From a private doctor. A government or a private pharmacy can
+                fill it.
+              </dd>
+              <dt>Yellow or green</dt>
+              <dd>
+                From a Queen Elizabeth Hospital outpatient clinic. Only a
+                government pharmacy can fill it.
+              </dd>
+            </dl>
+          </div>
+
+          <div class="screen" id="medicine-list">
+            <label class="govbb-link back-link" for="nav-start">Back</label>
+            <h1 class="govbb-text-h1">Check if your medicine is listed</h1>
+            <p class="govbb-text-body">
+              The Barbados National Drug Formulary is the list of medicines
+              covered by the Barbados Drug Service.
+            </p>
+            <p class="govbb-text-body">
+              You can search it to check if your medicine is on the list.
+            </p>
+            <p>
+              <a
+                class="govbb-link"
+                href="https://formulary.drugservice.gov.bb/bndf2022/menu.php"
+                target="_blank"
+                rel="noopener"
+                >Search the Barbados National Drug Formulary (opens in a new
+                tab)</a
+              >
+            </p>
+          </div>
+
+          <div class="screen" id="who-can-get-help">
+            <label class="govbb-link back-link" for="nav-start">Back</label>
+            <h1 class="govbb-text-h1">
+              Who can get medicine through the Barbados Drug Service
+            </h1>
+            <p class="govbb-text-body">
+              You may be able to get medicine through the Barbados Drug Service
+              if you:
+            </p>
+            <ul class="govbb-list govbb-list--bullet govbb-text-body">
+              <li>are a Barbadian citizen</li>
+              <li>are a permanent resident</li>
+              <li>are covered by CARICOM free movement</li>
+            </ul>
+            <p class="govbb-text-body">
+              You must also have a prescription for a medicine on the Barbados
+              National Drug Formulary.
+            </p>
+            <p class="govbb-text-body">
+              The prescription must be from a doctor registered with the Medical
+              Council of Barbados.
+            </p>
+            <p class="govbb-text-body">
+              Your doctor can work in the public or private health service.
+            </p>
+          </div>
+
+          <div class="screen" id="contact">
+            <label class="govbb-link back-link" for="nav-start">Back</label>
+            <h1 class="govbb-text-h1">Contact Barbados Drug Service</h1>
+            <p class="govbb-text-body">
+              Call the Barbados Drug Service before you pay full price.
+            </p>
+            <dl class="contact-details govbb-text-body">
+              <dt>Phone</dt>
+              <dd>
+                <a class="govbb-link" href="tel:+12465354300"
+                  >(246) 535-4300</a
+                >
+              </dd>
+              <dt>Email</dt>
+              <dd>
+                <a
+                  class="govbb-link"
+                  href="mailto:management@drugservice.gov.bb"
+                  >management@drugservice.gov.bb</a
+                >
+              </dd>
+              <dt>Website</dt>
+              <dd>
+                <a
+                  class="govbb-link"
+                  href="https://drugservice.gov.bb"
+                  target="_blank"
+                  rel="noopener"
+                  >drugservice.gov.bb</a
+                >
+              </dd>
+              <dt>Address</dt>
+              <dd>6th Floor, Warrens Tower II, St. Michael</dd>
+            </dl>
+          </div>
+
+          <!-- ============ START SCREEN (default, kept last) ============ -->
+          <div class="screen" id="start">
+            <!-- Page title and intro -->
+            <h1 class="govbb-text-h1">
+              Find a pharmacy for Barbados Drug Service prescription medicine
+            </h1>
+
+            <p class="govbb-text-body">Use this service to find:</p>
+            <ul class="govbb-list govbb-list--bullet govbb-text-body">
+              <li>government pharmacies</li>
+              <li>
+                private pharmacies that work with the Barbados Drug Service
+              </li>
+            </ul>
+            <p class="govbb-text-body">
+              The Barbados Drug Service helps lower the cost of some
+              prescription medicines. Some medicines may still cost money.
+            </p>
+            <p class="govbb-text-body">
+              You can check which pharmacies are open now after you choose a
+              pharmacy type.
+            </p>
+
+            <!-- Choose a pharmacy type -->
+            <section aria-labelledby="pharmacy-type-heading">
+              <h2 id="pharmacy-type-heading" class="govbb-text-h2">
+                Choose a pharmacy type
+              </h2>
+
+              <div class="cards">
+                <!-- Card 1 -->
+                <div class="card">
+                  <h3 class="govbb-text-h3">Government pharmacies</h3>
+                  <p class="govbb-text-body">
+                    Government pharmacies only provide medicines covered by the
+                    Barbados Drug Service.
+                  </p>
+                  <p class="govbb-text-body">
+                    Some medicines may still cost money.
+                  </p>
+                  <p class="govbb-text-body">
+                    You do not pay a fee to prepare your medicine.
+                  </p>
+                  <label class="govbb-btn" for="nav-results-government"
+                    >Show government pharmacies</label
+                  >
+                </div>
+
+                <!-- Card 2 -->
+                <div class="card">
+                  <h3 class="govbb-text-h3">Participating private pharmacies</h3>
+                  <p class="govbb-text-body">
+                    These are private pharmacies that work with the Barbados
+                    Drug Service.
+                  </p>
+                  <p class="govbb-text-body">
+                    They may have longer opening hours.
+                  </p>
+                  <p class="govbb-text-body">
+                    They may sell other medicines and items you can buy without
+                    a prescription.
+                  </p>
+                  <p class="govbb-text-body">
+                    You pay a fee to prepare your medicine. This is called a
+                    dispensing fee.
+                  </p>
+                  <label class="govbb-btn" for="nav-results-private"
+                    >Show participating private pharmacies</label
+                  >
+                </div>
+              </div>
+            </section>
+
+            <!-- What to take to the pharmacy -->
+            <section aria-labelledby="take-heading">
+              <h2 id="take-heading" class="govbb-text-h2">
+                What to take to the pharmacy
+              </h2>
+              <p class="govbb-text-body">Take:</p>
+              <ul class="govbb-list govbb-list--bullet govbb-text-body">
+                <li>the prescription</li>
+                <li>
+                  original accepted ID for the person the medicine is for
+                </li>
+              </ul>
+              <p class="govbb-text-body">Accepted ID can be:</p>
+              <ul class="govbb-list govbb-list--bullet govbb-text-body">
+                <li>Barbados National Identification (ID) card</li>
+                <li>Barbados passport</li>
+                <li>Barbados driver&rsquo;s licence</li>
+                <li>child health book, if the medicine is for a child</li>
+              </ul>
+              <p class="govbb-text-body">Photocopies are not accepted.</p>
+            </section>
+
+            <!-- What you may pay -->
+            <section aria-labelledby="pay-heading">
+              <h2 id="pay-heading" class="govbb-text-h2">What you may pay</h2>
+              <p class="govbb-text-body">Some medicines may still cost money.</p>
+              <ul class="govbb-list govbb-list--bullet govbb-text-body">
+                <li>
+                  At a government pharmacy, you do not pay a fee to prepare your
+                  medicine.
+                </li>
+                <li>
+                  At a participating private pharmacy, you pay a fee to prepare
+                  your medicine. This is called a dispensing fee.
+                </li>
+              </ul>
+            </section>
+
+            <!-- Where you can use your prescription -->
+            <section aria-labelledby="prescription-heading">
+              <h2 id="prescription-heading" class="govbb-text-h2">
+                Where you can use your prescription
+              </h2>
+              <p class="govbb-text-body">
+                Prescriptions may be different colours.
+              </p>
+              <p class="govbb-text-body">
+                The colour can help show which pharmacy can fill it.
+              </p>
+              <p>
+                <label class="govbb-link" for="nav-prescription-colours"
+                  >Check where you can use your prescription</label
+                >
+              </p>
+            </section>
+
+            <!-- Check if your medicine is listed -->
+            <section aria-labelledby="listed-heading">
+              <h2 id="listed-heading" class="govbb-text-h2">
+                Check if your medicine is listed
+              </h2>
+              <p class="govbb-text-body">
+                The Barbados National Drug Formulary is the list of medicines
+                covered by the Barbados Drug Service.
+              </p>
+              <p>
+                <label class="govbb-link" for="nav-medicine-list"
+                  >Check if your medicine is listed</label
+                >
+              </p>
+            </section>
+
+            <!-- Who can get medicine through the Barbados Drug Service -->
+            <section aria-labelledby="help-heading">
+              <h2 id="help-heading" class="govbb-text-h2">
+                Who can get medicine through the Barbados Drug Service
+              </h2>
+              <p class="govbb-text-body">
+                You may be able to get medicine through the Barbados Drug
+                Service if you meet the residency rules and have an approved
+                prescription.
+              </p>
+              <p>
+                <label class="govbb-link" for="nav-who-can-get-help"
+                  >Check who can get medicine through the Barbados Drug
+                  Service</label
+                >
+              </p>
+            </section>
+
+            <!-- If you need help before you pay -->
+            <section aria-labelledby="before-pay-heading">
+              <h2 id="before-pay-heading" class="govbb-text-h2">
+                If you need help before you pay
+              </h2>
+              <p class="govbb-text-body">
+                Call the Barbados Drug Service before you pay full price.
+              </p>
+              <div class="contact-strip">
+                <p class="govbb-text-body">
+                  Phone:
+                  <a class="govbb-link" href="tel:+12465354300"
+                    >(246) 535-4300</a
+                  >
+                </p>
+              </div>
+              <p>
+                <label class="govbb-link" for="nav-contact"
+                  >Contact Barbados Drug Service</label
+                >
+              </p>
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="govbb-footer">
+      <div class="govbb-container govbb-footer__inner">
+        <nav class="govbb-footer__nav" aria-label="Footer">
+          <label class="govbb-footer__link" for="nav-start" style="cursor: pointer">Home</label>
+          <a class="govbb-footer__link" href="#">Cookie Policy</a>
+          <a class="govbb-footer__link" href="#">Terms &amp; Conditions</a>
+          <a class="govbb-footer__link" href="#">Sitemap</a>
+        </nav>
+        <hr class="govbb-footer__divider" aria-hidden="true" />
+        <div class="govbb-footer__end">
+          <img
+            class="govbb-footer__coat"
+            src="https://unpkg.com/@govtech-bb/styles@1.0.0-alpha.16/dist/assets/images/govbb-creast.svg"
+            alt="Government of Barbados Coat of Arms"
+          />
+          <p class="govbb-footer__copy">© 2026 Government of Barbados</p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
