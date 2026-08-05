@@ -1,12 +1,13 @@
-# Open Pharmacy — Barbados SBS Pharmacy Finder
+# Open Pharmacy — Barbados pharmacy finder
 
-Helps people in Barbados find a pharmacy that accepts **Special Benefit Service (SBS)**
-prescriptions — see what's open now, filter by parish or type, and get directions. It's the
-interactive version of the Barbados Drug Service's printed SBS medication guide.
+Helps people in Barbados find a pharmacy that gives out **free or cheaper medication** — see
+what's open now, filter by parish or type, and get directions. It's the interactive version of
+the Barbados Drug Service's printed guide to the government subsidy (officially the Special
+Benefit Service).
 
 - **Live site:** https://govtech-bb.github.io/open-pharmacy
 - **Status:** Alpha
-- **Owner:** GovTech Barbados, with the Barbados Drug Service (BDS)
+- **Owner:** GovTech Barbados, with the Drug Service
 
 ## The two pages
 
@@ -17,8 +18,20 @@ interactive version of the Barbados Drug Service's printed SBS medication guide.
 
 ## Tech
 
-A static site — plain HTML, CSS and JavaScript, no build step or server. Uses the GOV.BB
-design system (`dist/`), Leaflet for the map, and `comments.js` for page feedback.
+A static site — plain HTML, CSS and JavaScript, no build step or server. It uses the GovBB
+design system, Leaflet for the map, and `comments.js` for page feedback.
+
+The design system is vendored, not built here:
+
+| Path | What it is |
+|------|------------|
+| `dist/govbb.css` | Copy of `@govtech-bb/frontend` v1.0.0-alpha.20 (`packages/frontend/dist/govbb.css`). **Never edit.** |
+| `assets/` | Copy of the design system's fonts and images — `govbb.css` loads the fonts from `../assets/fonts/`. |
+| `app.css` | This project's own styles (measure, typographic rhythm, page shell). |
+
+To take a new design-system release, re-copy both `dist/govbb.css` and `assets/` from
+[govbb-design-system](https://github.com/govtech-bb/govbb-design-system) and check the
+changelog for renamed classes.
 
 ## Run locally
 
@@ -46,17 +59,16 @@ edit that file.
 
 ## Report a change
 
-Out-of-date hours, a closure, a new pharmacy, or a wrong map pin? Contact the Barbados Drug
-Service:
+Out-of-date hours, a closure, a new pharmacy, or a wrong map pin? Contact the Drug Service:
 
 - Phone: (246) 535-4300
 - Email: management@drugservice.gov.bb
 
 ## Data source
 
-Sourced from the Barbados Drug Service (drugservice.gov.bb) and the printed SBS guide,
-verified May 2026. Hours and SBS participation change — pharmacies marked "SBS status not
-confirmed" must be verified with BDS before relying on coverage.
+Sourced from the Drug Service (drugservice.gov.bb) and its printed guide, verified May 2026.
+Hours and subsidy participation change — pharmacies marked "Private (no benefit)" must be
+verified with the Drug Service before relying on coverage.
 
 ---
 

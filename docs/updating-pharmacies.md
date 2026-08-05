@@ -17,7 +17,7 @@ phone number, fix opening hours, or add a pharmacy, you edit this array.
   type: 'government',                            // see "Types" below
   address: 'Black Rock Main Road, St. Michael',
   parish: 'St. Michael',                         // must match a parish in the filter dropdown
-  phone: '(246) 536-3701',                       // '' if none — card then says "call BDS"
+  phone: '(246) 536-3701',                       // '' if none — card says "call the Drug Service"
   hours: [
     { days: [1,2,3,4,5], open: 510, close: 990 } // Mon–Fri 8:30am–4:30pm
   ],
@@ -31,9 +31,9 @@ phone number, fix opening hours, or add a pharmacy, you edit this array.
 
 | `type` value | Meaning | Shown as |
 |--------------|---------|----------|
-| `government` | Government polyclinic — no dispensing fee for SBS beneficiaries | Blue border, "Government" badge |
+| `government` | Government polyclinic — no dispensing fee for people who qualify | Blue border, "Government" badge |
 | `private-sbs` | Confirmed Private Participating Pharmacy (PPP) — dispensing fee applies | Amber border, "Private Participating Pharmacy (PPP) · Dispensing fee" badge |
-| `unconfirmed` | Registered pharmacy whose SBS participation is **not** confirmed | Grey border, "SBS status not confirmed" badge **plus a caution note** |
+| `unconfirmed` | Registered pharmacy whose subsidy participation is **not** confirmed | Grey border, "Private (no benefit)" badge **plus a caution note** |
 
 ## How opening hours work
 
@@ -91,7 +91,7 @@ A pharmacy with no `COORDS` entry doesn't appear on the map (it still appears in
 **Move a pin**
 1. Find the pharmacy's `id` in `COORDS` and update the `[latitude, longitude]` pair.
 
-**Change SBS status** (e.g. a pharmacy is confirmed as a PPP)
+**Change subsidy status** (e.g. a pharmacy is confirmed as a PPP)
 1. Change its `type` from `'unconfirmed'` to `'private-sbs'`, and add real `hours` if known.
 
 ## Getting latitude & longitude for a pin
