@@ -1,0 +1,141 @@
+/* ─────────────────────────────────────────────────────────────
+   Open Pharmacy — project styles on top of the GovBB design system.
+
+   dist/govbb.css is a vendored copy of @govtech-bb/frontend
+   (v1.0.0-alpha.20). Never edit it — re-copy it from
+   packages/frontend/dist/govbb.css to update, and keep every
+   project-specific rule here (or inline for one-page styles).
+   ───────────────────────────────────────────────────────────── */
+
+/* The design-system focus ring is teal-100, which is 2.2:1 on white — below
+   the 3:1 non-text contrast floor (WCAG 1.4.11). Darken it once here rather
+   than per component. */
+:root {
+  --govbb-color-focus: var(--govbb-teal-00);
+}
+
+/* Full-width bands --------------------------------------------- */
+/* govbb-width-container sets margin-inline: auto, and body.govbb-page is a
+   column flex container — so a width container used as a DIRECT child of the
+   body gets cross-axis auto margins, which cancel `stretch`, shrink-wrap the
+   container to its content and centre it. Every width container therefore
+   needs a plain block band around it, the same way the design system's own
+   banner, header, main and footer regions wrap theirs. */
+.page-breadcrumb {
+  padding-block: var(--govbb-space-s);
+}
+
+@media (min-width: 1024px) {
+  .page-breadcrumb {
+    padding-block: var(--govbb-space-xm);
+  }
+}
+
+/* A trail is navigation — it carries nothing on paper. */
+@media print {
+  .page-breadcrumb {
+    display: none;
+  }
+}
+
+/* Measure ------------------------------------------------------ */
+/* Body content stops at ~800px so lines stay readable, matching the
+   alpha.gov.bb body layout. Page chrome (banner, header, breadcrumb, footer)
+   and the find.html finder keep the full container width. */
+.service-info-section > .govbb-width-container > * {
+  max-width: 50rem;
+}
+
+/* Vertical rhythm for body sections ---------------------------- */
+/* alpha.gov.bb's prose spacing. There, the page column is a stack of section
+   divs: each section is `space-y-s` inside (1rem between a heading and its
+   paragraphs, and between paragraphs), and the column separates the sections
+   with `space-y-6 lg:space-y-8` (1.5rem, 2rem from lg).
+
+   Our markup is a flat sequence rather than nested section divs, so the same
+   two gaps are expressed as top margins on siblings: 1rem by default, and the
+   larger section gap wherever a heading opens the next section. The govbb-text-*
+   classes set type only and the design-system base zeroes element margins, so
+   all of the vertical rhythm is owned here.
+
+   The prose blocks are the content column on the guide pages, plus the
+   standalone copy blocks on find.html. Scoped to DIRECT children, so nested
+   component internals are untouched. */
+.service-info-section > .govbb-width-container > * + *,
+.jp-sources > * + *,
+.section-pad > * + * {
+  margin-top: var(--govbb-space-s);
+}
+
+/* A heading starts a new section, so it takes the column gap, not the inner
+   one. .page-heading is a section in its own right, so what follows it does
+   the same. */
+.service-info-section > .govbb-width-container > * + :is(h2, h3),
+.service-info-section > .govbb-width-container > .page-heading + *,
+.jp-sources > * + :is(h2, h3),
+.section-pad > * + :is(h2, h3) {
+  margin-top: var(--govbb-space-xm);
+}
+
+@media (min-width: 1024px) {
+  .service-info-section > .govbb-width-container > * + :is(h2, h3),
+  .service-info-section > .govbb-width-container > .page-heading + *,
+  .jp-sources > * + :is(h2, h3),
+  .section-pad > * + :is(h2, h3) {
+    margin-top: var(--govbb-space-m);
+  }
+}
+
+/* List item spacing belongs to govbb-list (0.25rem), not here. */
+
+.service-info-section:last-of-type {
+  padding-bottom: var(--govbb-space-l);
+}
+
+/* Page heading block ------------------------------------------- */
+/* The h1 first, then the muted "last updated" line with a 4px blue rule
+   beneath it — the alpha.gov.bb page-heading pattern. The flex gap owns the
+   space between the two, so neither carries a margin of its own. */
+.page-heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--govbb-space-s);
+  padding-top: var(--govbb-space-m);
+}
+
+@media (min-width: 1024px) {
+  .page-heading {
+    gap: var(--govbb-space-xm);
+  }
+}
+
+/* A long unbroken service name must not overflow the column. */
+.page-heading h1 {
+  overflow-wrap: anywhere;
+}
+
+.page-heading__updated {
+  margin: 0;
+  padding-bottom: var(--govbb-space-s);
+  color: var(--govbb-color-muted);
+  border-bottom: 4px solid var(--govbb-blue-10);
+}
+
+/* Call to action ----------------------------------------------- */
+@media (max-width: 639px) {
+  .cta-wrap .govbb-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Feedback box ------------------------------------------------- */
+/* govbb-feedback is an inset block, so it needs a container and the same
+   measure as the body copy above it. */
+.feedback-wrap {
+  padding-bottom: var(--govbb-space-l);
+}
+
+.feedback-wrap .govbb-feedback {
+  max-width: 50rem;
+}

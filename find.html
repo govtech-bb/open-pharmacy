@@ -5,57 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="description" content="See which pharmacies are open now anywhere in Barbados. Also find pharmacies offering free or subsidised medication through the Barbados Drug Service. Filter by parish and view opening hours.">
   <title>Search for pharmacies — The Government of Barbados</title>
-  <link rel="icon" href="./dist/assets/images/favicon.ico">
-  <link rel="stylesheet" href="./dist/styles.css">
+  <link rel="icon" href="./assets/images/favicon.ico">
+  <link rel="stylesheet" href="./dist/govbb.css">
+  <link rel="stylesheet" href="./app.css">
   <style>
-    /* ══ mica2 — Justice-of-the-Peace finder design ══
-       Layout and chrome ported from the "Find a Justice of the Peace"
-       finder (govtech-bb.github.io/justice-of-the-peace): left filter
-       sidebar + results column, info notice, sources block and yellow
-       feedback box. Pharmacy-specific card, badge and map styles are kept
-       from the original pharmacy finder. */
-
-    /* Tokens present in the JP page's CDN styles but not this local build */
-    :root {
-      --color-light-grey-20: #d9dde1;
-      --color-dark-grey-00: var(--color-text);
-      --font-size-body-small: var(--font-size-caption);
-    }
-
-    /* Skip link */
-    .skip-link { position:absolute; left:-999px; top:0; z-index:3000; background:var(--color-teal-00); color:#fff; padding:10px 16px; font-weight:var(--font-weight-bold); border-radius:0 0 4px 0; }
-    .skip-link:focus { left:0; }
+    /* ══ Pharmacy finder — page-specific styles ══
+       Layout and chrome ported from the "Find a Justice of the Peace" finder
+       (govtech-bb.github.io/justice-of-the-peace): left filter sidebar +
+       results column, info notice and sources block. Shared page styles live
+       in app.css; components and tokens come from dist/govbb.css. */
 
     /* Heading block: H1 + muted "last updated", 4px blue rule beneath */
-    .jp-page { padding-bottom: var(--spacing-l); }
-    .jp-page__heading {
-      display: flex; flex-direction: column; gap: var(--spacing-s);
-      padding: var(--spacing-m) 0;
-      border-bottom: 4px solid var(--color-blue-10);
-    }
-    .service-meta { color: var(--color-text-muted); margin: 0; }
+    .jp-page { padding-bottom: var(--govbb-space-l); }
     .service-lede {
-      font-size: var(--font-size-h3); color: var(--color-dark-grey-00);
-      margin: var(--spacing-m) 0 0; line-height: 1.4;
+      font-size: var(--govbb-font-size-h3); color: var(--govbb-color-ink);
+      margin: var(--govbb-space-m) 0 0; line-height: 1.4;
     }
 
-    /* Info notice */
-    .notice { padding: var(--spacing-s) var(--spacing-xm); border-radius: var(--radius-sm); margin: var(--spacing-m) 0 0; }
-    .notice > p { margin: 0; }
-    .notice--info { background: var(--color-blue-10); border-left: 8px solid var(--color-blue-100); }
+    /* "How this works" disclosure */
+    .how-it-works { margin-top: var(--govbb-space-m); }
 
     /* Finder: filter sidebar + results column */
-    .finder { margin-top: var(--spacing-m); }
-    .finder__grid { display: grid; gap: var(--spacing-m); grid-template-columns: 1fr; }
+    .finder { margin-top: var(--govbb-space-m); }
+    .finder__grid { display: grid; gap: var(--govbb-space-m); grid-template-columns: 1fr; }
     @media (min-width: 1024px) {
       .finder__grid { grid-template-columns: 18rem 1fr; align-items: start; }
     }
     .finder__filters {
-      display: flex; flex-direction: column; gap: var(--spacing-s);
-      padding: var(--spacing-m); background: var(--color-blue-10);
-      border-radius: var(--radius-sm); align-self: start;
-      position: sticky; top: var(--spacing-s);
-      max-height: calc(100vh - 2 * var(--spacing-s)); overflow-y: auto;
+      display: flex; flex-direction: column; gap: var(--govbb-space-s);
+      padding: var(--govbb-space-m); background: var(--govbb-blue-10);
+      border-radius: var(--govbb-radius); align-self: start;
+      position: sticky; top: var(--govbb-space-s);
+      max-height: calc(100vh - 2 * var(--govbb-space-s)); overflow-y: auto;
       z-index: 500;   /* sit ABOVE the scrolling results so their text can't show through */
     }
     /* On mobile the filter is a plain static block at the top of the finder,
@@ -64,180 +45,143 @@
     @media (max-width: 1023px) {
       .finder__filters { position: static; max-height: none; overflow: visible; z-index: auto; }
     }
-    .finder__filters h2 { margin: 0; font-size: var(--font-size-h3); line-height: var(--line-height-h3); }
+    .finder__filters h2 { margin: 0; font-size: var(--govbb-font-size-h3); line-height: var(--govbb-line-height-h3); }
     .finder__results { min-width: 0; }
-    .filter-group { display: flex; flex-direction: column; gap: var(--spacing-xs); margin: 0; }
-    .filter-group .govbb-label { font-weight: var(--font-weight-bold); }
+    .filter-group { display: flex; flex-direction: column; gap: var(--govbb-space-xs); margin: 0; }
+    .filter-group .govbb-label { font-weight: 700; }
 
     /* Use-my-location button — full width with icon */
     .use-location-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; }
     .use-location-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
     .use-location-btn.active,
-    .use-location-btn[aria-pressed="true"] { background: #0a4549; }
+    .use-location-btn[aria-pressed="true"] { background: var(--govbb-color-interactive-active); }
     /* Location messages are informational, not errors — neutral blue notice. */
-    .jp-geo-error { margin: var(--spacing-xs) 0 0; padding: 8px 12px; border-left: 4px solid var(--color-blue-100); background: var(--color-blue-10); border-radius: 4px; font-size: var(--font-size-body-small); color: var(--color-text); }
+    .jp-geo-error { margin: var(--govbb-space-xs) 0 0; padding: 8px 12px; border-left: 4px solid var(--govbb-blue-100); background: var(--govbb-blue-10); border-radius: 4px; font-size: var(--govbb-font-size-caption); color: var(--govbb-color-ink); }
     .jp-geo-error a { color: inherit; text-decoration: underline; }
-    /* Design-system primary button focus ring is too light (2.2:1) — darken it. */
-    .govbb-btn:focus-visible:not(:disabled),
-    .govbb-btn--secondary:focus-visible:not(:disabled),
-    .use-location-btn:focus-visible:not(:disabled) { outline: 3px solid var(--color-teal-00) !important; outline-offset: 2px; }
-    /* Checkboxes were missing from the override; the design-system ring is only ~2:1 (SC 1.4.11). */
-    .govbb-checkbox:focus-visible { outline: 3px solid var(--color-teal-00) !important; outline-offset: 2px; box-shadow: none !important; }
 
-
-    /* Clear-filters text button */
-    .jp-clear { background: none; border: 0; padding: 6px 4px; min-height: 24px; font-size: var(--font-size-body-small); color: var(--color-teal-00); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; align-self: flex-start; font-family: var(--font-family-base); }
-    .jp-clear:hover { color: var(--color-teal-100); }
-    .jp-clear:focus-visible { outline: 3px solid var(--color-teal-00); outline-offset: 2px; }
-
-    /* Select chevron (parish + type) */
-    .govbb-select-wrapper { position: relative; display: block; overflow: hidden; background: var(--color-white-00); border-radius: var(--radius-sm); }
-    .filter-group select.govbb-select {
-      appearance: none; -webkit-appearance: none; width: 100%;
-      padding: 13px 52px 13px 12px; border: 2px solid var(--color-text);
-      border-radius: var(--radius-sm); background: var(--color-white-00);
-      font-family: var(--font-family-base); font-size: var(--font-size-body);
-      min-height: 48px;   /* comfortable touch target (mobile-first) */
-    }
-    .filter-group select.govbb-select:focus-visible { outline: 3px solid var(--color-teal-00); outline-offset: -1px; }
-    /* Name search box */
-    .jp-name-search { width: 100%; padding: 13px 12px; border: 2px solid var(--color-text); border-radius: var(--radius-sm); background: var(--color-white-00); font-family: var(--font-family-base); font-size: var(--font-size-body); min-height: 48px; }
-    .jp-name-search:focus-visible { outline: 3px solid var(--color-teal-00); outline-offset: 2px; }
-    .parish-chevron {
-      position: absolute; top: 2px; right: 2px; bottom: 2px; width: 38px;
-      display: flex; align-items: center; justify-content: center;
-      background: #f0f2f4; border-left: 2px solid var(--color-text);
-      color: var(--color-text); pointer-events: none;
-      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-    }
+    /* Clear-filters text button — hug the sidebar's left edge */
+    .clear-filters { align-self: flex-start; }
 
     /* Checkboxes use the design-system component (.govbb-checkbox /
-       .govbb-checkbox-item) from dist/styles.css — a 3rem touch target,
-       so no custom sizing here. Just let long labels wrap on narrow screens. */
+       .govbb-checkbox-item) — a 3rem touch target, so no custom sizing here.
+       Just let long labels wrap on narrow screens. */
     .filter-group .govbb-checkbox-item { align-items: flex-start; }
     .filter-group .govbb-checkbox-item__label { padding-top: 0.4rem; }
 
     /* Results meta */
-    .results-meta { display: flex; flex-direction: column; gap: var(--spacing-xs); padding-bottom: var(--spacing-xs); border-bottom: 2px solid var(--color-text); margin-bottom: var(--spacing-s); }
-    .results-count { font-size: var(--font-size-body); font-weight: var(--font-weight-bold); margin: 0; }
-    #filter-context { font-size: var(--font-size-caption); color: var(--color-text); margin: 0; }
+    .results-meta { display: flex; flex-direction: column; gap: var(--govbb-space-xs); padding-bottom: var(--govbb-space-xs); border-bottom: 2px solid var(--govbb-color-ink); margin-bottom: var(--govbb-space-s); }
+    .results-count { font-size: var(--govbb-font-size-body); font-weight: 700; margin: 0; }
+    #filter-context { font-size: var(--govbb-font-size-caption); color: var(--govbb-color-ink); margin: 0; }
     #filter-context a { margin-left: 4px; }
 
-
-    /* JP-style result cards (line-separated), keeping pharmacy content */
+    /* Line-separated result cards */
     .pharmacy-grid { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
     .pharmacy-card {
-      border: 0; border-bottom: 1px solid var(--color-light-grey-20);
-      padding: var(--spacing-s) var(--spacing-xs);
+      border: 0; border-bottom: 1px solid var(--govbb-grey-00);
+      padding: var(--govbb-space-s) var(--govbb-space-xs);
       display: flex; flex-direction: column; gap: 6px;
       background: transparent; position: relative;
     }
-    .pharmacy-card.is-selected { background: var(--color-grey-00); }
-    .pharmacy-card.is-closed .pharmacy-card__name { color: var(--color-mid-grey-00); }
-    .pharmacy-card__top { display: flex; flex-direction: column; gap: 4px; }
-    .pharmacy-card__name { font-size: var(--font-size-h4); line-height: var(--line-height-h4); font-weight: var(--font-weight-bold); margin: 0; overflow-wrap: anywhere; }
-    .pharmacy-card__status-wrap { display: flex; flex-wrap: wrap; gap: 4px; }
-    .pharmacy-card__address, .pharmacy-card__hours-row { font-size: var(--font-size-caption); color: var(--color-mid-grey-00); display: flex; align-items: flex-start; gap: 5px; margin: 0; }
-    .pharmacy-card__address svg, .pharmacy-card__hours-row svg { flex-shrink: 0; margin-top: 2px; }
-    .pharmacy-card__phone { display: inline-flex; align-items: center; gap: 5px; font-size: var(--font-size-caption); color: var(--color-teal-00); text-decoration: none; }
-    .pharmacy-card__note { font-size: var(--font-size-caption-sm); color: var(--color-mid-grey-00); font-style: italic; padding: 4px 8px; background: var(--color-blue-10); border-radius: 4px; }
-    .pharmacy-card__approx { margin: 0; font-size: var(--font-size-caption-sm); color: var(--color-mid-grey-00); }
-    .pharmacy-card__actions { display: flex; gap: var(--spacing-xs); flex-wrap: wrap; padding-top: 4px; }
+    .pharmacy-card.is-selected { background: var(--govbb-grey-00); }
+    .pharmacy-card.is-closed .pharmacy-card__name { color: var(--govbb-mid-grey-00); }
+    /* Status first — colour is always backed by the words, never carried alone. */
+    .pharmacy-card__status { display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--govbb-space-xs); margin: 0; font-size: var(--govbb-font-size-caption); font-weight: 700; }
+    .pharmacy-card__status::before { content: ''; align-self: center; flex-shrink: 0; width: 9px; height: 9px; border-radius: 50%; background: currentColor; }
+    .pharmacy-card__status--open { color: var(--govbb-green-00); }
+    .pharmacy-card__status--closed, .pharmacy-card__status--unknown { color: var(--govbb-mid-grey-00); }
+    .pharmacy-card__until { font-weight: 400; color: var(--govbb-mid-grey-00); }
 
-    /* Badges */
-    .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 100px; font-size: var(--font-size-caption-sm); font-weight: var(--font-weight-bold); line-height: 1.4; }
-    .badge--government { background: var(--color-blue-100); color: var(--color-white-00); }
-    .badge--private { background: var(--color-yellow-40); color: #5a3e00; }
-    .badge--unconfirmed { background: var(--color-grey-00); color: var(--color-mid-grey-00); }
-    .badge--open { background: var(--color-green-40); color: var(--color-green-00); }
-    .badge--closed { background: var(--color-grey-00); color: var(--color-mid-grey-00); }
-    .badge--unknown { background: var(--color-grey-00); color: var(--color-mid-grey-00); }
-    .badge--dot::before { content: ''; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+    /* h4 and body are both 1.25rem in the design system, so h4 gave the name no
+       size separation at all — h3 is the first step that actually clears body. */
+    .pharmacy-card__name { font-size: var(--govbb-font-size-h3); line-height: var(--govbb-line-height-h3); font-weight: 700; margin: 0; overflow-wrap: anywhere; }
 
-    /* Card map button */
+    /* Cost — the decision variable, so it reads as a statement. */
+    .pharmacy-card__cost { margin: 0; font-size: var(--govbb-font-size-caption); font-weight: 700; }
+    .pharmacy-card__cost--free { color: var(--govbb-green-00); }
+    .pharmacy-card__cost--fee  { color: var(--govbb-color-ink); }
+    .pharmacy-card__cost--full { color: var(--govbb-mid-grey-00); }
+    .pharmacy-card__address, .pharmacy-card__hours-row { font-size: var(--govbb-font-size-caption); color: var(--govbb-mid-grey-00); display: flex; align-items: flex-start; gap: 5px; margin: 0; }
+    /* Optically centre the icon on the FIRST text line, and keep it there when
+       the address wraps. The box is one line tall while the width stays 12px,
+       so the viewBox's default xMidYMid meet scales the 24x24 artwork to 12x12
+       and centres it in that box — no magic offset, and it follows the type
+       size. 1lh where supported, its computed equivalent (1.5em) before that. */
+    .pharmacy-card__address svg, .pharmacy-card__hours-row svg {
+      flex-shrink: 0;
+      inline-size: 12px;
+      block-size: 1.5em;
+      block-size: 1lh;
+    }
+    .pharmacy-card__phone { display: inline-flex; align-items: center; gap: 5px; font-size: var(--govbb-font-size-caption); color: var(--govbb-teal-00); text-decoration: none; }
+    .pharmacy-card__note { font-size: var(--govbb-font-size-caption-sm); color: var(--govbb-mid-grey-00); font-style: italic; padding: 4px 8px; background: var(--govbb-blue-10); border-radius: 4px; }
+    .pharmacy-card__actions { display: flex; gap: var(--govbb-space-xs); flex-wrap: wrap; padding-top: 4px; }
+
+    /* Card call/directions buttons */
     .card-call-btn { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
     .card-call-btn svg { flex-shrink: 0; }
 
-    /* Show more */
-    .jp-show-more { display: block; margin: var(--spacing-m) auto 0; background: var(--color-grey-00); color: var(--color-text); border: 0; border-radius: var(--radius-sm); padding: var(--spacing-s) var(--spacing-l); font-size: var(--font-size-h4); line-height: var(--line-height-h4); font-weight: 400; font-family: var(--font-family-base); cursor: pointer; }
-    .jp-show-more:hover { background: var(--color-light-grey-20); }
-    .jp-show-more:focus-visible { outline: 4px solid var(--color-teal-00); outline-offset: 2px; }
+    /* Show more — a secondary button centred under the list */
+    .jp-show-more { display: block; margin: var(--govbb-space-m) auto 0; }
     #pagination:empty { display: none; }
 
     /* Empty state */
-    .empty-state { text-align: center; padding: var(--spacing-l) var(--spacing-m); color: var(--color-mid-grey-00); }
-    .empty-state__icon { font-size: 3rem; margin-bottom: var(--spacing-s); }
-    .empty-state h3 { font-size: var(--font-size-h3); color: var(--color-text); }
+    .empty-state { text-align: center; padding: var(--govbb-space-l) var(--govbb-space-m); color: var(--govbb-mid-grey-00); }
+    .empty-state__icon { font-size: 3rem; margin-bottom: var(--govbb-space-s); }
+    .empty-state h3 { font-size: var(--govbb-font-size-h3); color: var(--govbb-color-ink); }
 
     /* Sources */
-    .jp-sources { margin-top: var(--spacing-l); }
-    .jp-sources h2 { margin: 0 0 var(--spacing-s); }
-    .source-note { color: var(--color-mid-grey-00); }
+    .jp-sources { margin-top: var(--govbb-space-l); }
+    .source-note { color: var(--govbb-mid-grey-00); }
 
-    /* Yellow feedback box (JP style) */
-
-    /* BDS contact */
-    .section-pad { padding: var(--spacing-m) 0; }
-    .section-divider { border: 0; border-top: 1px solid var(--color-grey-00); margin: 0 0 var(--spacing-m); }
+    /* Drug Service contact */
+    .section-pad { padding: var(--govbb-space-m) 0; }
+    .section-divider { border: 0; border-top: 1px solid var(--govbb-grey-00); margin: 0 0 var(--govbb-space-m); }
 
     /* Utilities */
     .hidden { display: none !important; }
-    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border-width:0; }
-    .text-muted { color: var(--color-mid-grey-00); }
-    main { padding-bottom: var(--spacing-l); }
-
-    /* Back-to-top (base styles come from the design system) */
-    /* Respect the user's reduced-motion preference */
-    @media (prefers-reduced-motion: reduce) {
-      html { scroll-behavior: auto; }
-      *, *::before, *::after { transition-duration: 0.01ms !important; }
-    }
+    .text-muted { color: var(--govbb-mid-grey-00); }
+    main { padding-bottom: var(--govbb-space-l); }
   </style>
 </head>
 <body class="govbb-page">
-  <a class="skip-link" href="#main">Skip to main content</a>
+  <a class="govbb-skip-link" href="#main">Skip to main content</a>
 
   <!-- ── Official Banner ── -->
   <div class="govbb-official-banner">
-    <div class="govbb-container">
-      <div class="govbb-official-banner__inner">
-        <span class="govbb-official-banner__crest">
-          <img src="./dist/assets/images/govbb-creast.svg" alt="" class="govbb-official-banner__icon">
-        </span>
-        <div class="govbb-official-banner__text">
-          <span>Official government website</span>
-        </div>
+    <div class="govbb-width-container govbb-official-banner__inner">
+      <span class="govbb-official-banner__crest">
+        <img src="./assets/images/govbb-crest.svg" alt="" class="govbb-official-banner__icon">
+      </span>
+      <div class="govbb-official-banner__text">
+        <span>Official government website</span>
       </div>
     </div>
   </div>
 
   <!-- ── Header ── -->
   <header class="govbb-header">
-    <div class="govbb-container">
-      <div class="govbb-header__inner">
-        <a href="https://alpha.gov.bb/" aria-label="Government of Barbados home">
-          <img src="./dist/assets/images/govbb-logo.svg" alt="" class="govbb-header__logo">
-        </a>
-      </div>
+    <div class="govbb-width-container govbb-header__inner">
+      <a class="govbb-header__home" href="https://alpha.gov.bb/">
+        <img src="./assets/images/govbb-logo.svg" alt="Government of Barbados" class="govbb-header__logo">
+      </a>
     </div>
   </header>
 
   <!-- ── Alpha banner ── -->
-  <div class="govbb-status-banner govbb-status-banner--alpha">
-    <div class="govbb-container">
+  <div class="govbb-status-banner govbb-status-banner--alpha govbb-status-banner--full-width">
+    <div class="govbb-width-container govbb-status-banner__inner">
       <p>This page is in <a href="https://alpha.gov.bb/what-we-mean-by-alpha" class="govbb-link">Alpha</a>.</p>
     </div>
   </div>
 
   <!-- ── Breadcrumb ── -->
   <div class="page-breadcrumb">
-    <div class="govbb-container">
-      <nav class="govbb-breadcrumbs" aria-label="Breadcrumb">
+    <div class="govbb-width-container">
+      <nav class="govbb-breadcrumbs govbb-breadcrumbs--collapse-on-mobile" aria-label="Breadcrumb">
         <ol class="govbb-breadcrumbs__list">
           <li class="govbb-breadcrumbs__item"><a href="https://alpha.gov.bb/" class="govbb-breadcrumbs__link">Home</a></li>
           <li class="govbb-breadcrumbs__item"><a href="https://alpha.gov.bb/health-and-emergency-services" class="govbb-breadcrumbs__link">Health and emergency services</a></li>
           <li class="govbb-breadcrumbs__item"><a href="index.html" class="govbb-breadcrumbs__link">Find an open pharmacy</a></li>
-          <li class="govbb-breadcrumbs__item" aria-current="page">Search for pharmacies</li>
         </ol>
       </nav>
     </div>
@@ -246,25 +190,26 @@
   <!-- ── Main ── -->
   <main id="main">
 
-    <div class="govbb-container jp-page">
+    <div class="govbb-width-container jp-page">
 
-      <header class="jp-page__heading">
-        <p class="service-meta govbb-text-caption">Last updated on May 15, 2026</p>
+      <header class="page-heading">
         <h1 class="govbb-text-h1">Search for pharmacies</h1>
+        <p class="govbb-text-caption page-heading__updated">Last updated on 23 July 2026, 2:04pm</p>
       </header>
 
       <p class="service-lede">
-        See which pharmacies are open now, anywhere in Barbados. Filter by parish or type, or use your location to find one near you.
+        Pharmacies that give free or cheaper prescription medication across Barbados.
       </p>
 
-      <div class="notice notice--info" role="region" aria-label="About this list">
-        <p>
-          <strong>Some pharmacies give out free or subsidised medication</strong> through the Barbados Drug Service &mdash; free at government polyclinics, or for a dispensing fee at participating private pharmacies. Others, marked &ldquo;Private (no benefit)&rdquo;, are not in the scheme. Tick &ldquo;Free &amp; subsidised medicine&rdquo; to show only those that take part. Opening hours can change, so call ahead to confirm.
-        </p>
-      </div>
+      <details class="govbb-show-hide how-it-works">
+        <summary class="govbb-show-hide__summary">How this works</summary>
+        <div class="govbb-show-hide__content">
+          <p class="govbb-text-body">Government polyclinic pharmacies are free. Private pharmacies charge a small dispensing fee. Filter by parish or type to find one near you.</p>
+        </div>
+      </details>
 
       <section class="finder" aria-labelledby="finder-heading">
-        <h2 id="finder-heading" class="sr-only">Pharmacy finder</h2>
+        <h2 id="finder-heading" class="govbb-visually-hidden">Pharmacy finder</h2>
 
         <div class="finder__grid">
 
@@ -273,7 +218,7 @@
             <h2 class="govbb-text-h3">Filters</h2>
 
             <div class="filter-group">
-              <button id="near-me-btn" class="govbb-btn use-location-btn" type="button" aria-pressed="false">
+              <button id="near-me-btn" class="govbb-button use-location-btn" type="button" aria-pressed="false">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
                 Use my location
               </button>
@@ -282,29 +227,23 @@
 
             <div class="govbb-form-group filter-group">
               <label class="govbb-label" for="name-search">Search by name</label>
-              <input type="search" id="name-search" class="jp-name-search" placeholder="e.g. Sparman, Collins, Massy" autocomplete="off">
+              <input type="search" id="name-search" class="govbb-input" placeholder="e.g. Sparman, Collins, Massy" autocomplete="off">
             </div>
 
             <div class="govbb-form-group filter-group">
               <label class="govbb-label" for="parish-select">Parish</label>
-              <div class="govbb-select-wrapper">
-                <select id="parish-select" class="govbb-select">
-                  <option value="">All parishes</option>
-                </select>
-                <span class="parish-chevron" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-              </div>
+              <select id="parish-select" class="govbb-select">
+                <option value="">All parishes</option>
+              </select>
             </div>
 
             <div class="govbb-form-group filter-group">
               <label class="govbb-label" for="type-select">Pharmacy type</label>
-              <div class="govbb-select-wrapper">
-                <select id="type-select" class="govbb-select">
-                  <option value="all">All pharmacies</option>
-                  <option value="government">Government</option>
-                  <option value="private-sbs">Private</option>
-                </select>
-                <span class="parish-chevron" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-              </div>
+              <select id="type-select" class="govbb-select">
+                <option value="all">All pharmacies</option>
+                <option value="government">Government</option>
+                <option value="private-sbs">Private (takes subsidy)</option>
+              </select>
             </div>
 
             <div class="filter-group">
@@ -312,15 +251,15 @@
                 <input type="checkbox" id="open-now" class="govbb-checkbox" aria-describedby="open-now-hint">
                 <label class="govbb-checkbox-item__label" for="open-now">Only open now</label>
               </div>
-              <p id="open-now-hint" class="govbb-text-caption" style="margin:0;color:var(--color-mid-grey-00);">Shows only pharmacies open right now, in Barbados time. Pharmacies with no confirmed hours are not shown &mdash; call to check.</p>
+              <p id="open-now-hint" class="govbb-text-caption" style="margin:0;color:var(--govbb-mid-grey-00);">Shows only pharmacies open right now, in Barbados time. Pharmacies with no confirmed hours are not shown &mdash; call to check.</p>
               <div class="govbb-checkbox-item">
-                <input type="checkbox" id="subsidised-only" class="govbb-checkbox">
-                <label class="govbb-checkbox-item__label" for="subsidised-only">Free &amp; subsidised medicine</label>
+                <input type="checkbox" id="subsidised-only" class="govbb-checkbox" checked>
+                <label class="govbb-checkbox-item__label" for="subsidised-only">Free &amp; subsidised medication</label>
               </div>
             </div>
 
             <div class="filter-group">
-              <button type="button" class="jp-clear clear-filters">Clear filters</button>
+              <button type="button" class="govbb-button govbb-button--text clear-filters">Clear filters</button>
             </div>
           </aside>
 
@@ -330,11 +269,11 @@
             <div class="results-meta">
               <p class="results-count" id="results-count" aria-live="polite">Loading&hellip;</p>
               <p id="filter-context" class="hidden"></p>
-              <p class="govbb-text-caption" style="color:var(--color-mid-grey-00);margin:0;">Open/closed status and opening times are shown in Barbados time.</p>
+              <p class="govbb-text-caption" style="color:var(--govbb-mid-grey-00);margin:0;">Open/closed status and opening times are shown in Barbados time.</p>
             </div>
 
             <noscript>
-              <p class="govbb-text-body">This page needs JavaScript to list pharmacies. To find a pharmacy or ask about free or subsidised medication, call the Barbados Drug Service on <a href="tel:+12465354300" class="govbb-link">(246) 535-4300</a>.</p>
+              <p class="govbb-text-body">This page needs JavaScript to list pharmacies. To find a pharmacy or ask about free or subsidised medication, call the Drug Service on <a href="tel:+12465354300" class="govbb-link">(246) 535-4300</a>.</p>
             </noscript>
 
             <div class="pharmacy-grid" id="pharmacy-grid">
@@ -348,7 +287,7 @@
 
       <aside class="jp-sources" id="sources" aria-labelledby="sources-heading">
         <h2 id="sources-heading" class="govbb-text-h2">Where this information comes from</h2>
-        <p class="govbb-text-body source-note">Government and Barbados Drug Service pharmacies come from the Barbados Drug Service register, verified May 2026. Pharmacies marked &ldquo;Private (no benefit)&rdquo; are drawn from a wider public pharmacy list and have not been confirmed with the Barbados Drug Service &mdash; they may still offer subsidised medicine, so call to check.</p>
+        <p class="govbb-text-body source-note">Government and Drug Service pharmacies come from the Drug Service register, verified May 2026. Pharmacies marked &ldquo;Private (no benefit)&rdquo; are drawn from a wider public pharmacy list and have not been confirmed with the Drug Service &mdash; they may still offer subsidised medication, so call to check.</p>
         <p class="govbb-text-body source-note">Opening hours and Drug Service participation can change &mdash; call ahead to confirm.</p>
       </aside>
 
@@ -359,21 +298,21 @@
         <p class="govbb-text-body"><a href="rx-colours.html" class="govbb-link" target="_blank" rel="noopener">Check what the prescription slip colours mean (opens in a new tab)</a></p>
       </section>
 
-      <section class="section-pad" aria-label="Barbados Drug Service contact">
+      <section class="section-pad" aria-label="Drug Service contact">
         <hr class="section-divider">
-        <h2 class="govbb-text-h2">Barbados Drug Service</h2>
-        <p class="govbb-text-body">If a pharmacy is refusing your Barbados Drug Service (SBS) prescription, contact the Barbados Drug Service before you pay.</p>
+        <h2 class="govbb-text-h2">Drug Service</h2>
+        <p class="govbb-text-body">If a pharmacy is refusing your Drug Service prescription, contact the Drug Service before you pay.</p>
         <p class="govbb-text-body">Phone: <a href="tel:+12465354300" class="govbb-link">(246) 535-4300</a></p>
         <p class="govbb-text-body">Email: <a href="mailto:management@drugservice.gov.bb" class="govbb-link">management@drugservice.gov.bb</a></p>
         <p class="govbb-text-body">Website: <a href="https://drugservice.gov.bb" class="govbb-link">drugservice.gov.bb</a></p>
         <p class="govbb-text-body">Address: 6th Floor, Warrens Tower II</p>
       </section>
 
-      <div class="govbb-feedback-box">
-        <h2 class="govbb-feedback-box__heading">Was this helpful?</h2>
-        <p class="govbb-feedback-box__body">Give us your feedback about this page.</p>
+      <aside class="govbb-feedback">
+        <h2 class="govbb-feedback__heading">Was this helpful?</h2>
+        <p>Give us your feedback about this page.</p>
         <a href="https://alpha.gov.bb/feedback" class="govbb-link">Help us improve alpha.gov.bb</a>
-      </div>
+      </aside>
 
     </div>
 
@@ -381,18 +320,16 @@
 
   <!-- ── Footer ── -->
   <footer class="govbb-footer">
-    <div class="govbb-container">
-      <div class="govbb-footer__inner">
-        <nav class="govbb-footer__nav" aria-label="Footer navigation">
-          <a href="https://alpha.gov.bb/" class="govbb-footer__link">Home</a>
-          <a href="https://alpha.gov.bb/terms-conditions" class="govbb-footer__link">Terms &amp; Conditions</a>
-          <a href="https://job-boards.greenhouse.io/govtechbarbados" class="govbb-footer__link">Careers</a>
-        </nav>
-        <hr class="govbb-footer__divider">
-        <div class="govbb-footer__end">
-          <img src="./dist/assets/images/govbb-creast.svg" alt="Government of Barbados" class="govbb-footer__coat">
-          <p class="govbb-footer__copy">&copy; 2026 Government of Barbados</p>
-        </div>
+    <div class="govbb-width-container govbb-footer__inner">
+      <nav class="govbb-footer__nav" aria-label="Footer navigation">
+        <a href="https://alpha.gov.bb/" class="govbb-footer__link govbb-link">Home</a>
+        <a href="https://alpha.gov.bb/terms-conditions" class="govbb-footer__link govbb-link">Terms &amp; Conditions</a>
+        <a href="https://job-boards.greenhouse.io/govtechbarbados" class="govbb-footer__link govbb-link">Careers</a>
+      </nav>
+      <hr class="govbb-footer__divider" aria-hidden="true">
+      <div class="govbb-footer__end">
+        <img src="./assets/images/govbb-crest.svg" alt="Government of Barbados Coat of Arms" class="govbb-footer__coat">
+        <p class="govbb-footer__copy">&copy; 2026 Government of Barbados</p>
       </div>
     </div>
   </footer>
@@ -413,7 +350,7 @@
         { days: [1,2,3,4,5], open: 495, close: 1320 },
         { days: [6],          open: 495, close: 990  }
       ],
-      hoursText: 'Mon–Fri 8:15am–10:00pm · Sat 8:15am–4:30pm',
+      hoursText: 'Mon–Fri 8:15am–10pm · Sat 8:15am–4:30pm',
       notes: 'Latest-closing government pharmacy. The only one open Saturdays.',
       routes: 'Routes 11, 12 from Bridgetown Terminal (Probyn St)'
     },
@@ -495,7 +432,7 @@
       hours: [
         { days: [3], open: 495, close: 720 }
       ],
-      hoursText: 'Wed 8:15am–12:00pm only',
+      hoursText: 'Wed 8:15am–12pm only',
       notes: 'Open Wednesdays only.', routes: 'Route 2 from Bridgetown (Lower Green Terminal)'
     },
     {
@@ -524,7 +461,7 @@
         { days: [1,2,3,4,5,6], open: 480,  close: 1200 },
         { days: [0],           open: 540,  close: 840  }
       ],
-      hoursText: 'Mon–Sat 8:00am–8:00pm · Sun 9:00am–2:00pm',
+      hoursText: 'Mon–Sat 8am–8pm · Sun 9am–2pm',
       notes: 'WhatsApp prescription service available.',
       routes: 'Routes 30, 31 from Bridgetown'
     },
@@ -533,7 +470,7 @@
       address: 'Sheraton Centre, Sargeant\'s Village, Christ Church', parish: 'Christ Church',
       phone: '(246) 271-3784',
       hours: [{ days: [1,2,3,4,5,6], open: 540, close: 1200 }],
-      hoursText: 'Mon–Sat 9:00am–8:00pm · Closed Sundays',
+      hoursText: 'Mon–Sat 9am–8pm · Closed Sundays',
       notes: 'WhatsApp prescription service available.',
       routes: 'Routes 11, 22 from Bridgetown'
     },
@@ -545,7 +482,7 @@
         { days: [1,2,3,4,5,6], open: 480, close: 1200 },
         { days: [0],           open: 540, close: 840  }
       ],
-      hoursText: 'Mon–Sat 8:00am–8:00pm · Sun 9:00am–2:00pm',
+      hoursText: 'Mon–Sat 8am–8pm · Sun 9am–2pm',
       notes: 'WhatsApp prescription service available.',
       routes: 'Routes 11, 11C from Bridgetown'
     },
@@ -557,7 +494,7 @@
         { days: [1,2,3,4,5,6], open: 480, close: 1200 },
         { days: [0],           open: 540, close: 840  }
       ],
-      hoursText: 'Mon–Sat 8:00am–8:00pm · Sun 9:00am–2:00pm',
+      hoursText: 'Mon–Sat 8am–8pm · Sun 9am–2pm',
       notes: 'WhatsApp prescription service available.',
       routes: 'Routes 30, 31 from Bridgetown'
     },
@@ -566,7 +503,7 @@
       address: 'Wildey, St. Michael', parish: 'St. Michael',
       phone: '(246) 271-3784',
       hours: [{ days: [1,2,3,4,5,6], open: 480, close: 1200 }],
-      hoursText: 'Mon–Sat 8:00am–8:00pm · Closed Sundays',
+      hoursText: 'Mon–Sat 8am–8pm · Closed Sundays',
       notes: 'WhatsApp prescription service available.',
       routes: 'Routes 11, 22 from Bridgetown'
     },
@@ -575,7 +512,7 @@
       address: 'Emerald Park, Six Cross Roads, St. Philip', parish: 'St. Philip',
       phone: '(246) 271-3784',
       hours: [{ days: [1,2,3,4,5,6], open: 480, close: 1200 }],
-      hoursText: 'Mon–Sat 8:00am–8:00pm · Bank holidays 10:00am–2:00pm',
+      hoursText: 'Mon–Sat 8am–8pm · Bank holidays 10am–2pm',
       notes: '', routes: 'Route 10 from Bridgetown'
     },
     {
@@ -586,7 +523,7 @@
         { days: [1,2,3,4,5,6], open: 480, close: 1200 },
         { days: [0],           open: 540, close: 840  }
       ],
-      hoursText: 'Mon–Sat 8:00am–8:00pm · Sun 9:00am–2:00pm · Bank holidays 10:00am–2:00pm',
+      hoursText: 'Mon–Sat 8am–8pm · Sun 9am–2pm · Bank holidays 10am–2pm',
       notes: '', routes: 'Route 3 from Bridgetown'
     },
     {
@@ -594,7 +531,7 @@
       address: 'Welches, St. Thomas', parish: 'St. Thomas',
       phone: '(246) 271-3784',
       hours: [{ days: [1,2,3,4,5,6], open: 540, close: 1080 }],
-      hoursText: 'Mon–Sat 9:00am–6:00pm',
+      hoursText: 'Mon–Sat 9am–6pm',
       notes: '', routes: 'Route 6 from Bridgetown'
     },
     {
@@ -605,8 +542,8 @@
         { days: [1,2,3,4,5], open: 0,   close: 1020 },
         { days: [0,6],        open: 0,   close: 480  }
       ],
-      hoursText: 'Mon–Fri midnight–5:00pm · Sat–Sun midnight–8:00am',
-      notes: 'This pharmacy serves overnight shift workers: it opens at midnight and closes in the afternoon or morning. If you are visiting in normal daytime hours, note it is closed after 5:00pm on weekdays and after 8:00am at weekends. Always call (246) 624-3278 to confirm before visiting.',
+      hoursText: 'Mon–Fri midnight–5pm · Sat–Sun midnight–8am',
+      notes: 'This pharmacy serves overnight shift workers: it opens at midnight and closes in the afternoon or morning. If you are visiting in normal daytime hours, note it is closed after 5pm on weekdays and after 8am at weekends. Always call (246) 624-3278 to confirm before visiting.',
       routes: 'Routes 12, 22 from Bridgetown'
     },
     {
@@ -640,7 +577,7 @@
       routes: 'Route 1 from Bridgetown northbound'
     },
     {
-      // DATA CONFLICT: Barbados business directory lists Lewis Drug Mart at "Carmen, Rockley / Highway 7" (Christ Church), a different spot from "Rockley Main Road" below — verify with BDS.
+      // DATA CONFLICT: Barbados business directory lists Lewis Drug Mart at "Carmen, Rockley / Highway 7" (Christ Church), a different spot from "Rockley Main Road" below — verify with the Drug Service.
       id: 'priv-13', name: 'Lewis Drug Mart', type: 'private-sbs',
       address: 'Rockley Main Road, Rockley, Christ Church', parish: 'Christ Church',
       phone: '(246) 435-8090',
@@ -656,7 +593,7 @@
       routes: 'Routes 30, 31 from Bridgetown'
     },
     {
-      // DATA CONFLICT: Barbados business directory lists Connolly's at "Hadley House, Lower Broad Street, Bridgetown", NOT "Emerald City Supermarket, Six Roads, St. Philip" below — different parish. Verify with BDS before trusting either.
+      // DATA CONFLICT: Barbados business directory lists Connolly's at "Hadley House, Lower Broad Street, Bridgetown", NOT "Emerald City Supermarket, Six Roads, St. Philip" below — different parish. Verify with the Drug Service before trusting either.
       id: 'priv-15', name: "Connolly's Pharmacy", type: 'private-sbs',
       address: 'Emerald City Supermarket, Six Roads, St. Philip', parish: 'St. Philip',
       phone: '(246) 423-4937',
@@ -702,7 +639,7 @@
         { days: [6],          open: 480, close: 810  },
         { days: [0],          open: 480, close: 750  }
       ],
-      hoursText: 'Mon–Fri 8:00am–3:00pm & 6:45pm–9:00pm · Sat 8:00am–1:30pm · Sun 8:00am–12:30pm',
+      hoursText: 'Mon–Fri 8am–3pm & 6:45pm–9pm · Sat 8am–1:30pm · Sun 8am–12:30pm',
       notes: 'Also (246) 237-8992.', routes: ''
     },
     {
@@ -713,7 +650,7 @@
         { days: [1,2,3,4,5,6], open: 480, close: 1140 },
         { days: [0],           open: 480, close: 960  }
       ],
-      hoursText: 'Mon–Sat 8:00am–7:00pm · Sun 8:00am–4:00pm',
+      hoursText: 'Mon–Sat 8am–7pm · Sun 8am–4pm',
       notes: 'Hours do not change on bank holidays.', routes: 'Route 1 from Bridgetown northbound'
     },
     {
@@ -725,7 +662,7 @@
         { days: [2,4],   open: 480, close: 1140 },
         { days: [6],     open: 540, close: 1020 }
       ],
-      hoursText: 'Mon, Wed & Fri 8:00am–5:00pm · Tue & Thu 8:00am–7:00pm · Sat 9:00am–5:00pm',
+      hoursText: 'Mon, Wed & Fri 8am–5pm · Tue & Thu 8am–7pm · Sat 9am–5pm',
       notes: '', routes: ''
     },
     {
@@ -747,7 +684,7 @@
         { days: [1,2,3,4,5], open: 480, close: 990 },
         { days: [6],          open: 480, close: 930 }
       ],
-      hoursText: 'Mon–Fri 8:00am–4:30pm · Sat 8:00am–3:30pm · Closed Sundays',
+      hoursText: 'Mon–Fri 8am–4:30pm · Sat 8am–3:30pm · Closed Sundays',
       notes: 'Telephone / WhatsApp +1 (246) 426-6387. oneuppharmacy.com', routes: ''
     },
     {
@@ -758,7 +695,7 @@
         { days: [1,2,3,4,5], open: 510, close: 990 },
         { days: [6],          open: 540, close: 810 }
       ],
-      hoursText: 'Mon–Fri 8:30am–4:30pm · Sat 9:00am–1:30pm · Closed Sundays',
+      hoursText: 'Mon–Fri 8:30am–4:30pm · Sat 9am–1:30pm · Closed Sundays',
       notes: 'Telephone / WhatsApp +1 (246) 426-6387. oneuppharmacy.com', routes: ''
     },
     {
@@ -769,7 +706,7 @@
         { days: [1,2,3,4,5], open: 480, close: 900 },
         { days: [6],          open: 480, close: 780 }
       ],
-      hoursText: 'Mon–Fri 8:00am–3:00pm · Sat 8:00am–1:00pm · Closed Sundays',
+      hoursText: 'Mon–Fri 8am–3pm · Sat 8am–1pm · Closed Sundays',
       notes: 'Telephone / WhatsApp +1 (246) 426-6387. oneuppharmacy.com', routes: ''
     },
     {
@@ -781,7 +718,7 @@
         { days: [6],          open: 510, close: 840 },
         { days: [0],          open: 540, close: 780 }
       ],
-      hoursText: 'Mon–Fri 8:30am–4:30pm · Sat 8:30am–2:00pm · Sun 9:00am–1:00pm · Bank holidays 9:00am–12:00pm',
+      hoursText: 'Mon–Fri 8:30am–4:30pm · Sat 8:30am–2pm · Sun 9am–1pm · Bank holidays 9am–12pm',
       notes: '', routes: 'Routes 11, 12 from Bridgetown'
     },
     {
@@ -792,7 +729,7 @@
         { days: [1,2,3,4,5], open: 540, close: 900 },
         { days: [6],          open: 540, close: 780 }
       ],
-      hoursText: 'Mon–Fri 9:00am–3:00pm · Sat 9:00am–1:00pm',
+      hoursText: 'Mon–Fri 9am–3pm · Sat 9am–1pm',
       notes: '', routes: 'Route 3 from Bridgetown'
     },
 
@@ -800,36 +737,36 @@
       id: 'priv-29', name: 'Elcourt Pharmacy', type: 'private-sbs',
       address: 'Maxwell Main Road, Christ Church', parish: 'Christ Church',
       phone: '(246) 428-5323',
-      hours: [], hoursText: 'Listed as 8:00am–10:00pm — call to confirm opening days',
-      notes: 'Address and phone from a Barbados business directory — confirm opening days and SBS status with BDS.', routes: ''
+      hours: [], hoursText: 'Listed as 8am–10pm — call to confirm opening days',
+      notes: 'Address and phone from a Barbados business directory — confirm opening days and whether they offer the government subsidy with the Drug Service.', routes: ''
     },
     {
       id: 'priv-30', name: 'Lyte Drug Mart', type: 'private-sbs',
       address: 'Brittons Cross Roads, St. Michael', parish: 'St. Michael',
       phone: '(246) 624-4581',
-      hours: [], hoursText: 'Listed as 8:00am–5:30pm — call to confirm opening days',
-      notes: 'Address, phone and opening days to be confirmed with BDS.', routes: ''
+      hours: [], hoursText: 'Listed as 8am–5:30pm — call to confirm opening days',
+      notes: 'Address, phone and opening days to be confirmed with the Drug Service.', routes: ''
     },
     {
       id: 'priv-31', name: 'Palmcourt Dispensary', type: 'private-sbs',
       address: '28 Pine Road, Belleville, St. Michael', parish: 'St. Michael',
       phone: '(246) 437-8098',
-      hours: [], hoursText: 'Listed as 8:00am–4:30pm — call to confirm opening days',
-      notes: 'Address and phone from a Barbados business directory — confirm opening days and SBS status with BDS.', routes: ''
+      hours: [], hoursText: 'Listed as 8am–4:30pm — call to confirm opening days',
+      notes: 'Address and phone from a Barbados business directory — confirm opening days and whether they offer the government subsidy with the Drug Service.', routes: ''
     },
 
-    /* ── Private pharmacy previously listed with unconfirmed SBS status ── */
+    /* ── Private pharmacy previously listed with unconfirmed subsidy status ── */
     {
       id: 'unc-12', name: 'Holborn Pharmacy', type: 'private-sbs',
       address: '36A Pine Road, St. Michael', parish: 'St. Michael',
       phone: '(246) 427-8143',
       hours: [{ days: [1,2,3,4,5,6], open: 480, close: 1080 }],
-      hoursText: 'Mon–Sat 8:00am–6:00pm', notes: 'Opening days assumed Mon–Sat — confirm with BDS.', routes: ''
+      hoursText: 'Mon–Sat 8am–6pm', notes: 'Opening days assumed Mon–Sat — confirm with the Drug Service.', routes: ''
     },
 
-    /* ── SBS Status Unconfirmed (pulled from the wider open-pharmacy list) ── */
+    /* ── Subsidy status unconfirmed (pulled from the wider open-pharmacy list) ── */
     {
-      // DATA CONFLICT: Barbados business directory lists Ace Pharmacy at "3 10th Ave, Belleville, St. Michael", not "Pine Housing Estate" below — verify with BDS.
+      // DATA CONFLICT: Barbados business directory lists Ace Pharmacy at "3 10th Ave, Belleville, St. Michael", not "Pine Housing Estate" below — verify with the Drug Service.
       id: 'unc-1', name: 'Ace Pharmacy', type: 'unconfirmed',
       address: 'Pine Housing Estate, St. Michael', parish: 'St. Michael',
       phone: '(246) 228-2026',
@@ -884,7 +821,7 @@
       hours: [], hoursText: 'Call to confirm', notes: '', routes: ''
     },
     {
-      // DATA CONFLICT: Barbados business directory lists Friendship Pharmacy at "Manor Lodge Complex, Lodge Hill" and shows "23 Baxters Road" (below) as TOTAL CARE PHARMACY — this address may be mislabelled. Verify with BDS.
+      // DATA CONFLICT: Barbados business directory lists Friendship Pharmacy at "Manor Lodge Complex, Lodge Hill" and shows "23 Baxters Road" (below) as TOTAL CARE PHARMACY — this address may be mislabelled. Verify with the Drug Service.
       id: 'unc-10', name: 'Friendship Pharmacy', type: 'unconfirmed',
       address: '23 Baxters Road, St. Michael', parish: 'St. Michael',
       phone: '(246) 438-9218',
@@ -915,7 +852,7 @@
     {
       id: 'unc-16', name: 'Pharm-N-Care Pharmacy', type: 'unconfirmed',
       address: 'Unit 3, Emperors Court, Worthing, Christ Church', parish: 'Christ Church',
-      phone: '(246) 426-2601', hours: [], hoursText: 'Call to confirm', notes: 'Address, parish and phone from a Barbados business directory — confirm with BDS.', routes: ''
+      phone: '(246) 426-2601', hours: [], hoursText: 'Call to confirm', notes: 'Address, parish and phone from a Barbados business directory — confirm with the Drug Service.', routes: ''
     },
     {
       id: 'unc-17', name: 'The Pharmacy Shoppe', type: 'unconfirmed',
@@ -926,7 +863,7 @@
     {
       id: 'unc-18', name: 'Pharmacy World Inc', type: 'unconfirmed',
       address: 'Peterkin Road, Bank Hall, St. Michael', parish: 'St. Michael',
-      phone: '(246) 429-0334', hours: [], hoursText: 'Call to confirm', notes: 'Address and phone from a Barbados business directory — confirm with BDS.', routes: ''
+      phone: '(246) 429-0334', hours: [], hoursText: 'Call to confirm', notes: 'Address and phone from a Barbados business directory — confirm with the Drug Service.', routes: ''
     },
     {
       id: 'unc-19', name: 'Station Hill Medical Complex Pharmacy', type: 'unconfirmed',
@@ -945,427 +882,427 @@
       address: "George Saint Belleville, St. Michael", parish: "St. Michael",
       phone: "(246) 426-8771",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-22", name: "Alpha Pharmacy", type: "unconfirmed",
       address: "Sunny Side Complex, Black Rock, St. Michael", parish: "St. Michael",
       phone: "(246) 426-3499",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-23", name: "Apothec Pharmacy", type: "unconfirmed",
       address: "Worthing, Christ Church", parish: "Christ Church",
       phone: "(246) 436-6337",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-24", name: "Avis Pharmacy", type: "unconfirmed",
       address: "28 Thorpes Main Road, St. James", parish: "St. James",
       phone: "(246) 438-4444",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-25", name: "Belleville Dispensary", type: "unconfirmed",
       address: "Corner George St & 3rd Avenue, St. Michael", parish: "St. Michael",
       phone: "(246) 429-5616",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-26", name: "Brittons Hill Dispensary", type: "unconfirmed",
       address: "Corner Flagstaff & Brittons New Road, St. Michael", parish: "St. Michael",
       phone: "(246) 429-5461",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-27", name: "Callies Pharmacy — Garrison", type: "unconfirmed",
       address: "Brigade House Garrison, St. Michael", parish: "St. Michael",
       phone: "(246) 429-9346",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-28", name: "Carledon Drug Emporium Inc", type: "unconfirmed",
       address: "Lr Bay St, St. Michael", parish: "St. Michael",
       phone: "(246) 228-2476",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-29", name: "Carlton Pharmacy", type: "unconfirmed",
       address: "Carlton Complex, Black Rock Main Road, St. Michael", parish: "St. Michael",
       phone: "(246) 425-1604",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-30", name: "Cave's Pharmacy", type: "unconfirmed",
       address: "Worthing Plaza, Christ Church", parish: "Christ Church",
       phone: "(246) 435-7460",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-31", name: "Crayton's Pharmacy", type: "unconfirmed",
       address: "Gall Hill Medical Centre, Christ Church", parish: "Christ Church",
       phone: "(246) 428-3497",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-32", name: "DNK Pharmacy", type: "unconfirmed",
       address: "Wildey Main Road, St. Michael", parish: "St. Michael",
       phone: "(246) 427-7070",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-33", name: "E C Gill Drugstore", type: "unconfirmed",
       address: "Marhill St, St. Michael", parish: "St. Michael",
       phone: "(246) 426-2454",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-34", name: "Eastern Pharmacy", type: "unconfirmed",
       address: "Church Village, St. Philip", parish: "St. Philip",
       phone: "(246) 423-4449",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-35", name: "Elbethel Pharmacy — 2nd Avenue", type: "unconfirmed",
       address: "2nd Avenue, Belleville, St. Michael", parish: "St. Michael",
       phone: "(246) 437-9261",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-36", name: "Felimar Drug Mart", type: "unconfirmed",
       address: "Jordans Complex Fitts Vlge, St. James", parish: "St. James",
       phone: "(246) 417-5685",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-37", name: "Forde C B Pharmacy Ltd", type: "unconfirmed",
       address: "Shoppers Centre Black Rock, St. Michael", parish: "St. Michael",
       phone: "(246) 425-9654",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-40", name: "Gill Shirley S (Gill's Pharmacy)", type: "unconfirmed",
       address: "Chapel St Nr Tudor St", parish: "St. Michael",
       phone: "(246) 427-2654",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-42", name: "Griffiths Reliance Pharmacy Ltd", type: "unconfirmed",
       address: "Lr Dayrell's Road, St. Michael", parish: "St. Michael",
       phone: "(246) 426-0438",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-43", name: "Grosvenor Pharmacy Inc", type: "unconfirmed",
       address: "Beckles Road, St. Michael", parish: "St. Michael",
       phone: "(246) 436-6842",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-44", name: "Hastings Pharmacy", type: "unconfirmed",
       address: "Skyway Plaza, Christ Church", parish: "Christ Church",
       phone: "(246) 429-8932",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-45", name: "Health Care Pharmacy", type: "unconfirmed",
       address: "101 Devlind Lr Black Rock Tel/Fax, St. Michael", parish: "St. Michael",
       phone: "(246) 425-2273",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-46", name: "Henley's Pharmacy", type: "unconfirmed",
       address: "Charles Rowe Bridge, St. George, Froster Hall", parish: "St. George",
       phone: "(246) 436-7417",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-47", name: "Heritage Pharmacy", type: "unconfirmed",
       address: "Spooners Hill, St. Michael", parish: "St. Michael",
       phone: "(246) 425-3159",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-49", name: "Imperial Pharmacy", type: "unconfirmed",
       address: "Bethesda Black Rock, St. Michael", parish: "St. Michael",
       phone: "(246) 436-1744",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-50", name: "Jems Pharmacy", type: "unconfirmed",
       address: "Jamestown Clinic Holetown, St. James", parish: "St. James",
       phone: "(246) 432-6997",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-52", name: "Joe's Pharmacy", type: "unconfirmed",
       address: "Oistins Main Road, Christ Church", parish: "Christ Church",
       phone: "(246) 428-6025",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-53", name: "Jones A P & Co Ltd", type: "unconfirmed",
       address: "Drug Store 8 High Street, St. Michael", parish: "St. Michael",
       phone: "(246) 426-3241",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-54", name: "K C B Pharmacy", type: "unconfirmed",
       address: "Brittons New Road Brittons Hill, St. Michael", parish: "St. Michael",
       phone: "(246) 426-7456",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-55", name: "K O D's Pharmacy", type: "unconfirmed",
       address: "Fontabelle, St. Michael", parish: "St. Michael",
       phone: "(246) 228-5087",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-57", name: "Maranatha Pharmacy", type: "unconfirmed",
       address: "Rock Dundo Medical Clinic White Main Road St Michael Tel/Fax", parish: "St. Michael",
       phone: "(246) 271-5736",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-59", name: "Maycare Pharmacy", type: "unconfirmed",
       address: "Open Until 10 PM Mon - SatEmerald City Supermarket Six Roads, St. Philip", parish: "St. Philip",
       phone: "(246) 423-4937",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-60", name: "Mayfield Pharmacy", type: "unconfirmed",
       address: "Mayfield Medical Centre, 4th Avenue Belleville, St. Michael", parish: "St. Michael",
       phone: "(246) 427-6066",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-61", name: "Neil's Pharmacy", type: "unconfirmed",
       address: "Aberfoyle Black Rock, St. Michael", parish: "St. Michael",
       phone: "(246) 427-5762",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-62", name: "O'Hana Pharmacy", type: "unconfirmed",
       address: "Gills Terr Speightstown, St. Peter", parish: "St. Peter",
       phone: "(246) 422-1800",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-65", name: "Pearson's Pharmacies", type: "unconfirmed",
       address: "Upper Collymore Rock Road, St. Michael", parish: "St. Michael",
       phone: "(246) 427-5521",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-66", name: "Pharmaco", type: "unconfirmed",
       address: "Church St Speightstown, St. Peter", parish: "St. Peter",
       phone: "(246) 422-1908",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-67", name: "Pickwick Pharmacy", type: "unconfirmed",
       address: "Peterkin Road Bank Hall, St. Michael", parish: "St. Michael",
       phone: "(246) 430-9594",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-68", name: "Pine Dispensary Inc", type: "unconfirmed",
       address: "Pine Medical Centre 3rd Avenue Belleville, St. Michael", parish: "St. Michael",
       phone: "(246) 436-8678",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-69", name: "Prescription Specialist Pharmacy The", type: "unconfirmed",
       address: "4th Avenue Belleville, St. Michael", parish: "St. Michael",
       phone: "(246) 437-3684",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-70", name: "Prescriptions Plus Inc", type: "unconfirmed",
       address: "Canary Lane Mall, St George Street, St. Michael", parish: "St. Michael",
       phone: "(246) 435-7587",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-71", name: "River Road Dispensary", type: "unconfirmed",
       address: "Glendor House River Road, St. Michael", parish: "St. Michael",
       phone: "(246) 429-4240",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-72", name: "Rock Dundo Pharmacy", type: "unconfirmed",
       address: "Cave Hill, St. Michael", parish: "St. Michael",
       phone: "(246) 425-1088",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-73", name: "Roebuck Pharmacy Ltd", type: "unconfirmed",
       address: "121 Roebuck, St. Michael", parish: "St. Michael",
       phone: "(246) 436-6101",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-74", name: "S E Well Care Pharmacy", type: "unconfirmed",
       address: "ARS Medicare 6th Avenue Belleville, St. Michael", parish: "St. Michael",
       phone: "(246) 436-1099",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-75", name: "S K Total Health Pharmacy Inc", type: "unconfirmed",
       address: "Rendezvous Court R'vous, Christ Church", parish: "Christ Church",
       phone: "(246) 436-0140",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-76", name: "Standard Pharmacy Ltd", type: "unconfirmed",
       address: "Corner of Fairfield Road Tweedside Road, St. Michael", parish: "St. Michael",
       phone: "(246) 429-3298",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-78", name: "Total Care Pharmacy", type: "unconfirmed",
       address: "23 Baxters Road Opp Jordans Supermarket, St. Michael", parish: "St. Michael",
       phone: "(246) 436-5241",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-80", name: "Walkers H C Pharmacy", type: "unconfirmed",
       address: "47 Tudor St", parish: "St. Michael",
       phone: "(246) 426-3707",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-82", name: "Weekes L A Drug Store", type: "unconfirmed",
       address: "Carlton Black Rock Main Road, St. Michael", parish: "St. Michael",
       phone: "(246) 425-1046",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-83", name: "Welches Dispensary", type: "unconfirmed",
       address: "Welches, Christ Church", parish: "Christ Church",
       phone: "(246) 428-1206",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-84", name: "Whole Health Pharmacy", type: "unconfirmed",
       address: "Queen Saint Speightstown, St. Peter", parish: "St. Peter",
       phone: "(246) 422-5207",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-85", name: "Worrell's Pharmacy Inc", type: "unconfirmed",
       address: "Wildey Shopping Plaza, St. Michael", parish: "St. Michael",
       phone: "(246) 427-5468",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-86", name: "Worthing Pharmacy", type: "unconfirmed",
       address: "Worthing, Christ Church", parish: "Christ Church",
       phone: "(246) 435-7041",
       hours: [], hoursText: "Call to confirm",
-      notes: "From a Barbados business directory \u2014 location approximate and Drug Service status not confirmed with BDS.", routes: ""
+      notes: "From a Barbados business directory \u2014 location approximate and subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-87", name: "Massy Pharmacy — Warrens", type: "private-sbs",
       address: "Warrens SuperCentre, St. Michael", parish: "St. Michael",
       phone: "",
       hours: [], hoursText: "Call to confirm",
-      notes: "Massy Stores pharmacy (formerly Knights) \u2014 on the Barbados Drug Service subsidised list; pharmacy hours unconfirmed \u2014 call to confirm.", routes: ""
+      notes: "Massy Stores pharmacy (formerly Knights) \u2014 on the Drug Service subsidised list; pharmacy hours unconfirmed \u2014 call to confirm.", routes: ""
     },
     {
       id: "unc-88", name: "Massy Pharmacy — Sky Mall", type: "private-sbs",
       address: "Sky Mall, Haggatt Hall, St. Michael", parish: "St. Michael",
       phone: "",
       hours: [], hoursText: "Call to confirm",
-      notes: "Massy Stores pharmacy (formerly Knights) \u2014 on the Barbados Drug Service subsidised list; pharmacy hours unconfirmed \u2014 call to confirm.", routes: ""
+      notes: "Massy Stores pharmacy (formerly Knights) \u2014 on the Drug Service subsidised list; pharmacy hours unconfirmed \u2014 call to confirm.", routes: ""
     },
     {
       id: "unc-89", name: "Massy Pharmacy — Sunset Crest", type: "private-sbs",
       address: "Sunset Crest, Holetown, St. James", parish: "St. James",
       phone: "",
       hours: [], hoursText: "Call to confirm",
-      notes: "Massy Stores pharmacy (formerly Knights) \u2014 on the Barbados Drug Service subsidised list; pharmacy hours unconfirmed \u2014 call to confirm.", routes: ""
+      notes: "Massy Stores pharmacy (formerly Knights) \u2014 on the Drug Service subsidised list; pharmacy hours unconfirmed \u2014 call to confirm.", routes: ""
     },
     {
       id: "unc-91", name: "Massy Pharmacy — Six Roads", type: "private-sbs",
       address: "Six Roads, St. Philip", parish: "St. Philip",
       phone: "",
       hours: [], hoursText: "Call to confirm",
-      notes: "Massy Stores pharmacy (formerly Knights) \u2014 on the Barbados Drug Service subsidised list; pharmacy hours unconfirmed \u2014 call to confirm.", routes: ""
+      notes: "Massy Stores pharmacy (formerly Knights) \u2014 on the Drug Service subsidised list; pharmacy hours unconfirmed \u2014 call to confirm.", routes: ""
     },
     {
       id: "unc-92", name: "Massy Pharmacy — Worthing", type: "private-sbs",
       address: "Rendezvous Road, Worthing, Christ Church", parish: "Christ Church",
       phone: "",
       hours: [], hoursText: "Call to confirm",
-      notes: "Massy Stores pharmacy (formerly Knights) \u2014 on the Barbados Drug Service subsidised list; pharmacy hours unconfirmed \u2014 call to confirm.", routes: ""
+      notes: "Massy Stores pharmacy (formerly Knights) \u2014 on the Drug Service subsidised list; pharmacy hours unconfirmed \u2014 call to confirm.", routes: ""
     },
     {
       id: "unc-93", name: "Massy Pharmacy — Oistins", type: "private-sbs",
       address: "Oistins, Christ Church", parish: "Christ Church",
       phone: "",
       hours: [], hoursText: "Call to confirm",
-      notes: "Massy Stores pharmacy (formerly Knights) \u2014 on the Barbados Drug Service subsidised list; pharmacy hours unconfirmed \u2014 call to confirm.", routes: ""
+      notes: "Massy Stores pharmacy (formerly Knights) \u2014 on the Drug Service subsidised list; pharmacy hours unconfirmed \u2014 call to confirm.", routes: ""
     },
     {
       id: "unc-94", name: "Roundhay Pharmacy", type: "unconfirmed",
       address: "One Accord Plaza, Warrens Industrial Park, St. Michael", parish: "St. Michael",
       phone: "",
       hours: [], hoursText: "Call to confirm",
-      notes: "Warrens Healthcare complex. Drug Service status not confirmed with BDS.", routes: ""
+      notes: "Warrens Healthcare complex. Subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "priv-32", name: "iMart Pharmacy — Carlton Complex", type: "private-sbs",
@@ -1373,7 +1310,7 @@
       phone: "(246) 271-3784",
       hours: [
         { days: [1,2,3,4,5,6], open: 480, close: 1020 }
-      ], hoursText: "Mon–Sat 8:00am–5:00pm",
+      ], hoursText: "Mon–Sat 8am–5pm",
       notes: "iMart Pharmacy Express, Carlton Complex. Hours per iMart.", routes: ""
     },
     {
@@ -1382,7 +1319,7 @@
       phone: "(246) 271-3784",
       hours: [
         { days: [1,2,3,4,5,6], open: 540, close: 1080 }
-      ], hoursText: "Mon–Sat 9:00am–6:00pm",
+      ], hoursText: "Mon–Sat 9am–6pm",
       notes: "iMart Pharmacy Express, Sunset Crest Service Station. Hours per iMart.", routes: ""
     },
     {
@@ -1390,7 +1327,7 @@
       address: "Corner 6th Avenue, Belleville, St. Michael", parish: "St. Michael",
       phone: "(246) 622-1405",
       hours: [], hoursText: "Call to confirm",
-      notes: "Second Elbethel branch (Lloyd A Burrowes). Drug Service status not confirmed with BDS.", routes: ""
+      notes: "Second Elbethel branch (Lloyd A Burrowes). Subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-96", name: "Aqua Pharmacy", type: "unconfirmed",
@@ -1399,36 +1336,36 @@
       hours: [
         { days: [1,2,3,4,5], open: 510, close: 1020 },
         { days: [6],          open: 540, close: 840  }
-      ], hoursText: "Mon–Fri 8:30am–5:00pm · Sat 9:00am–2:00pm",
-      notes: "Hours per Aqua Pharmacy. Drug Service status not confirmed with BDS.", routes: ""
+      ], hoursText: "Mon–Fri 8:30am–5pm · Sat 9am–2pm",
+      notes: "Hours per Aqua Pharmacy. Subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-97", name: "BetterLife Pharmacy", type: "unconfirmed",
       address: "Building 2, 1 Friendship Drive, Green Hill, St. Michael", parish: "St. Michael",
       phone: "(246) 571-3788",
       hours: [], hoursText: "Call to confirm",
-      notes: "Drug Service status not confirmed with BDS.", routes: ""
+      notes: "Subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-98", name: "Get Well Pharmacy", type: "unconfirmed",
       address: "Windsor Medical Centre, cnr Government Hill & Pine Plantation Rd, St. Michael", parish: "St. Michael",
       phone: "(246) 622-4171",
       hours: [], hoursText: "Call to confirm",
-      notes: "Retail counter at Windsor Medical Centre (also Wildey Industrial Estate). Confirm address and hours by phone. Drug Service status not confirmed with BDS.", routes: ""
+      notes: "Retail counter at Windsor Medical Centre (also Wildey Industrial Estate). Confirm address and hours by phone. Subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-99", name: "City Pharmacy Inc", type: "unconfirmed",
       address: "Marhill Street, Bridgetown, St. Michael", parish: "St. Michael",
       phone: "(246) 426-2454",
       hours: [], hoursText: "Call to confirm",
-      notes: "Drug Service status not confirmed with BDS.", routes: ""
+      notes: "Subsidy status not confirmed with the Drug Service.", routes: ""
     },
     {
       id: "unc-100", name: "Massy Pharmacy — Coverley", type: "private-sbs",
       address: "The Villages at Coverley, Christ Church", parish: "Christ Church",
       phone: "(246) 623-7374",
       hours: [], hoursText: "Call to confirm",
-      notes: "Massy Stores pharmacy (formerly Knights) \u2014 on the Barbados Drug Service subsidised list. Phone is the store line; pharmacy hours unconfirmed \u2014 call to confirm.", routes: ""
+      notes: "Massy Stores pharmacy (formerly Knights) \u2014 on the Drug Service subsidised list. Phone is the store line; pharmacy hours unconfirmed \u2014 call to confirm.", routes: ""
     }
   ];
 
@@ -1485,6 +1422,25 @@
     return null;
   }
 
+  // Clock format matches the hoursText strings: lowercase, no space, no :00.
+  function fmtClock(m) {
+    const h24 = Math.floor(m / 60) % 24, min = m % 60;
+    if (h24 === 0 && min === 0) return 'midnight';
+    const h = h24 % 12 === 0 ? 12 : h24 % 12;
+    return (min === 0 ? String(h) : h + ':' + String(min).padStart(2, '0')) + (h24 < 12 ? 'am' : 'pm');
+  }
+
+  // The slot the pharmacy is inside right now, so the status can say how long
+  // the reader has left rather than only that it is open.
+  function closesAt(pharmacy) {
+    if (!pharmacy.hours || pharmacy.hours.length === 0) return null;
+    const now  = getBarbadosDate();
+    const day  = now.getDay();
+    const mins = minutesSinceMidnight(now);
+    const slot = pharmacy.hours.find(s => s.days.includes(day) && mins >= s.open && mins < s.close);
+    return slot ? fmtClock(slot.close) : null;
+  }
+
   function openStatus(pharmacy) {
     if (!pharmacy.hours || pharmacy.hours.length === 0) return null;
     const now  = getBarbadosDate();
@@ -1516,10 +1472,12 @@
   const PHONE_SVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.81a19.79 19.79 0 01-3.07-8.68A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>`;
   const MAP_SVG   = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>`;
 
+  // Cost is what the reader is actually deciding on, so each type states the
+  // price in words. A 12px category chip buried the answer.
   const TYPE_LABELS = {
-    'government':  { label: 'Government',      cls: 'badge--government' },
-    'private-sbs': { label: 'Private (dispensing fee)',   cls: 'badge--private'    },
-    'unconfirmed': { label: 'Private (no benefit)', cls: 'badge--unconfirmed' }
+    'government':  { label: 'Free — government polyclinic',    cls: 'pharmacy-card__cost--free' },
+    'private-sbs': { label: 'Small fee — private pharmacy',    cls: 'pharmacy-card__cost--fee'  },
+    'unconfirmed': { label: 'Full price — not in the subsidy', cls: 'pharmacy-card__cost--full' }
   };
 
   function buildCard(p) {
@@ -1528,11 +1486,11 @@
     const phoneDigits = p.phone.replace(/[^0-9]/g, '');
     // Phone is the primary action older users want, so it becomes a button below.
     const callBtn = p.phone
-      ? `<a href="tel:+1${phoneDigits}" class="govbb-btn card-call-btn" aria-label="Call ${p.name} on ${p.phone}">${PHONE_SVG} Call ${p.phone}</a>`
+      ? `<a href="tel:+1${phoneDigits}" class="govbb-button card-call-btn" aria-label="Call ${p.name} on ${p.phone}">${PHONE_SVG} Call ${p.phone}</a>`
       : '';
     const noPhoneNote = p.phone
       ? ''
-      : `<p class="pharmacy-card__phone" style="color:var(--color-mid-grey-00); font-weight:normal; font-size: var(--font-size-caption);">No number listed. Call the Barbados Drug Service on (246) 535-4300.</p>`;
+      : `<p class="pharmacy-card__phone" style="color:var(--govbb-mid-grey-00); font-weight:normal; font-size: var(--govbb-font-size-caption);">No number listed. Call the Drug Service on (246) 535-4300.</p>`;
 
     // Only offer Directions when there's a usable address + a map pin — otherwise
     // the Google Maps query is a dead search (placeholder addresses).
@@ -1550,40 +1508,42 @@
       if (waDigits.length === 10) waDigits = '1' + waDigits;
     }
     const whatsappLink = waDigits
-      ? `<a href="https://wa.me/${waDigits}?text=Hello%2C%20I%20need%20a%20prescription%20at%20${encodeURIComponent(p.name)}" target="_blank" rel="noopener" class="govbb-link" style="font-size:var(--font-size-caption);display:inline-block;margin-top:4px;padding:6px 0;" aria-label="Send prescription via WhatsApp to ${p.name} (opens in a new tab)">Order prescription via WhatsApp (opens in a new tab)</a>`
+      ? `<a href="https://wa.me/${waDigits}?text=Hello%2C%20I%20need%20a%20prescription%20at%20${encodeURIComponent(p.name)}" target="_blank" rel="noopener" class="govbb-link" style="font-size:var(--govbb-font-size-caption);display:inline-block;margin-top:4px;padding:6px 0;" aria-label="Send prescription via WhatsApp to ${p.name} (opens in a new tab)">Order prescription via WhatsApp (opens in a new tab)</a>`
       : '';
 
     const notesHTML  = p.notes  ? `<p class="pharmacy-card__note">${p.notes}</p>` : '';
+    // Yellow/green (QEH) slips fall outside the subsidy at private pharmacies.
+    const qehNote = p.type === 'private-sbs'
+      ? '<p class="pharmacy-card__note">Yellow or green (QEH) prescriptions are not covered here — you would pay full price.</p>'
+      : '';
 
     const isSel = (p.id === selectedId);
     const hasPin = (typeof COORDS !== 'undefined') && !!COORDS[p.id];
 
-    // Open-now status badge — shown only when the pharmacy's hours are known.
-    // (Sorting already lists open pharmacies first, government before private.)
+    // Open-now status line — the card's first line, since it is the reader's
+    // first question. (Sorting already lists open pharmacies first.)
     const _open = openStatus(p);
-    const openBadge = _open === true
-      ? '<span class="badge badge--open badge--dot">Open now</span>'
-      : _open === false
-        ? '<span class="badge badge--closed badge--dot">Closed</span>'
-        : '<span class="badge badge--unknown badge--dot">Hours not confirmed</span>';
+    const _until = _open === true ? closesAt(p) : null;
+    const statusText = _open === true ? 'Open now' : _open === false ? 'Closed now' : 'Hours not confirmed';
+    const statusMod  = _open === true ? 'open' : _open === false ? 'closed' : 'unknown';
+    const statusLine = `<p class="pharmacy-card__status pharmacy-card__status--${statusMod}">${statusText}`
+      + (_until ? `<span class="pharmacy-card__until">until ${_until}</span>` : '')
+      + '</p>';
 
     return `
 <article class="pharmacy-card pharmacy-card--${p.type}${isSel ? ' is-selected' : ''}${_open === false ? ' is-closed' : ''}" data-type="${p.type}" data-parish="${p.parish}" data-id="${p.id}"${isSel ? ' aria-current="true"' : ''}>
-  <div class="pharmacy-card__top">
-    <h3 class="pharmacy-card__name">${p.name}</h3>
-    <div class="pharmacy-card__status-wrap">
-      ${openBadge}
-      <span class="badge ${typeMeta.cls}">${typeMeta.label}</span>
-    </div>
-  </div>
+  ${statusLine}
+  <h3 class="pharmacy-card__name">${p.name}</h3>
+  <p class="pharmacy-card__cost ${typeMeta.cls}">${typeMeta.label}</p>
   <p class="pharmacy-card__address">${PIN_SVG}<span>${p.address}</span></p>
   ${noPhoneNote}
   <div class="pharmacy-card__hours-row">${CLOCK_SVG}<span>${p.hoursText}</span></div>
   ${notesHTML}
+  ${qehNote}
   ${whatsappLink}
   <div class="pharmacy-card__actions">
     ${callBtn}
-    ${addressKnown ? `<a href="${mapsURL}" target="_blank" rel="noopener" class="govbb-btn--secondary card-call-btn" aria-label="Get directions to ${p.name} on Google Maps (opens in a new tab)">${MAP_SVG} Directions</a>` : ''}
+    ${addressKnown ? `<a href="${mapsURL}" target="_blank" rel="noopener" class="govbb-button govbb-button--secondary card-call-btn" aria-label="Get directions to ${p.name} on Google Maps (opens in a new tab)">${MAP_SVG} Directions</a>` : ''}
   </div>
 </article>`;
   }
@@ -1593,7 +1553,11 @@
 
   const PAGE_SIZE  = 20;
   const SB = (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) ? 'auto' : 'smooth';
-  let subsidisedOnly = false;  // "Free & subsidised drugs" filter — excludes pharmacies whose drug-service status is unknown
+  // The default view shows only pharmacies that give free or cheaper medication
+  // (i.e. it excludes those whose subsidy status is unknown). "Show all
+  // pharmacies" in the results summary is the way out of it.
+  const SUBSIDY_DEFAULT = true;
+  let subsidisedOnly = SUBSIDY_DEFAULT;
   let activeType   = 'all';
   let currentPage  = 1;
   let userLatLng   = null;    // {lat, lng} once the user shares location
@@ -1668,9 +1632,13 @@
     if (!el) return;
     const typeWord = activeType === 'government' ? 'Government'
                    : activeType === 'private-sbs' ? 'Private' : '';
-    const hasFilter = !!parishFilter || !!typeWord || openNowOnly || subsidisedOnly;
+    const nonDefaultSubsidy = subsidisedOnly !== SUBSIDY_DEFAULT;
+    const hasFilter = !!parishFilter || !!typeWord || openNowOnly || nonDefaultSubsidy;
     let html;
-    if (!hasFilter) {
+    if (!hasFilter && subsidisedOnly) {
+      html = 'Showing pharmacies that give free or cheaper medication. '
+           + '<a href="#" class="govbb-link show-all">Show all pharmacies</a>. ';
+    } else if (!hasFilter) {
       html = 'Showing all pharmacies in Barbados. Open pharmacies are listed first. ';
     } else {
       html = 'Showing ';
@@ -1680,7 +1648,7 @@
       if (parishFilter) html += ' in ' + escHtml(parishFilter);
       if (openNowOnly)  html += ' open now';
       html += '. ';
-      if (subsidisedOnly && !typeWord) html += 'Free at government polyclinics, subsidised (dispensing fee) at private SBS pharmacies. ';
+      if (subsidisedOnly && !typeWord) html += 'Free at government polyclinics, cheaper at private pharmacies that take part — you pay a dispensing fee. ';
       if (openNowOnly) html += 'Based on published hours (in Barbados time) — call to confirm. ';
     }
     if (nearMode && userLatLng) html += 'Open pharmacies first, then nearest to you. ';
@@ -1707,24 +1675,24 @@
 
     if (filtered.length === 0) {
       let title = 'No pharmacies match your filters';
-      let body = `<a href="#" class="govbb-link clear-filters">Clear all filters</a> to see all pharmacies.`;
+      let body = `<a href="#" class="govbb-link clear-filters">Clear all filters</a>, or <a href="#" class="govbb-link show-all">show all pharmacies</a>.`;
       if (parishFilter && activeType === 'all' && !subsidisedOnly && !openNowOnly) {
         // Pure parish filter with no results — the parish has no pharmacy listed (e.g. St. Lucy).
         title = `No pharmacies are listed in ${escHtml(parishFilter)}`;
         const nearest = parishFilter === 'St. Lucy'
           ? 'St. Lucy has no pharmacy listed — the nearest are in Speightstown, St. Peter. '
           : 'Try a nearby parish. ';
-        body = `${nearest}<a href="#" class="govbb-link clear-filters">Clear all filters</a> to see all pharmacies.`;
+        body = `${nearest}<a href="#" class="govbb-link clear-filters">Clear all filters</a>, or <a href="#" class="govbb-link show-all">show all pharmacies</a>.`;
       }
       if (openNowOnly) {
         title = 'No pharmacies are open right now';
-        body = `This is based on published opening hours (in Barbados time). <a href="#" class="govbb-link clear-filters">Clear all filters</a> to see all pharmacies and their hours, then call ahead to confirm.`;
+        body = `This is based on published opening hours (in Barbados time). <a href="#" class="govbb-link clear-filters">Clear all filters</a> to see opening hours, then call ahead to confirm.`;
       }
       grid.innerHTML = `
         <div class="empty-state">
           <div class="empty-state__icon" aria-hidden="true">💊</div>
           <h3>${title}</h3>
-          <p class="govbb-text-body text-muted" style="margin-top: var(--spacing-xs);">${body}</p>
+          <p class="govbb-text-body text-muted" style="margin-top: var(--govbb-space-xs);">${body}</p>
         </div>`;
       countEl.textContent = 'No results';
       pagEl.innerHTML = '';
@@ -1738,7 +1706,7 @@
 
     if (end < filtered.length) {
       const remaining = filtered.length - end;
-      pagEl.innerHTML = `<button type="button" class="jp-show-more" data-showmore>Show more pharmacies (${remaining} more)</button>`;
+      pagEl.innerHTML = `<button type="button" class="govbb-button govbb-button--secondary jp-show-more" data-showmore>Show more pharmacies (${remaining} more)</button>`;
     } else {
       pagEl.innerHTML = '';
     }
@@ -1820,11 +1788,11 @@
     if (nearBtn) { nearBtn.classList.remove('active'); nearBtn.setAttribute('aria-pressed', 'false'); nearBtn.innerHTML = NEAR_SVG + ' Use my location'; }
     parishFilter = '';
     openNowOnly = false;
-    subsidisedOnly = false;
+    subsidisedOnly = SUBSIDY_DEFAULT;
     selectedId = null;
     const ps = document.getElementById('parish-select'); if (ps) ps.value = '';
     const on = document.getElementById('open-now'); if (on) on.checked = false;
-    const so = document.getElementById('subsidised-only'); if (so) so.checked = false;
+    const so = document.getElementById('subsidised-only'); if (so) so.checked = SUBSIDY_DEFAULT;
     nameQuery = '';
     const nsel = document.getElementById('name-search'); if (nsel) nsel.value = '';
     const ul = document.getElementById('legend-unconfirmed'); if (ul) ul.style.display = '';
@@ -1842,7 +1810,7 @@
     if (activeType && activeType !== 'all') q.set('type', activeType);
     if (parishFilter) q.set('parish', parishFilter);
     if (openNowOnly) q.set('open', '1');
-    if (subsidisedOnly) q.set('sbs', '1');
+    if (!subsidisedOnly) q.set('all', '1');
     if (nameQuery) q.set('q', nameQuery);
     if (nearMode) q.set('near', '1');
     const qs = q.toString();
@@ -1867,10 +1835,10 @@
       openNowOnly = true;
       const on = document.getElementById('open-now'); if (on) on.checked = true;
     }
-    if (q.get('sbs') === '1') {
-      subsidisedOnly = true;
-      const so = document.getElementById('subsidised-only'); if (so) so.checked = true;
-      const ul = document.getElementById('legend-unconfirmed'); if (ul) ul.style.display = 'none';
+    if (q.get('all') === '1') {
+      subsidisedOnly = false;
+      const so = document.getElementById('subsidised-only'); if (so) so.checked = false;
+      const ul = document.getElementById('legend-unconfirmed'); if (ul) ul.style.display = '';
     }
     const qq = q.get('q');
     if (qq) {
@@ -1989,6 +1957,17 @@
     document.addEventListener('click', e => {
       const clear = e.target.closest('.clear-filters');
       if (clear) { e.preventDefault(); clearAllFilters(); updateMobileFilterCount(); return; }
+      const showAll = e.target.closest('.show-all');
+      if (showAll) {
+        e.preventDefault();
+        subsidisedOnly = false;
+        const so = document.getElementById('subsidised-only'); if (so) so.checked = false;
+        currentPage = 1;
+        selectedId = null;
+        render();
+        updateMobileFilterCount();
+        return;
+      }
     });
 
     // Apply ?type= / ?parish= / ?near= deep links from the landing page
